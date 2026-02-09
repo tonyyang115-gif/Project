@@ -1,0 +1,26 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/room/index",
+    "pages/profile/index",
+    "pages/history/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "欢乐打牌记",
+    "navigationBarBackgroundColor": "#4c88ff",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f6f7f9",
+    "backgroundTextStyle": "light",
+    "enablePullDownRefresh": false
+  },
+  "networkTimeout": {
+    "request": 10000,
+    "downloadFile": 10000
+  },
+  "debug": false,
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}
+
+

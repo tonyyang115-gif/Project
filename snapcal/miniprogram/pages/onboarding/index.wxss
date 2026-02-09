@@ -1,0 +1,759 @@
+/* 容器 */
+/* 容器 */
+.onboarding-container {
+    height: 100vh;
+    background: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ========== Header区域 ========== */
+.header {
+    background: #FFFFFF;
+    padding: 48rpx 48rpx 16rpx;
+    border-bottom: 1rpx solid #F3F4F6;
+    flex-shrink: 0;
+}
+
+.header-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 96rpx;
+    margin-bottom: 16rpx;
+}
+
+.back-btn {
+    position: absolute;
+    left: 0;
+    width: 80rpx;
+    height: 80rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #F3F4F6;
+    transition: all 0.2s;
+}
+
+.back-btn:active {
+    background-color: #E5E7EB;
+    transform: scale(0.95);
+}
+
+.back-icon {
+    font-size: 48rpx;
+    color: #374151;
+}
+
+.header-title {
+    font-size: 36rpx;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* 进度信息 */
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16rpx;
+}
+
+.progress-text {
+    font-size: 24rpx;
+    font-weight: 700;
+    color: #6B7280;
+}
+
+.progress-percent {
+    font-size: 24rpx;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+/* 进度条 */
+.progress-bar {
+    height: 12rpx;
+    background: #F3F4F6;
+    border-radius: 12rpx;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #07C160;
+    border-radius: 12rpx;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ========== 内容区域 ========== */
+.content-area {
+    flex: 1;
+    height: 0;
+    width: 100%;
+    padding: 32rpx 32rpx 0; /* padding-bottom 移至 spacer */
+}
+
+/* 底部占位符 */
+.bottom-spacer {
+    height: 300rpx;
+    width: 100%;
+}
+
+.step-content {
+    animation: fadeSlideIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(40rpx);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 步骤Header */
+.step-header {
+    margin-bottom: 64rpx;
+}
+
+.step-title {
+    font-size: 48rpx;
+    font-weight: 900;
+    color: #111827;
+    margin-bottom: 16rpx;
+}
+
+.step-desc {
+    font-size: 28rpx;
+    color: #6B7280;
+    line-height: 1.5;
+}
+
+/* ========== 表单组件 ========== */
+.form-group {
+    margin-bottom: 64rpx;
+}
+
+.form-label {
+    font-size: 28rpx;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 24rpx;
+    display: block;
+}
+
+/* 输入框 */
+.form-input {
+    width: 100%;
+    height: 112rpx;
+    padding: 0 32rpx;
+    background: #F9FAFB;
+    border: 2rpx solid #E5E7EB;
+    border-radius: 24rpx;
+    font-size: 36rpx; /* 字体稍微大一点点 */
+    font-weight: 500;
+    color: #111827;
+    margin-bottom: 16rpx; /* 增加一点下边距 */
+}
+
+.form-input::placeholder {
+    color: #9CA3AF;
+}
+
+/* 性别选择 */
+.gender-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32rpx;
+}
+
+.gender-item {
+    height: 256rpx;
+    border: 4rpx solid #E5E7EB;
+    border-radius: 32rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16rpx;
+    transition: all 0.3s;
+    background: #FFFFFF;
+}
+
+.gender-item.active {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+}
+
+.gender-icon {
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48rpx;
+    background: #F3F4F6;
+    color: #9CA3AF;
+    transition: all 0.3s;
+}
+
+.gender-item.active .gender-icon {
+    background: #D1F2E2;
+    color: var(--primary-color);
+}
+
+.gender-text {
+    font-size: 32rpx;
+    font-weight: 700;
+    color: #6B7280;
+    transition: all 0.3s;
+}
+
+.gender-item.active .gender-text {
+    color: #047857;
+}
+
+/* 数据项 */
+.data-item {
+    background: #FFFFFF;
+    padding: 32rpx;
+    border-radius: 32rpx;
+    border: 2rpx solid #E5E7EB;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32rpx;
+}
+
+.data-label {
+    font-size: 32rpx;
+    font-weight: 500;
+    color: #374151;
+}
+
+.data-input-group {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+}
+
+.data-input {
+    text-align: right;
+    font-size: 48rpx;
+    font-weight: 700;
+    color: #111827;
+    width: 160rpx;
+    font-family: var(--font-number);
+}
+
+.data-unit {
+    font-size: 28rpx;
+    color: #9CA3AF;
+    font-weight: 700;
+}
+
+/* 数据卡片 */
+.data-card {
+    background: #FFFFFF;
+    padding: 32rpx; /* 减小卡片内边距 */
+    border-radius: 32rpx;
+    border: 2rpx solid #E5E7EB;
+    margin-bottom: 32rpx;
+}
+
+.data-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48rpx;
+}
+
+.unit-toggle {
+    display: flex;
+    background: #F3F4F6;
+    border-radius: 16rpx;
+    padding: 4rpx;
+}
+
+.unit {
+    padding: 8rpx 16rpx;
+    font-size: 24rpx;
+    font-weight: 700;
+    color: #9CA3AF;
+    transition: all 0.2s;
+}
+
+.unit.active {
+    background: #FFFFFF;
+    border-radius: 12rpx;
+    color: #111827;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.data-slider {
+    width: 100%;
+    margin-bottom: 32rpx;
+}
+
+.data-value-large {
+    text-align: center;
+}
+
+.value-number {
+    font-size: 72rpx;
+    font-weight: 900;
+    color: #111827;
+    font-family: var(--font-number);
+}
+
+.value-unit {
+    font-size: 28rpx;
+    color: #9CA3AF;
+    margin-left: 8rpx;
+    font-weight: 700;
+}
+
+/* 体重调整器 */
+.weight-adjuster {
+    display: flex;
+    justify-content: space-between; /*改为space-between以适应宽度*/
+    align-items: center;
+    gap: 24rpx; /* 减小间距 */
+}
+
+.adjust-btn {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    background: #F3F4F6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.adjust-btn:active {
+    background: #E5E7EB;
+    transform: scale(0.9);
+}
+
+.adjust-icon {
+    font-size: 40rpx;
+    color: #374151;
+    font-weight: 700;
+}
+
+/* 活动量列表 */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    padding: 32rpx;
+    border-radius: 32rpx;
+    border: 4rpx solid #E5E7EB;
+    background: #FFFFFF;
+    transition: all 0.3s;
+}
+
+.activity-item.active {
+    border-color: var(--primary-color);
+    background: var(--primary-light);
+}
+
+.activity-icon {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    background: #F3F4F6;
+    margin-right: 32rpx;
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+.activity-item.active .activity-icon {
+    background: #D1F2E2;
+}
+
+.activity-text {
+    flex: 1;
+}
+
+.activity-label {
+    font-size: 28rpx;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4rpx;
+    transition: all 0.3s;
+}
+
+.activity-item.active .activity-label {
+    color: #059669;
+}
+
+.activity-desc {
+    font-size: 24rpx;
+    color: #9CA3AF;
+}
+
+.activity-radio {
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    border: 4rpx solid #D1D5DB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s;
+}
+
+/* 选中时，外圈变为实心蓝底 */
+.activity-item.active .activity-radio {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+}
+
+/* 内部圆点：白色小圆点 */
+.radio-dot {
+    width: 20rpx;
+    height: 20rpx;
+    border-radius: 50%;
+    background: #FFFFFF;
+    display: block; /* 确保显示 */
+}
+
+/* ========== Step 2 样式 ========== */
+.goals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 32rpx;
+    margin-bottom: 64rpx;
+}
+
+.goal-item {
+    display: flex;
+    align-items: center;
+    padding: 40rpx;
+    border-radius: 32rpx;
+    border: 4rpx solid #E5E7EB;
+    background: #FFFFFF;
+    transition: all 0.3s;
+}
+
+.goal-item.active {
+    border-color: #07C160;
+    background: #FFFFFF;
+    box-shadow: 0 8rpx 32rpx rgba(7, 193, 96, 0.1);
+}
+
+.goal-icon {
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 32rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48rpx;
+    background: #F3F4F6;
+    margin-right: 32rpx;
+    transition: all 0.3s;
+}
+
+.goal-item.active .goal-icon {
+    background: #D1F2E2;
+}
+
+.goal-text {
+    flex: 1;
+}
+
+.goal-title {
+    font-size: 36rpx;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8rpx;
+}
+
+.goal-desc {
+    font-size: 24rpx;
+    color: #9CA3AF;
+}
+
+.goal-radio {
+    width: 48rpx;
+    height: 48rpx;
+    border-radius: 50%;
+    border: 4rpx solid #D1D5DB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+    background: transparent;
+    flex-shrink: 0;
+}
+
+/* 选中时外圈变蓝 */
+.goal-item.active .goal-radio {
+    border-color: var(--primary-color);
+    background: var(--primary-color);
+}
+
+/* 内部圆点：复用原有的 radio-dot-large，改为白色小点 */
+.radio-dot-large {
+    width: 20rpx;
+    height: 20rpx;
+    border-radius: 50%;
+    background: #FFFFFF; /* 白色内芯 */
+    display: block;
+}
+
+/* 目标体重卡片 */
+.target-weight-card {
+    background: #FFFFFF;
+    padding: 48rpx;
+    border-radius: 48rpx;
+    border: 2rpx solid #E5E7EB;
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.02);
+}
+
+.target-weight-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 64rpx;
+}
+
+.current-weight-label {
+    font-size: 24rpx;
+    color: #9CA3AF;
+    font-weight: 500;
+}
+
+.weight-adjuster.large {
+    gap: 64rpx;
+    margin-bottom: 48rpx;
+}
+
+.adjust-btn-large {
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 50%;
+    background: #EFF6FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.adjust-btn-large:active {
+    background: #DBEAFE;
+    transform: scale(0.9);
+}
+
+.adjust-btn-large .adjust-icon {
+    color: var(--primary-color);
+    font-size: 48rpx;
+}
+
+.target-value {
+    text-align: center;
+    width: 288rpx;
+}
+
+.value-number-large {
+    font-size: 96rpx;
+    font-weight: 900;
+    color: #111827;
+    font-family: var(--font-number);
+}
+
+.value-unit-large {
+    font-size: 32rpx;
+    color: #9CA3AF;
+    margin-left: 8rpx;
+    font-weight: 700;
+}
+
+/* ========== Step 3 样式 ========== */
+.diet-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24rpx;
+    margin-bottom: 64rpx;
+}
+
+.diet-item {
+    padding: 32rpx;
+    border-radius: 32rpx;
+    border: 4rpx solid #E5E7EB;
+    background: #FFFFFF;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.diet-item.active {
+    border-color: #07C160;
+    background: rgba(7, 193, 96, 0.05);
+}
+
+.diet-title {
+    font-size: 32rpx;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 8rpx;
+}
+
+.diet-sub {
+    font-size: 24rpx;
+    color: #9CA3AF;
+}
+
+.diet-check {
+    position: absolute;
+    top: 24rpx;
+    right: 24rpx;
+    color: var(--primary-color);
+    font-size: 32rpx;
+    font-weight: 700;
+}
+
+/* 每日热量卡片 */
+.calories-card {
+    background: linear-gradient(135deg, #07C160 0%, #059669 100%);
+    border-radius: 32rpx;
+    padding: 40rpx;
+    margin-bottom: 32rpx;
+    color: #FFFFFF;
+    box-shadow: 0 8rpx 32rpx rgba(7, 193, 96, 0.2);
+}
+
+.calories-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16rpx;
+}
+
+.calories-title {
+    font-size: 28rpx;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.calories-value {
+    display: flex;
+    align-items: baseline;
+}
+
+.calories-number {
+    font-size: 64rpx;
+    font-weight: 900;
+    line-height: 1;
+    font-family: var(--font-number);
+}
+
+.calories-unit {
+    font-size: 24rpx;
+    margin-left: 8rpx;
+    opacity: 0.8;
+}
+
+.calories-desc {
+    font-size: 24rpx;
+    opacity: 0.7;
+}
+
+/* 营养素网格 */
+.macros-grid {
+    display: flex;
+    gap: 20rpx;
+}
+
+.macro-item {
+    flex: 1;
+    background: #F9FAFB;
+    border-radius: 24rpx;
+    padding: 24rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 2rpx solid #F3F4F6;
+}
+
+.macro-label {
+    font-size: 24rpx;
+    color: #6B7280;
+    margin-bottom: 8rpx;
+}
+
+.macro-value {
+    font-size: 32rpx;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 12rpx;
+    font-family: var(--font-number);
+}
+
+.macro-bar {
+    width: 100%;
+    height: 8rpx;
+    border-radius: 4rpx;
+    opacity: 0.8;
+}
+
+/* ========== 底部按钮 ========== */
+.bottom-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 48rpx;
+    padding-bottom: calc(48rpx + env(safe-area-inset-bottom));
+    background: #FFFFFF;
+    border-top: 2rpx solid #F3F4F6;
+    z-index: 50;
+}
+
+.next-btn,
+.finish-btn {
+    height: 112rpx;
+    background: #07C160;
+    border-radius: 32rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16rpx;
+    font-size: 36rpx;
+    font-weight: 700;
+    color: #FFFFFF;
+    box-shadow: 0 16rpx 48rpx rgba(7, 193, 96, 0.3);
+    transition: all 0.2s;
+}
+
+.next-btn:active,
+.finish-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 8rpx 24rpx rgba(7, 193, 96, 0.2);
+}
+
+.btn-arrow,
+.btn-icon {
+    font-size: 40rpx;
+}

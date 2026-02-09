@@ -1,0 +1,73 @@
+<view class="tool-modal {{visible ? 'show' : ''}}">
+  <view class="modal-mask" bindtap="onClose"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">基础代谢率 (BMR)</text>
+      <view class="close-btn" bindtap="onClose">×</view>
+    </view>
+
+    <scroll-view scroll-y class="modal-body">
+      <!-- 结果卡片: 橙色主题 (代谢火焰) -->
+      <view class="result-card orange-theme">
+        <view class="flame-container">
+            <view class="metabolic-flame">🔥</view>
+            <view class="flame-particles"></view>
+        </view>
+        
+        <view class="result-content">
+            <text class="result-label">每日静息消耗</text>
+            <view class="result-val-row">
+                <text class="result-value">{{result}}</text>
+                <text class="result-unit">KCAL</text>
+            </view>
+            <text class="result-desc">这是您维持生命体征所需的最低能量</text>
+        </view>
+      </view>
+
+      <!-- 输入区 -->
+      <view class="input-section">
+        
+        <!-- 性别切换 -->
+        <view class="input-row">
+            <text class="label">性别</text>
+            <view class="gender-switch" bindtap="onGenderToggle">
+                <view class="switch-item {{gender === '男' ? 'active' : ''}}">男 ♂</view>
+                <view class="switch-item {{gender === '女' ? 'active' : ''}}">女 ♀</view>
+            </view>
+        </view>
+
+        <!-- 年龄 -->
+        <view class="input-row">
+            <text class="label">年龄</text>
+            <view class="stepper">
+                <view class="step-btn" bindtap="onAgeChange" data-value="{{age - 1}}">-</view>
+                <input class="step-input" type="number" value="{{age}}" bindinput="onAgeChange"/>
+                <view class="step-btn" bindtap="onAgeChange" data-value="{{age + 1}}">+</view>
+            </view>
+        </view>
+
+        <!-- 身高 (Slider重用) -->
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">身高 (cm)</text>
+                <text class="value-display">{{height}}</text>
+            </view>
+            <slider min="100" max="230" value="{{height}}" activeColor="#10B981" bindchanging="onHeightChange" bindchange="onHeightChange" />
+        </view>
+
+        <!-- 体重 -->
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">体重 (kg)</text>
+                <text class="value-display">{{weight}}</text>
+            </view>
+            <slider min="30" max="150" value="{{weight}}" activeColor="#10B981" bindchanging="onWeightChange" bindchange="onWeightChange" />
+        </view>
+
+      </view>
+
+      <button class="save-btn orange-btn" bindtap="onSave">同步到个人档案</button>
+      <view style="height: 40rpx;"></view>
+    </scroll-view>
+  </view>
+</view>

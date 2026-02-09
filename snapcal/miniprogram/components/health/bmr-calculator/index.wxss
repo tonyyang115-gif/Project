@@ -1,0 +1,234 @@
+/* 复用部分基础样式，建议后续提取到 common.wxss */
+.tool-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.tool-modal.show {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-radius: 40rpx 40rpx 0 0;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+    max-height: 85vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.tool-modal.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 32rpx 40rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1rpx solid #f3f4f6;
+}
+
+.modal-title {
+    font-size: 32rpx;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.close-btn {
+    font-size: 40rpx;
+    color: #9ca3af;
+    padding: 10rpx;
+    line-height: 1;
+}
+
+.modal-body {
+    padding: 40rpx;
+    overflow-y: auto;
+}
+
+/* 结果卡片 - BMR特有 */
+/* 结果卡片 - BMR特有 (Metabolic Flame) */
+.result-card {
+    background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%); /* Mint Gradient */
+    border: 4rpx solid #d1fae5; /* Mint 100 */
+    border-radius: 40rpx;
+    padding: 48rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 48rpx;
+    box-shadow: 0 12rpx 32rpx rgba(249, 115, 22, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+.flame-container {
+    position: relative;
+    width: 160rpx;
+    height: 160rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24rpx;
+}
+
+.metabolic-flame {
+    font-size: 100rpx;
+    animation: flame-pulse 2s ease-in-out infinite;
+    filter: drop-shadow(0 4rpx 16rpx rgba(249, 115, 22, 0.4));
+    transform-origin: center bottom;
+}
+
+@keyframes flame-pulse {
+    0% { transform: scale(1); filter: drop-shadow(0 4rpx 12rpx rgba(249, 115, 22, 0.3)); }
+    50% { transform: scale(1.1); filter: drop-shadow(0 8rpx 24rpx rgba(249, 115, 22, 0.5)); }
+    100% { transform: scale(1); filter: drop-shadow(0 4rpx 12rpx rgba(249, 115, 22, 0.3)); }
+}
+
+.result-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.result-label {
+    font-size: 26rpx;
+    font-weight: 700;
+    color: #9a3412;
+    margin-bottom: 8rpx;
+    letter-spacing: 2rpx;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.result-val-row {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 12rpx;
+}
+
+.result-value {
+    font-size: 88rpx;
+    font-weight: 900;
+    color: #c2410c;
+    margin-right: 12rpx;
+    font-family: var(--font-number);
+    line-height: 1;
+    text-shadow: 2rpx 2rpx 0 #fff;
+}
+
+.result-unit {
+    font-size: 28rpx;
+    font-weight: 800;
+    color: #ea580c;
+}
+
+.result-desc {
+    font-size: 22rpx;
+    color: #047857; /* Dark Green */
+    background: #d1fae5; /* Mint 100 */
+    padding: 8rpx 20rpx;
+    border-radius: 20rpx;
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+/* 输入控件 */
+.input-section {
+    background: #f9fafb;
+    padding: 32rpx;
+    border-radius: 24rpx;
+    margin-bottom: 40rpx;
+}
+
+.input-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32rpx;
+}
+
+.label {
+    font-size: 28rpx;
+    font-weight: 600;
+    color: #4b5563;
+}
+
+.gender-switch {
+    display: flex;
+    background: #e5e7eb;
+    padding: 4rpx;
+    border-radius: 16rpx;
+}
+
+.switch-item {
+    padding: 12rpx 32rpx;
+    border-radius: 12rpx;
+    font-size: 26rpx;
+    font-weight: 600;
+    color: #6b7280;
+    transition: all 0.2s;
+}
+
+.switch-item.active {
+    background: #fff;
+    color: #1f2937;
+    box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.05);
+}
+
+.input-group {
+    margin-bottom: 32rpx;
+}
+
+.label-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16rpx;
+}
+
+.value-display {
+    font-size: 32rpx;
+    font-weight: 800;
+    color: #1f2937;
+}
+
+.save-btn {
+    border-radius: 50rpx;
+    font-size: 30rpx;
+    font-weight: 600;
+    padding: 24rpx 0;
+    width: 100%;
+    color: #fff;
+}
+
+.orange-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%); /* Mint Button */
+    box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.2);
+}
+
+.orange-btn:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+}

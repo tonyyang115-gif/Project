@@ -1,0 +1,614 @@
+<view class="dashboard {{showLogModal || showExerciseModal ? 'is-locked' : ''}}">
+  <!-- 顶部Header -->
+  <view class="header">
+    <view class="user-info">
+      <view class="avatar">
+        <image wx:if="{{user.avatarUrl}}" src="{{user.avatarUrl}}" class="avatar-img" />
+        <view wx:else class="avatar-placeholder">{{user.name.charAt(0)}}</view>
+      </view>
+      <view class="user-text">
+        <view class="greeting">你好, {{user.name}}</view>
+        <view class="date-text">{{today.month}}月{{today.date}}日, 今天</view>
+      </view>
+    </view>
+    <picker mode="date" value="{{today.dateStr}}" end="{{today.dateStr}}" bindchange="onDateChange">
+      <view class="calendar-btn">
+        <text class="calendar-icon">📅</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 主卡路里圆环 -->
+  <view class="calorie-circle-card">
+    <view class="circle-gradient"></view>
+    
+    <view class="circle-container">
+      <!-- 圆形进度（使用Canvas绘制或简化版本） -->
+      <view class="progress-ring">
+        <!-- 外圈 -->
+        <!-- 策略重构：放弃兼容性差的 CSS Mask，改用 "叠层遮盖法 (Overlay Strategy)" -->
+        <!-- 1. 底层：轨道 -->
+        <view class="ring-track"></view>
+        
+        <!-- 2. 中层：实体进度扇形 (Conic Gradient with Hard Stops) -->
+        <view class="ring-progress-pie" style="--progress: {{percentConsumed}}%"></view>
+        
+        <!-- 3. 上层：中心遮盖圆 (仿镂空) -->
+        <!-- 背景色与卡片一致，形成视觉上的镂空 -->
+        <view class="ring-center-hole"></view>
+        
+        <!-- 中心内容 -->
+        <view class="circle-content">
+          <text class="flame-icon">🔥</text>
+          <view class="remaining-value">{{remainingCalories}}</view>
+          <view class="remaining-label">剩余可摄入 (千卡)</view>
+          
+          <view class="target-pill">
+            <view class="target-main">
+              <text>总计可摄入卡数: </text>
+              <text class="target-value">{{dailyTarget}}</text>
+            </view>
+            <view class="target-detail">
+              <text>基础 {{user.targetCalories}}</text>
+              <text> + </text>
+              <text>运动 {{totalBurned}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 营养摄入标题 -->
+  <view class="section-header">
+    <view class="section-title">营养摄入</view>
+    <view class="section-link" bindtap="viewNutritionDetails">详情</view>
+  </view>
+
+  <!-- 营养卡片网格 -->
+  <view class="nutrition-grid">
+    <!-- 蛋白质 -->
+    <view class="macro-card">
+      <view class="macro-header">
+        <text class="macro-label">蛋白质</text>
+        <view class="macro-icon purple-icon">⚡</view>
+      </view>
+      <view class="macro-value">{{totals.protein}}<text class="macro-unit">克</text></view>
+      <view class="macro-target">/ {{user.targetProtein}}克</view>
+      <view class="progress-bar">
+        <view class="progress-fill purple-bar" style="width: {{proteinPercent}}%"></view>
+      </view>
+    </view>
+
+    <!-- 碳水 -->
+    <view class="macro-card">
+      <view class="macro-header">
+        <text class="macro-label">碳水</text>
+        <view class="macro-icon blue-icon">🌾</view>
+      </view>
+      <view class="macro-value">{{totals.carbs}}<text class="macro-unit">克</text></view>
+      <view class="macro-target">/ {{user.targetCarbs}}克</view>
+      <view class="progress-bar">
+        <view class="progress-fill blue-bar" style="width: {{carbsPercent}}%"></view>
+      </view>
+    </view>
+
+    <!-- 脂肪 -->
+    <view class="macro-card">
+      <view class="macro-header">
+        <text class="macro-label">脂肪</text>
+        <view class="macro-icon orange-icon">💧</view>
+      </view>
+      <view class="macro-value">{{totals.fat}}<text class="macro-unit">克</text></view>
+      <view class="macro-target">/ {{user.targetFat}}克</view>
+      <view class="progress-bar">
+        <view class="progress-fill orange-bar" style="width: {{fatPercent}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 今日记录标题 -->
+  <view class="section-header">
+    <view class="section-title">今日记录</view>
+  </view>
+
+  <!-- 餐次记录列表 -->
+  <view class="meals-list">
+    <view 
+      wx:for="{{mealSections}}" 
+      wx:key="type" 
+      class="meal-section"
+    >
+      <!-- 餐次头部 -->
+      <view class="meal-header">
+        <view class="meal-info">
+          <view class="meal-icon {{item.iconBg}} {{item.iconColor}}">
+            <text>{{item.icon}}</text>
+          </view>
+          <view class="meal-text">
+            <view class="meal-name">{{item.type}}</view>
+            <view class="meal-calories">{{item.calories}} 千卡</view>
+          </view>
+        </view>
+        
+        <view class="meal-actions">
+          <view 
+            class="meal-btn {{item.buttonBg}} {{item.buttonColor}}"
+            data-type="{{item.type}}"
+            bindtap="handleLogFoodPhoto"
+          >
+            <text class="btn-icon">📷</text>
+            <text class="btn-text">AI识别</text>
+          </view>
+          <view 
+            class="meal-btn btn-secondary"
+            data-type="{{item.type}}"
+            bindtap="handleLogFoodSearch"
+          >
+            <text class="btn-icon">✏️</text>
+            <text class="btn-text">快捷记录</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 餐次记录列表 -->
+      <view class="meal-logs">
+        <view wx:if="{{item.logs.length === 0}}" class="empty-logs">暂无记录</view>
+        <view 
+          wx:for="{{item.logs}}" 
+          wx:for-item="log" 
+          wx:key="name"
+          class="log-item"
+        >
+          <view class="log-image">
+            <image wx:if="{{log.imageUrl}}" src="{{log.imageUrl}}" class="food-img" />
+            <view wx:else class="food-placeholder">🍽️</view>
+          </view>
+          <view class="log-details">
+            <view class="log-name">{{log.name}}</view>
+            <view class="log-calories">{{log.calories}} 千卡</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 运动记录区 -->
+    <view class="meal-section">
+      <view class="meal-header">
+        <view class="meal-info">
+          <view class="meal-icon bg-red-50 text-red-500">
+            <text>🏃</text>
+          </view>
+          <view class="meal-text">
+            <view class="meal-name">运动</view>
+            <view class="meal-calories">{{totalBurned}} 千卡</view>
+          </view>
+        </view>
+        
+        <view class="add-exercise-btn" bindtap="handleLogExercise">
+          <text>+</text>
+        </view>
+      </view>
+
+      <view class="meal-logs">
+        <view wx:if="{{exercises.length === 0}}" class="empty-logs">暂无运动记录</view>
+        <view 
+          wx:for="{{exercises}}" 
+          wx:key="id"
+          class="log-item"
+        >
+          <view class="log-image">
+            <view class="food-placeholder">{{item.icon || '🏃'}}</view>
+          </view>
+          <view class="log-details">
+            <view class="log-name">{{item.name}}</view>
+            <view class="log-calories">{{item.duration}} 分钟 · {{item.calories}} 千卡</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部固定导航栏 -->
+  <view class="bottom-nav">
+    <view class="nav-item {{currentTab === 'home' ? 'active' : ''}}" bindtap="switchToHome">
+      <view class="nav-icon icon-home"></view>
+      <text class="nav-text">首页</text>
+    </view>
+    
+    <view class="nav-item" bindtap="viewNutritionDetails">
+      <view class="nav-icon icon-chart"></view>
+      <text class="nav-text">统计</text>
+    </view>
+    
+    <view class="nav-item nav-camera" bindtap="switchToCamera">
+      <view class="camera-button">
+        <view class="icon-camera"></view>
+      </view>
+    </view>
+    
+    <view class="nav-item" bindtap="goToHealth">
+      <view class="nav-icon icon-heart"></view>
+      <text class="nav-text">健康</text>
+    </view>
+    
+    <view class="nav-item {{currentTab === 'profile' ? 'active' : ''}}" bindtap="switchToProfile">
+      <view class="nav-icon icon-user"></view>
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+
+  <!-- ========== 统一饮食记录弹窗 (底部抽屉) ========== -->
+  
+  <view class="modal-overlay {{showLogModal ? 'show' : ''}}" bindtap="closeLogModal" catchtouchmove="preventScroll" wx:if="{{showLogModal}}"></view>
+
+  <view class="bottom-sheet {{showLogModal ? 'show' : ''}}" catchtouchmove="preventScroll">
+    <!-- 1. 弹窗头部 (List模式特殊样式) -->
+    <view class="log-header" wx:if="{{logTab === 'list'}}">
+      <view class="header-btn cancel" bindtap="clearFoodList">清空列表</view>
+      <view class="header-title" wx:if="{{foodList.length > 0}}">已添加 ({{foodList.length}})</view>
+      <view class="header-title" wx:else>食物列表</view>
+      <view class="header-btn save" style="background: #2563EB; color: #fff;" bindtap="confirmLog">保存</view>
+    </view>
+    <view class="log-header" wx:else>
+      <view class="header-btn cancel" bindtap="closeLogModal">取消</view>
+      <view class="header-title">记录饮食</view>
+      <view class="header-btn save" bindtap="confirmLog">保存</view>
+    </view>
+
+    <!-- 2. 顶部 Tab 切换 (在 list 模式下隐藏，或者允许切回添加更多) -->
+    <view class="log-tabs" wx:if="{{logTab !== 'list'}}">
+      <view 
+        class="tab-item {{logTab === 'camera' ? 'active' : ''}}" 
+        data-tab="camera" 
+        bindtap="switchLogTab"
+      >
+        <view class="tab-icon camera"></view>
+        <text>拍照</text>
+      </view>
+      <view 
+        class="tab-item {{logTab === 'search' ? 'active' : ''}}" 
+        data-tab="search" 
+        bindtap="switchLogTab"
+      >
+        <view class="tab-icon search"></view>
+        <text>搜索</text>
+      </view>
+      <view 
+        class="tab-item {{logTab === 'manual' ? 'active' : ''}}" 
+        data-tab="manual" 
+        bindtap="switchLogTab"
+      >
+        <view class="tab-icon pen"></view>
+        <text>手输</text>
+      </view>
+    </view>
+
+    <!-- 3. 餐次选择器 -->
+    <view class="meal-selector" wx:if="{{logTab !== 'list'}}">
+      <view 
+        wx:for="{{mealTypes}}" 
+        wx:key="*this"
+        class="meal-pill {{selectedMealType === item ? 'active' : ''}}"
+        data-type="{{item}}"
+        bindtap="selectLogMealType"
+      >
+        {{item}}
+      </view>
+    </view>
+
+    <!-- 4. 内容区域 -->
+    <view class="log-content-area">
+      
+      <!-- 模式A: 拍照识别 -->
+      <view class="tab-content camera-mode" wx:if="{{logTab === 'camera'}}">
+        <view class="camera-trigger" bindtap="handleCameraAction">
+          <view class="camera-circle">
+            <view class="camera-icon-lg"></view>
+          </view>
+          <view class="camera-text">点击拍摄食物</view>
+          <view class="camera-subtext">AI 自动识别热量与营养</view>
+        </view>
+      </view>
+
+      <!-- 模式B: 搜索 (暂只做UI展示，逻辑复用手输) -->
+      <view class="tab-content search-mode" wx:if="{{logTab === 'search'}}">
+        <view class="search-box">
+          <view class="search-icon-sm"></view>
+          <input class="search-input" placeholder="例如：一碗牛肉面" confirm-type="search" />
+          <view class="search-btn-circle">→</view>
+        </view>
+        <!-- 下方可展示历史记录或推荐，暂留白 -->
+      </view>
+
+      <!-- 模式C: 手动输入 (详细表单) -->
+      <view class="tab-content manual-mode" wx:if="{{logTab === 'manual'}}">
+        <!-- 基础信息 -->
+        <view class="form-row">
+          <view class="form-group grow">
+            <text class="label">食物名称</text>
+            <input class="text-input-box" placeholder="例如：红烧排骨" value="{{tempFoodName}}" data-field="name" bindinput="onLogInput" />
+          </view>
+        </view>
+
+        <view class="form-row">
+          <view class="form-group half">
+            <text class="label">份量数值</text>
+            <input class="input-box" type="number" value="1" />
+          </view>
+          <view class="form-group half">
+            <text class="label">单位</text>
+            <input class="input-box" value="份" />
+          </view>
+        </view>
+
+        <!-- 热量高亮 -->
+        <view class="form-group">
+          <text class="label">热量 (千卡)</text>
+          <view class="calories-input-wrapper">
+            <input class="input-calories" type="number" value="{{tempNutrients.calories}}" data-field="calories" bindinput="onLogInput" placeholder="0" />
+            <text class="flame-suffix">🔥</text>
+          </view>
+        </view>
+
+        <!-- 三大营养素 -->
+        <view class="macros-row">
+          <view class="macro-input-group">
+            <text class="label">蛋白质(G)</text>
+            <input class="input-box" type="number" value="{{tempNutrients.protein}}" data-field="protein" bindinput="onLogInput" placeholder="0" />
+          </view>
+          <view class="macro-input-group">
+            <text class="label">碳水(G)</text>
+            <input class="input-box" type="number" value="{{tempNutrients.carbs}}" data-field="carbs" bindinput="onLogInput" placeholder="0" />
+          </view>
+          <view class="macro-input-group">
+            <text class="label">脂肪(G)</text>
+            <input class="input-box" type="number" value="{{tempNutrients.fat}}" data-field="fat" bindinput="onLogInput" placeholder="0" />
+          </view>
+        </view>
+
+        <!-- 底部添加按钮 -->
+        <button class="add-list-btn" bindtap="confirmLog">＋ 添加到列表</button>
+      </view>
+
+      <!-- 模式D: 食物列表展示 (新增) -->
+      <view class="tab-content list-mode" wx:if="{{logTab === 'list'}}">
+        <scroll-view scroll-y style="max-height: 60vh;">
+          <view wx:for="{{foodList}}" wx:key="id" class="food-card-item">
+            
+            <!-- 卡片头部: 标题 + 关闭 -->
+            <view class="card-header-row">
+              <input class="card-title-input" value="{{item.name}}" data-index="{{index}}" data-field="name" bindinput="onFoodItemChange" />
+              <view class="card-close-btn" data-index="{{index}}" bindtap="removeFoodItem">×</view>
+            </view>
+
+            <!-- 健康指数 (动态渲染) -->
+            <view class="card-health-row" wx:if="{{item.healthScore > 0}}">
+              <text class="health-label">健康指数 ({{item.healthScore}})</text>
+              <view class="stars">
+                <text 
+                  class="star" 
+                  wx:for="{{[1,2,3,4,5]}}" 
+                  wx:key="*this" 
+                  wx:for-item="starIndex"
+                  style="color: {{starIndex <= item.healthScore/2 + 0.5 ? '#FACC15' : '#E5E7EB'}}"
+                >★</text>
+              </view>
+            </view>
+
+            <!-- 核心输入区: 份量 & 热量 -->
+            <view class="card-main-inputs">
+              <!-- 左侧: 份量 -->
+              <view class="input-block portion-block">
+                <text class="input-label">份量</text>
+                <view class="portion-inputs">
+                  <input class="portion-val" type="number" value="{{item.quantity}}" data-index="{{index}}" data-field="quantity" bindinput="onFoodItemChange" />
+                  <input class="portion-unit" value="{{item.unit}}" data-index="{{index}}" data-field="unit" bindinput="onFoodItemChange" />
+                </view>
+              </view>
+
+              <!-- 右侧: 热量 -->
+              <view class="input-block calories-block">
+                <text class="input-label">热量 (KCAL)</text>
+                <input class="calories-val" type="number" value="{{item.calories}}" data-index="{{index}}" data-field="calories" bindinput="onFoodItemChange" />
+              </view>
+            </view>
+
+            <!-- 三色营养素 (底部) -->
+            <view class="card-macro-grid">
+              <!-- 蛋白质 (绿/青) -->
+              <view class="macro-box green-box">
+                <input class="macro-val green-text" type="number" value="{{item.protein}}" data-index="{{index}}" data-field="protein" bindinput="onFoodItemChange" />
+                <text class="macro-sub green-text">蛋白质</text>
+              </view>
+              <!-- 碳水 (蓝) -->
+              <view class="macro-box blue-box">
+                <input class="macro-val blue-text" type="number" value="{{item.carbs}}" data-index="{{index}}" data-field="carbs" bindinput="onFoodItemChange" />
+                <text class="macro-sub blue-text">碳水</text>
+              </view>
+              <!-- 脂肪 (橙) -->
+              <view class="macro-box orange-box">
+                <input class="macro-val orange-text" type="number" value="{{item.fat}}" data-index="{{index}}" data-field="fat" bindinput="onFoodItemChange" />
+                <text class="macro-sub orange-text">脂肪</text>
+              </view>
+            </view>
+
+          </view>
+          
+          <button class="add-more-btn" bindtap="switchToCamera">+ 继续添加 (拍照)</button>
+          <view style="height: 40rpx;"></view>
+        </scroll-view>
+      </view>
+
+    </view>
+  </view>
+
+  <!-- ========== 运动记录弹窗 ========== -->
+  <view class="modal-overlay {{showExerciseModal ? 'show' : ''}}" bindtap="closeExerciseModal" catchtouchmove="preventScroll" wx:if="{{showExerciseModal}}"></view>
+
+  <view class="bottom-sheet {{showExerciseModal ? 'show' : ''}}" catchtouchmove="preventScroll">
+    <!-- 头部 -->
+    <view class="log-header">
+      <view class="header-btn cancel" bindtap="closeExerciseModal">取消</view>
+      <view class="header-title">记录运动</view>
+      <view class="header-btn save" style="background: #2563EB; color: #fff;" bindtap="confirmExercise">保存</view>
+    </view>
+
+    <scroll-view scroll-y class="exercise-scroll-content">
+      <!-- 1. 运动类型选择 (4列网格) -->
+      <view class="exercise-type-grid">
+        <view 
+          class="exercise-grid-item {{tempExercise.typeIndex === index ? 'active' : ''}}" 
+          wx:for="{{exerciseTypes}}" 
+          wx:key="name"
+          data-index="{{index}}"
+          bindtap="selectExerciseType"
+        >
+          <view class="grid-icon">{{item.icon}}</view>
+          <text class="grid-name">{{item.name}}</text>
+        </view>
+      </view>
+
+      <!-- 2. 时长滑块 -->
+      <view class="exercise-card duration-card">
+        <view class="card-title-row">
+          <text class="card-icon">⏱️</text>
+          <text class="card-title">时长 (分钟)</text>
+        </view>
+        
+        <view class="slider-row">
+          <slider 
+            class="duration-slider" 
+            min="5" 
+            max="180" 
+            step="5" 
+            value="{{tempExercise.duration}}" 
+            activeColor="#2563EB" 
+            backgroundColor="#E5E7EB" 
+            block-size="24"
+            bindchanging="onDurationChange"
+            bindchange="onDurationChange"
+          />
+          <view class="duration-display">
+            <text class="duration-val">{{tempExercise.duration}}</text>
+            <text class="duration-unit">min</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 3. 热量结果卡片 (优化版) -->
+      <view class="exercise-card result-card">
+        <view class="result-row">
+          <view class="result-info">
+            <text class="result-label">预计消耗 (千卡)</text>
+            <text class="result-sub">支持手动修正</text>
+          </view>
+          
+          <view class="result-input-group">
+            <input 
+              class="calories-huge-input" 
+              type="number" 
+              value="{{tempExercise.calories}}" 
+              bindinput="onExerciseCaloriesInput"
+            />
+            <text class="edit-icon">✏️</text>
+          </view>
+        </view>
+
+        <view class="result-divider"></view>
+        
+        <view class="result-footer">
+          <text>🔥 基于 {{exerciseTypes[tempExercise.typeIndex].met}} METs × {{user.weight}}kg 计算</text>
+        </view>
+      </view>
+      
+      <!-- 底部留白，微调 -->
+      <view style="height: 32rpx;"></view>
+    </scroll-view>
+  </view>
+
+
+  <!-- ========== AI 扫描全屏动画 ========== -->
+  <view class="scanning-overlay {{analyzing ? 'show' : ''}}" wx:if="{{analyzing}}" catchtouchmove="preventScroll">
+    <view class="scan-container">
+      <image class="scan-img" src="{{scanImageUrl}}" mode="aspectFill" />
+      <view class="scan-grid"></view>
+      <view class="scan-line"></view>
+      <view class="scan-text">{{analyzingText}}</view>
+    </view>
+  </view>
+
+  <!-- ========== AI 结果确认卡片 (Pro Max) ========== -->
+  <view class="modal-overlay {{showAiResultModal ? 'show' : ''}}" bindtap="closeAiResultModal" catchtouchmove="preventScroll" wx:if="{{showAiResultModal}}"></view>
+
+  <view class="bottom-sheet ai-result-sheet {{showAiResultModal ? 'show' : ''}}" wx:if="{{showAiResultModal}}" catchtouchmove="preventScroll">
+    <!-- 顶部拖拽条 -->
+    <view class="handle-bar"></view>
+
+    <!-- 1. 图片与标题区 -->
+    <view class="result-header">
+      <image class="result-img" src="{{aiResult.imageUrl}}" mode="aspectFill" bindtap="previewAiImage" />
+      <view class="result-meta">
+        <view class="meta-label">识别结果</view>
+        <view class="meta-title-row">
+          <input class="meta-title-input" value="{{tempFoodName}}" bindinput="onTempFoodNameInput" />
+          <view class="edit-icon">✎</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 2. 核心数据 (热量 + 三大项) -->
+    <view class="result-data-card">
+      <view class="calories-row">
+        <text class="cal-val">{{tempNutrients.calories}}</text>
+        <text class="cal-unit">千卡</text>
+        <text class="cal-label">/ 100g估算</text>
+      </view>
+      
+      <view class="macros-grid">
+        <view class="macro-item">
+          <view class="macro-val protein">{{tempNutrients.protein}}g</view>
+          <view class="macro-tag">蛋白质</view>
+        </view>
+        <view class="macro-divider"></view>
+        <view class="macro-item">
+          <view class="macro-val carbs">{{tempNutrients.carbs}}g</view>
+          <view class="macro-tag">碳水</view>
+        </view>
+        <view class="macro-divider"></view>
+        <view class="macro-item">
+          <view class="macro-val fat">{{tempNutrients.fat}}g</view>
+          <view class="macro-tag">脂肪</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 3. 餐次选择 (决策区) -->
+    <view class="meal-decision-area">
+      <view class="section-label">记录到</view>
+      <view class="meal-capsule-row">
+        <view 
+          wx:for="{{mealTypes}}" 
+          wx:key="*this"
+          class="meal-capsule {{selectedMealType === item ? 'active' : ''}}"
+          data-type="{{item}}"
+          bindtap="selectLogMealType"
+        >
+          {{item}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 4. 底部操作按钮 -->
+    <view class="result-actions">
+      <button class="action-btn discard" bindtap="closeAiResultModal">不入库</button>
+      <button class="action-btn save" bindtap="confirmAiResult">
+        <text>确认记录</text>
+        <text class="btn-arrow">→</text>
+      </button>
+    </view>
+    
+    <view style="height: env(safe-area-inset-bottom);"></view>
+  </view>
+
+</view>

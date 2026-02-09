@@ -1,0 +1,46 @@
+<view class="tool-modal {{visible ? 'show' : ''}}">
+  <view class="modal-mask" bindtap="onClose"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">相对脂肪 (RFM)</text>
+      <view class="close-btn" bindtap="onClose">×</view>
+    </view>
+
+    <scroll-view scroll-y class="modal-body">
+      
+      <!-- 结果卡片: 青色主题 -->
+      <view class="result-card cyan-theme">
+        <view class="result-icon">📐</view>
+        <text class="result-label">RFM 估算值</text>
+        <text class="result-value">{{result}}%</text>
+        <view class="tape-visual">
+            <view class="tape-line"></view>
+            <view class="tape-ticks"></view>
+        </view>
+        <text class="result-tip">RFM = 64 - (20 × 身高/腰围)</text>
+      </view>
+
+      <!-- 输入区 -->
+      <view class="input-section">
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">腰围 (cm)</text>
+                <text class="value-display">{{waist}}</text>
+            </view>
+            <slider min="50" max="150" value="{{waist}}" activeColor="#10B981" bindchanging="onWaistChange" bindchange="onWaistChange" />
+        </view>
+
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">身高 (cm)</text>
+                <text class="value-display">{{height}}</text>
+            </view>
+            <slider min="100" max="230" value="{{height}}" activeColor="#10B981" bindchanging="onHeightChange" bindchange="onHeightChange" />
+        </view>
+      </view>
+
+      <button class="save-btn cyan-btn" bindtap="onSave">同步数据</button>
+      <view style="height: 40rpx;"></view>
+    </scroll-view>
+  </view>
+</view>

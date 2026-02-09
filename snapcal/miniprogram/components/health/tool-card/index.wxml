@@ -1,0 +1,5 @@
+<view class="tool-card" bindtap="onTap">
+    <view class="tool-icon icon-{{iconColor}}">{{icon}}</view>
+    <text class="tool-name">{{name}}</text>
+    <text class="tool-desc">{{desc}}</text>
+</view>

@@ -1,0 +1,86 @@
+/* 复用基础 Modal 样式 */
+@import '../bmr-calculator/index.wxss'; 
+
+.result-card.purple-theme {
+    background: #ecfdf5; /* Mint 50 */
+    border-color: #d1fae5; /* Mint 100 */
+}
+
+.progress-ring-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24rpx;
+}
+
+.conic-ring {
+    width: 240rpx;
+    height: 240rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* gradient style set inline */
+}
+
+.inner-circle {
+    width: 200rpx;
+    height: 200rpx;
+    background: #ecfdf5; /* Match card bg */
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.ring-value {
+    font-size: 64rpx;
+    font-weight: 800;
+    color: #059669; /* Mint 600 */
+    line-height: 1;
+}
+
+.ring-unit {
+    font-size: 24rpx;
+    font-weight: 600;
+    color: #10b981; /* Mint 500 */
+}
+
+/* 区间表 */
+.range-table {
+    width: 100%;
+    background: #fff;
+    border-radius: 16rpx;
+    padding: 16rpx;
+    margin-top: 24rpx;
+}
+
+.range-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12rpx 0;
+    font-size: 24rpx;
+    color: #6b7280;
+    border-bottom: 1rpx solid #f3f4f6;
+}
+
+.range-row:last-child { border-bottom: none; }
+
+.range-row.header {
+    font-weight: 700;
+    color: #374151;
+}
+
+.range-row.active {
+    background: #d1fae5;
+    color: #047857;
+    font-weight: 700;
+    border-radius: 8rpx;
+    padding: 12rpx 8rpx;
+}
+
+.purple-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.2);
+}

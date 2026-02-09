@@ -1,0 +1,47 @@
+<!--pages/history/index.wxml-->
+<view class="history-container">
+  <scroll-view class="history-list" scroll-y>
+    <view wx:if="{{history.length === 0}}" class="empty-state">
+      <text class="empty-icon">📜</text>
+      <text class="empty-text">暂无历史对局</text>
+    </view>
+
+    <view wx:else>
+      <view 
+        wx:for="{{history}}" 
+        wx:key="roomId" 
+        class="history-item"
+        bind:tap="viewHistory"
+        data-index="{{index}}"
+      >
+        <view class="history-header">
+          <text class="history-date">{{formatDateTime(item.createdAt)}}</text>
+          <text class="history-rounds">{{item.rounds.length}} 局</text>
+        </view>
+        <view class="history-players">
+          <view 
+            wx:for="{{item.players}}" 
+            wx:for-item="player"
+            wx:key="id"
+            class="history-player"
+          >
+            <avatar url="{{player.avatarUrl}}" alt="{{player.name}}" size="sm" />
+            <text class="player-name-small">{{player.name}}</text>
+            <text class="player-score-small {{player.totalScore >= 0 ? 'positive' : 'negative'}}">
+              {{player.totalScore > 0 ? '+' : ''}}{{player.totalScore}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>
+
+
+
+
+
+
+
+
+

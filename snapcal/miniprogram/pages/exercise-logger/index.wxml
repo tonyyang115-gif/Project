@@ -1,0 +1,69 @@
+<view class="exercise-logger">
+  <!-- Header -->
+  <view class="header">
+    <view class="cancel-btn" bindtap="handleCancel">取消</view>
+    <text class="header-title">记录运动</text>
+    <view class="save-btn" bindtap="handleSave">保存</view>
+  </view>
+
+  <scroll-view class="content" scroll-y>
+    <!-- 运动类型选择 -->
+    <view class="types-grid">
+      <view 
+        wx:for="{{exerciseTypes}}" 
+        wx:key="id"
+        class="type-card {{selectedType.id === item.id ? 'active' : ''}}"
+        data-id="{{item.id}}"
+        bindtap="selectExercise"
+      >
+        <text class="type-icon">{{item.icon}}</text>
+        <text class="type-name">{{item.name}}</text>
+      </view>
+    </view>
+
+    <!-- 时长输入 -->
+    <view class="input-card">
+      <view class="card-header">
+        <text class="card-icon">⏱️</text>
+        <text class="card-label">时长 (分钟)</text>
+      </view>
+      <view class="slider-wrap">
+        <slider 
+          min="5" 
+          max="180" 
+          step="5" 
+          value="{{duration}}"
+          activeColor="#2563eb"
+          block-size="24"
+          bindchange="onDurationChange"
+        />
+        <view class="slider-value">
+          <text class="value-num">{{duration}}</text>
+          <text class="value-unit">min</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 热量输入 -->
+    <view class="calorie-card">
+      <view class="card-header">
+        <view class="card-left">
+          <text class="card-icon">🔥</text>
+          <text class="card-label orange">消耗热量 (千卡)</text>
+        </view>
+        <view class="edit-tag">可手动修改</view>
+      </view>
+      <view class="calorie-input-wrap">
+        <input 
+          type="number" 
+          value="{{calories}}"
+          bindinput="onCaloriesInput"
+          class="calorie-input"
+        />
+      </view>
+      <text class="estimate-text">
+        基于体重 ({{userWeight}}kg) 和 {{selectedType.name}} MET值估算
+      </text>
+    </view>
+  </scroll-view>
+</view>

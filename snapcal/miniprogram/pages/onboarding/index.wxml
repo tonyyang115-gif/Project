@@ -1,0 +1,303 @@
+<wxs src="../../utils/format.wxs" module="format" />
+<view class="onboarding-container">
+  <!-- 顶部Header -->
+  <view class="header">
+    <view class="header-content">
+      <!-- 返回按钮 -->
+      <view wx:if="{{step > 0}}" class="back-btn" bindtap="prevStep">
+        <text class="back-icon">←</text>
+      </view>
+      
+      <view class="header-title">基础档案设置</view>
+    </view>
+    
+    <!-- 进度信息 -->
+    <view class="progress-info">
+      <text class="progress-text">第 {{step + 1}} 步 / 共 3 步</text>
+      <text class="progress-percent">完成 {{progressPercent}}%</text>
+    </view>
+    
+    <!-- 进度条 -->
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{(step + 1) / 3 * 100}}%"></view>
+    </view>
+  </view>
+
+  <!-- 步骤内容区 -->
+  <scroll-view class="content-area" scroll-y>
+    <!-- Step 1: 基础信息 -->
+    <view wx:if="{{step === 0}}" class="step-content">
+      <view class="step-header">
+        <view class="step-title">让我们了解一下您</view>
+        <view class="step-desc">我们需要这些数据来准确计算您的个性化热量和营养目标。</view>
+      </view>
+
+      <!-- 昵称 -->
+      <view class="form-group">
+        <view class="form-label">昵称</view>
+        <input 
+          class="form-input"
+          type="text"
+          placeholder="请输入您的昵称"
+          value="{{formData.name}}"
+          bindinput="onNameInput"
+        />
+      </view>
+
+      <!-- 性别 -->
+      <view class="form-group">
+        <view class="form-label">性别</view>
+        <view class="gender-grid">
+          <view 
+            class="gender-item {{formData.gender === '男' ? 'active' : ''}}"
+            data-gender="男"
+            bindtap="selectGender"
+          >
+            <view class="gender-icon">♂</view>
+            <text class="gender-text">男</text>
+          </view>
+          <view 
+            class="gender-item {{formData.gender === '女' ? 'active' : ''}}"
+            data-gender="女"
+            bindtap="selectGender"
+          >
+            <view class="gender-icon">♀</view>
+            <text class="gender-text">女</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 身体数据 -->
+      <view class="form-group">
+        <view class="form-label">身体数据</view>
+        
+        <!-- 年龄 -->
+        <view class="data-item">
+          <text class="data-label">年龄</text>
+          <view class="data-input-group">
+            <input 
+              class="data-input"
+              type="number"
+              value="{{formData.age}}"
+              bindinput="onAgeInput"
+            />
+            <text class="data-unit">岁</text>
+          </view>
+        </view>
+
+        <!-- 身高 -->
+        <view class="data-card">
+          <view class="data-card-header">
+            <text class="data-label">身高</text>
+            <view class="unit-toggle">
+              <text class="unit active">CM</text>
+              <text class="unit">FT</text>
+            </view>
+          </view>
+          <slider 
+            class="data-slider"
+            min="100" 
+            max="230" 
+            value="{{formData.height}}"
+            bindchange="onHeightChange"
+            block-size="20"
+            activeColor="#07C160"
+            backgroundColor="#F3F4F6"
+          />
+          <view class="data-value-large">
+            <text class="value-number">{{formData.height}}</text>
+            <text class="value-unit">cm</text>
+          </view>
+        </view>
+
+        <!-- 体重 -->
+        <view class="data-card">
+          <view class="data-card-header">
+            <text class="data-label">体重</text>
+            <view class="unit-toggle">
+              <text class="unit">LBS</text>
+              <text class="unit active">KG</text>
+            </view>
+          </view>
+          <view class="weight-adjuster">
+            <view class="adjust-btn" data-amount="-0.5" bindtap="adjustWeight">
+              <text class="adjust-icon">−</text>
+            </view>
+            <view class="data-value-large">
+              <text class="value-number">{{format.toFixed(formData.weight, 1)}}</text>
+              <text class="value-unit">kg</text>
+            </view>
+            <view class="adjust-btn" data-amount="0.5" bindtap="adjustWeight">
+              <text class="adjust-icon">+</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 活动量 -->
+      <view class="form-group">
+        <view class="form-label">活动量</view>
+        <view class="activity-list">
+          <view 
+            wx:for="{{activityLevels}}" 
+            wx:key="value"
+            class="activity-item {{formData.activityLevel === item.value ? 'active' : ''}}"
+            data-level="{{item.value}}"
+            bindtap="selectActivity"
+          >
+            <view class="activity-icon">{{item.icon}}</view>
+            <view class="activity-text">
+              <view class="activity-label">{{item.label}}</view>
+              <view class="activity-desc">{{item.desc}}</view>
+            </view>
+            <view class="activity-radio">
+              <view wx:if="{{formData.activityLevel === item.value}}" class="radio-dot"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- Step 2: 目标设置 -->
+    <view wx:if="{{step === 1}}" class="step-content">
+      <view class="step-header">
+        <view class="step-title">您的目标是什么?</view>
+        <view class="step-desc">我们将根据目标为您定制饮食计划。</view>
+      </view>
+
+      <!-- 目标选择 -->
+      <view class="goals-list">
+        <view 
+          wx:for="{{goals}}" 
+          wx:key="id"
+          class="goal-item {{formData.goal === item.id ? 'active' : ''}}"
+          data-goal="{{item.id}}"
+          bindtap="selectGoal"
+        >
+          <view class="goal-icon">{{item.icon}}</view>
+          <view class="goal-text">
+            <view class="goal-title">{{item.title}}</view>
+            <view class="goal-desc">{{item.desc}}</view>
+          </view>
+          <view class="goal-radio">
+            <view wx:if="{{formData.goal === item.id}}" class="radio-dot-large"></view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 目标体重 -->
+      <view class="form-group">
+        <view class="form-label">目标体重</view>
+        
+        <view class="target-weight-card">
+          <view class="target-weight-header">
+            <text class="current-weight-label">当前: {{formData.weight}} kg</text>
+            <view class="unit-toggle">
+              <text class="unit active">KG</text>
+              <text class="unit">LBS</text>
+            </view>
+          </view>
+
+          <view class="weight-adjuster large">
+            <view class="adjust-btn-large" data-amount="-0.5" bindtap="adjustTargetWeight">
+              <text class="adjust-icon">−</text>
+            </view>
+            <view class="target-value">
+              <text class="value-number-large">{{format.toFixed(formData.targetWeight, 1)}}</text>
+              <text class="value-unit-large">kg</text>
+            </view>
+            <view class="adjust-btn-large" data-amount="0.5" bindtap="adjustTargetWeight">
+              <text class="adjust-icon">+</text>
+            </view>
+          </view>
+
+          <slider 
+            class="data-slider"
+            min="40" 
+            max="150" 
+            step="0.5"
+            value="{{formData.targetWeight}}"
+            bindchange="onTargetWeightChange"
+            block-size="20"
+            activeColor="#07C160"
+            backgroundColor="#F3F4F6"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- Step 3: 饮食偏好和结果 -->
+    <view wx:if="{{step === 2}}" class="step-content">
+      <view class="step-header">
+        <view class="step-title">您的饮食偏好?</view>
+        <view class="step-desc">帮助我们更精准地推荐食物</view>
+      </view>
+
+      <!-- 饮食偏好网格 -->
+      <view class="diet-grid">
+        <view 
+          wx:for="{{dietPreferences}}" 
+          wx:key="id"
+          class="diet-item {{formData.dietPreference === item.id ? 'active' : ''}}"
+          data-diet="{{item.id}}"
+          bindtap="selectDiet"
+        >
+          <view class="diet-title">{{item.title}}</view>
+          <view class="diet-sub">{{item.sub}}</view>
+          <view wx:if="{{formData.dietPreference === item.id}}" class="diet-check">✓</view>
+        </view>
+      </view>
+
+      <!-- 计算结果 -->
+      <view class="form-group">
+        <view class="form-label">您的每日营养目标</view>
+        
+        <!-- 每日热量总览 -->
+        <view class="calories-card">
+          <view class="calories-header">
+            <view class="calories-title">每日推荐摄入</view>
+            <view class="calories-value">
+              <text class="calories-number">{{stats.targetCalories}}</text>
+              <text class="calories-unit">kcal</text>
+            </view>
+          </view>
+          <view class="calories-desc">根据您的{{formData.goal}}目标调整（BMR: {{stats.bmr}} | TDEE: {{stats.tdee}}）</view>
+        </view>
+
+        <!-- 营养素分配 (随饮食偏好变化) -->
+        <view class="macros-grid">
+          <view class="macro-item">
+            <view class="macro-label">蛋白质</view>
+            <view class="macro-value">{{stats.targetProtein}}g</view>
+            <view class="macro-bar" style="background: #3B82F6;"></view>
+          </view>
+          <view class="macro-item">
+            <view class="macro-label">脂肪</view>
+            <view class="macro-value">{{stats.targetFat}}g</view>
+            <view class="macro-bar" style="background: #F59E0B;"></view>
+          </view>
+          <view class="macro-item">
+            <view class="macro-label">碳水</view>
+            <view class="macro-value">{{stats.targetCarbs}}g</view>
+            <view class="macro-bar" style="background: #10B981;"></view>
+          </view>
+        </view>
+      </view> <!-- Close form-group -->
+    </view> <!-- Close step-content -->
+    
+    <!-- 底部占位符，防止内容被底部固定按钮遮挡 -->
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <!-- 底部按钮 -->
+  <view class="bottom-actions">
+    <view wx:if="{{step < 2}}" class="next-btn" bindtap="nextStep">
+      <text>下一步</text>
+    </view>
+    
+    <view wx:else class="finish-btn" bindtap="handleFinish">
+      <text>完成并开启健康之旅</text>
+      <text class="btn-icon">🚀</text>
+    </view>
+  </view>
+</view>

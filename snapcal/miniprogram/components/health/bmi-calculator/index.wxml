@@ -1,0 +1,73 @@
+<view class="tool-modal {{visible ? 'show' : ''}}">
+  <view class="modal-mask" bindtap="onClose"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">BMI 计算器</text>
+      <view class="close-btn" bindtap="onClose">×</view>
+    </view>
+
+    <scroll-view scroll-y class="modal-body">
+      <!-- 结果卡片: 仪表盘风格 -->
+      <view class="result-section">
+        <view class="speedometer-container">
+          <!-- 仪表盘主体 -->
+          <view class="speedometer-gauge">
+            <view class="gauge-bg-track"></view>
+            <view class="gauge-track"></view>
+            <view class="gauge-ticks">
+                <view class="tick t-18-5"></view>
+                <view class="tick t-24"></view>
+                <view class="tick t-28"></view>
+            </view>
+            <!-- 指针容器: 根据计算出的角度旋转 -->
+            <view class="needle-container" style="transform: rotate({{needleAngle}}deg)">
+                <view class="needle"></view>
+            </view>
+            <!-- 中心盖板 -->
+            <view class="gauge-center">
+                <view class="bmi-value">{{result.value}}</view>
+                <view class="bmi-unit">BMI</view>
+            </view>
+          </view>
+          <!-- 状态标签 -->
+          <view class="status-pill {{result.color}}">
+            {{result.status}}
+          </view>
+        </view>
+
+        <view class="tips-box">
+            <text class="tip-icon" wx:if="{{result.color === 'blue'}}">🥣</text>
+            <text class="tip-icon" wx:if="{{result.color === 'green'}}">💪</text>
+            <text class="tip-icon" wx:if="{{result.color === 'orange'}}">🏃</text>
+            <text class="tip-icon" wx:if="{{result.color === 'red'}}">🥗</text>
+            <text class="tip-text" wx:if="{{result.status === '正常'}}">您的身体质量指数处于健康范围，继续保持！</text>
+            <text class="tip-text" wx:if="{{result.status === '偏瘦'}}">体重偏轻，请注意营养摄入，适当进行增肌训练。</text>
+            <text class="tip-text" wx:if="{{result.status === '超重'}}">体重超标，建议控制热量摄入并增加有氧运动。</text>
+            <text class="tip-text" wx:if="{{result.status === '肥胖'}}">需要关注健康风险，建议制定科学的减脂饮食计划。</text>
+        </view>
+      </view>
+
+      <!-- 交互输入 -->
+      <view class="input-section">
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">身高 (cm)</text>
+                <text class="value-display">{{tempHeight}}</text>
+            </view>
+            <slider min="100" max="230" value="{{tempHeight}}" activeColor="#10B981" bindchanging="onHeightChange" bindchange="onHeightChange" />
+        </view>
+
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">体重 (kg)</text>
+                <text class="value-display">{{tempWeight}}</text>
+            </view>
+            <slider min="30" max="150" value="{{tempWeight}}" activeColor="#10B981" bindchanging="onWeightChange" bindchange="onWeightChange" />
+        </view>
+      </view>
+
+      <button class="save-btn" bindtap="onSave">同步到个人档案</button>
+      <view style="height: 40rpx;"></view>
+    </scroll-view>
+  </view>
+</view>

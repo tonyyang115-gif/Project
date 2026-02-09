@@ -1,0 +1,11 @@
+var toFixed = function (value, precision) {
+  var num = parseFloat(value);
+  if (isNaN(num)) {
+    return '0.0';
+  }
+  return num.toFixed(precision);
+}
+
+module.exports = {
+  toFixed: toFixed
+};

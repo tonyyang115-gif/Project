@@ -1,0 +1,84 @@
+<view class="tool-modal {{visible ? 'show' : ''}}">
+  <view class="modal-mask" bindtap="onClose"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">体脂率 (BFR)</text>
+      <view class="close-btn" bindtap="onClose">×</view>
+    </view>
+
+    <scroll-view scroll-y class="modal-body">
+      
+      <!-- 结果卡片: 紫色主题 + 环形进度 -->
+      <view class="result-card purple-theme">
+        
+        <view class="progress-ring-container">
+            <!-- 简单的 SVG 环形进度条 -->
+            <!-- 小程序 svg 支持有限，这里用 CSS conic-gradient 模拟更稳定 -->
+            <view class="conic-ring" style="background: conic-gradient(#10B981 {{result}}%, #ECFDF5 0%);">
+                <view class="inner-circle">
+                    <text class="ring-value">{{result}}</text>
+                    <text class="ring-unit">%</text>
+                </view>
+            </view>
+        </view>
+
+        <text class="result-tip">基于 BMI 公式估算</text>
+        
+        <!-- 区间对照表 -->
+        <view class="range-table">
+            <view class="range-row header">
+                <text>类型</text>
+                <text>男性</text>
+                <text>女性</text>
+            </view>
+            <view class="range-row {{result < 14 ? 'active' : ''}}">
+                <text>运动员</text>
+                <text>6-13%</text>
+                <text>14-20%</text>
+            </view>
+            <view class="range-row {{result >= 14 && result < 25 ? 'active' : ''}}">
+                <text>健康</text>
+                <text>14-24%</text>
+                <text>21-31%</text>
+            </view>
+            <view class="range-row {{result >= 25 ? 'active' : ''}}">
+                <text>肥胖</text>
+                <text>25%+</text>
+                <text>32%+</text>
+            </view>
+        </view>
+
+      </view>
+
+      <!-- 输入区 -->
+      <view class="input-section">
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">身高 (cm)</text>
+                <text class="value-display">{{height}}</text>
+            </view>
+            <slider min="100" max="230" value="{{height}}" activeColor="#10B981" bindchanging="onHeightChange" bindchange="onHeightChange" />
+        </view>
+
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">体重 (kg)</text>
+                <text class="value-display">{{weight}}</text>
+            </view>
+            <slider min="30" max="150" value="{{weight}}" activeColor="#10B981" bindchanging="onWeightChange" bindchange="onWeightChange" />
+        </view>
+
+        <view class="input-group">
+            <view class="label-row">
+                <text class="label">年龄</text>
+                <text class="value-display">{{age}}</text>
+            </view>
+            <slider min="10" max="100" value="{{age}}" activeColor="#10B981" bindchanging="onAgeChange" bindchange="onAgeChange" />
+        </view>
+      </view>
+
+      <button class="save-btn purple-btn" bindtap="onSave">同步基础数据</button>
+      <view style="height: 40rpx;"></view>
+    </scroll-view>
+  </view>
+</view>

@@ -1,0 +1,214 @@
+<!--pages/room/index.wxml-->
+<view class="room-container">
+  <view class="room-header">
+    <view class="header-top">
+      <view class="logo">
+        <text class="logo-icon">♠</text>
+        <text class="logo-text">欢乐打牌记</text>
+      </view>
+    </view>
+
+    <view class="user-info-row">
+      <avatar url="{{currentUser.avatarUrl}}" alt="{{currentUser.name}}" size="md" />
+      <view class="user-info">
+        <text class="user-name">{{currentUser.name}}</text>
+        <text class="user-desc">欢迎使用，祝你玩的开心~</text>
+      </view>
+      <button class="profile-btn" bind:tap="openProfileModal">个人中心</button>
+    </view>
+
+    <view class="score-card">
+      <view class="score-card-content">
+        <text class="score-label">我的积分</text>
+        <text class="score-value">{{myScore}}</text>
+        <view class="score-footer">
+          <text class="score-rank">我的排名: {{myRank}}</text>
+          <text class="score-detail-link" bind:tap="openScoreDetail">积分明细 ›</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view class="room-content" scroll-y>
+    <view class="room-section">
+      <view class="section-header">
+        <view class="room-info">
+          <text class="section-title">房间</text>
+          <text class="room-id">房间ID: {{room.roomId}}</text>
+        </view>
+        <button class="share-btn" open-type="share">
+          <text class="share-icon">📤</text>
+          <text class="share-text">分享</text>
+        </button>
+      </view>
+
+      <view wx:if="{{sortedPlayers.length === 0}}" class="empty-state">
+        <text class="empty-icon">👥</text>
+        <text class="empty-title">等待玩家加入</text>
+        <text class="empty-hint">点击右上角"分享"按钮，邀请好友加入房间</text>
+      </view>
+
+      <view wx:else class="players-list">
+        <view wx:for="{{sortedPlayers}}" wx:key="id" class="player-item {{item.id === currentUser.id ? 'is-me' : ''}}" bind:tap="onPlayerClick" data-id="{{item.id}}">
+          <view class="player-left">
+            <text class="player-rank">{{index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : index + 1}}</text>
+            <avatar url="{{item.avatarUrl}}" alt="{{item.name}}" size="md" />
+            <view class="player-info">
+              <text class="player-name">{{item.name}}</text>
+            </view>
+          </view>
+          <view class="player-score">
+            <text class="score-text {{item.totalScore > 0 ? 'positive' : item.totalScore < 0 ? 'negative' : ''}}">
+              {{item.totalScore > 0 ? '+' : ''}}{{item.totalScore}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <view class="leave-btn" bind:tap="handleLeaveClick">
+      <text>离开房间</text>
+    </view>
+    <view class="settle-btn" bind:tap="settleGame">
+      <text>结算积分</text>
+    </view>
+  </view>
+
+  <!-- 离开确认弹窗 -->
+  <view class="action-sheet {{showLeaveConfirm ? 'show' : ''}}" wx:if="{{showLeaveConfirm}}">
+    <view class="action-sheet-backdrop" bind:tap="cancelLeave"></view>
+    <view class="action-sheet-content">
+      <button class="action-sheet-btn confirm" bind:tap="confirmLeave">确认</button>
+      <view class="action-sheet-gap"></view>
+      <button class="action-sheet-btn cancel" bind:tap="cancelLeave">取消</button>
+    </view>
+  </view>
+
+  <!-- 转积分模态框 -->
+  <view class="transfer-modal {{showTransferModal ? 'show' : ''}}" wx:if="{{showTransferModal && transferTarget}}">
+    <view class="transfer-modal-backdrop" bind:tap="closeTransferModal"></view>
+    <view class="transfer-modal-content">
+      <view class="transfer-modal-header">
+        <text class="transfer-modal-title">积分划转</text>
+        <view class="transfer-modal-close" bind:tap="closeTransferModal">×</view>
+      </view>
+
+      <view class="transfer-players">
+        <view class="transfer-player">
+          <avatar url="{{currentUser.avatarUrl}}" alt="我" size="lg" />
+          <text class="transfer-player-name">我</text>
+        </view>
+        
+        <view class="transfer-arrow">
+          <view class="transfer-dots">
+            <view class="transfer-dot"></view>
+            <view class="transfer-dot"></view>
+            <view class="transfer-dot"></view>
+          </view>
+          <text class="transfer-arrow-text">支付给</text>
+        </view>
+
+        <view class="transfer-player">
+          <avatar url="{{transferTarget.avatarUrl}}" alt="{{transferTarget.name}}" size="lg" />
+          <text class="transfer-player-name">{{transferTarget.name}}</text>
+        </view>
+      </view>
+
+      <view class="transfer-input-section">
+        <text class="transfer-input-label">输入积分数量 (正整数)</text>
+        <input 
+          class="transfer-input" 
+          type="number" 
+          value="{{transferAmount}}" 
+          bind:input="onTransferAmountInput" 
+          placeholder="0"
+          confirm-type="done"
+        />
+        <text class="transfer-hint">
+          确认后：您的积分 <text class="transfer-hint-negative">-{{transferAmount || '0'}}</text>，
+          对方积分 <text class="transfer-hint-positive">+{{transferAmount || '0'}}</text>
+        </text>
+      </view>
+
+      <button class="transfer-submit-btn" bind:tap="submitTransfer">确认划转</button>
+    </view>
+  </view>
+
+  <!-- 积分明细模态框 -->
+  <view class="score-detail-modal {{showScoreDetailModal ? 'show' : ''}}" wx:if="{{showScoreDetailModal && room}}">
+    <view class="score-detail-modal-backdrop" bind:tap="closeScoreDetailModal"></view>
+    <view class="score-detail-modal-content">
+      <view class="score-detail-modal-header">
+        <text class="score-detail-modal-title">积分明细</text>
+        <view class="score-detail-modal-close" bind:tap="closeScoreDetailModal">×</view>
+      </view>
+      
+      <scroll-view class="score-detail-modal-body" scroll-y>
+        <view wx:if="{{scoreEvents.length === 0}}" class="score-detail-empty">
+          <view class="score-detail-empty-icon">📋</view>
+          <text class="score-detail-empty-text">暂无对局记录</text>
+        </view>
+        <view wx:else class="score-detail-list">
+          <view wx:for="{{scoreEvents}}" wx:key="uniqueId" class="score-detail-item">
+            <view class="score-detail-item-left">
+              <avatar url="{{item.playerAvatar}}" alt="{{item.playerName}}" size="sm" />
+              <view class="score-detail-item-info">
+                <text class="score-detail-item-name">{{item.playerName}}</text>
+                <text class="score-detail-item-time">{{formatTime(item.timestamp)}}</text>
+              </view>
+            </view>
+            <text class="score-detail-item-score {{item.score > 0 ? 'positive' : 'negative'}}">
+              {{item.score > 0 ? '+' : ''}}{{item.score}}
+            </text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 积分结算模态框 -->
+  <view class="settlement-modal {{showSettlementModal ? 'show' : ''}}" wx:if="{{showSettlementModal && room}}">
+    <view class="settlement-modal-backdrop" bind:tap="closeSettlementModal"></view>
+    <view class="settlement-modal-content">
+      <view class="settlement-modal-header">
+        <text class="settlement-modal-title">最终结算</text>
+        <view class="settlement-modal-close" bind:tap="closeSettlementModal">×</view>
+      </view>
+
+      <scroll-view class="settlement-modal-body" scroll-y>
+        <!-- 大赢家 -->
+        <view wx:if="{{sortedPlayers.length > 0}}" class="settlement-winner">
+          <view class="settlement-winner-crown">👑</view>
+          <avatar url="{{sortedPlayers[0].avatarUrl}}" alt="{{sortedPlayers[0].name}}" size="lg" custom-class="settlement-winner-avatar" />
+          <text class="settlement-winner-name">{{sortedPlayers[0].name}}</text>
+          <text class="settlement-winner-badge">大赢家</text>
+          <text class="settlement-winner-score">+{{sortedPlayers[0].totalScore}}</text>
+        </view>
+
+        <!-- 转账列表 -->
+        <view class="settlement-transfers">
+          <view class="settlement-transfers-header">
+            <text class="settlement-transfers-title">💰 输家付给赢家</text>
+          </view>
+          <view wx:if="{{transfers.length === 0}}" class="settlement-no-transfers">
+            <text>无转账产生</text>
+          </view>
+          <view wx:else class="settlement-transfer-list">
+            <view wx:for="{{transfers}}" wx:key="index" class="settlement-transfer-item">
+              <view class="settlement-transfer-info">
+                <text class="settlement-transfer-from">{{item.fromName}}</text>
+                <text class="settlement-transfer-label">支付</text>
+                <text class="settlement-transfer-arrow">›</text>
+                <text class="settlement-transfer-to">{{item.toName}}</text>
+              </view>
+              <text class="settlement-transfer-amount">{{item.amount}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>
+

@@ -1,0 +1,63 @@
+<view class="tool-modal {{visible ? 'show' : ''}}">
+  <view class="modal-mask" bindtap="onClose"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">燃脂心率区间</text>
+      <view class="close-btn" bindtap="onClose">×</view>
+    </view>
+
+    <scroll-view scroll-y class="modal-body">
+      <!-- 结果卡片: 红色主题 -->
+      <view class="result-card red-theme">
+        <view class="result-icon">❤️</view>
+        <text class="result-label">最佳燃脂区间</text>
+        <view class="result-val-row">
+            <text class="result-value">{{burnMin}} - {{burnMax}}</text>
+            <text class="result-unit">bpm</text>
+        </view>
+        <text class="sub-text">最大心率: {{maxHr}} bpm</text>
+      </view>
+
+      <!-- 心率分区图解 -->
+      <view class="zone-chart">
+        <view class="zone-item">
+            <view class="zone-bar gray"></view>
+            <view class="zone-info">
+                <text class="zone-title">热身/恢复 (50-60%)</text>
+                <text class="zone-val">{{maxHr * 0.5}} - {{maxHr * 0.6}} bpm</text>
+            </view>
+        </view>
+        <view class="zone-item active">
+            <view class="zone-bar red"></view>
+            <view class="zone-info">
+                <text class="zone-title red-text">燃脂区间 (60-80%)</text>
+                <text class="zone-val">{{burnMin}} - {{burnMax}} bpm</text>
+            </view>
+        </view>
+        <view class="zone-item">
+            <view class="zone-bar orange"></view>
+            <view class="zone-info">
+                <text class="zone-title">心肺强化 (80-90%)</text>
+                <text class="zone-val">{{maxHr * 0.8}} - {{maxHr * 0.9}} bpm</text>
+            </view>
+        </view>
+      </view>
+
+      <!-- 输入区 -->
+      <view class="input-section">
+        <view class="input-row">
+            <text class="label">年龄</text>
+            <view class="stepper">
+                <view class="step-btn" bindtap="onAgeChange" data-value="{{age - 1}}">-</view>
+                <input class="step-input" type="number" value="{{age}}" bindinput="onAgeChange"/>
+                <view class="step-btn" bindtap="onAgeChange" data-value="{{age + 1}}">+</view>
+            </view>
+        </view>
+        <slider min="10" max="100" value="{{age}}" activeColor="#10B981" bindchanging="onAgeChange" bindchange="onAgeChange" />
+      </view>
+
+      <button class="save-btn red-btn" bindtap="onSave">同步到个人档案</button>
+      <view style="height: 40rpx;"></view>
+    </scroll-view>
+  </view>
+</view>

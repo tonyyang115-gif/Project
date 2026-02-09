@@ -1,0 +1,174 @@
+<view class="page-wrapper">
+  <scroll-view type="list" scroll-y class="scroll-container" show-scrollbar="{{false}}">
+    <view class="stats-container">
+  <!-- Header -->
+  <view class="header">
+    <view class="std-back-btn" bindtap="goBack"></view>
+    <text class="header-title">数据统计</text>
+    <view class="placeholder"></view>
+  </view>
+
+  <view class="content">
+    <!-- 日历卡片 -->
+    <view class="calendar-card">
+      <!-- 月份导航 -->
+      <view class="month-nav">
+        <view class="nav-btn" bindtap="prevMonth">‹</view>
+        <text class="month-text">{{currentMonth.year}}年{{currentMonth.month}}月</text>
+        <view class="nav-btn" bindtap="nextMonth">›</view>
+      </view>
+
+      <!-- 星期标题 -->
+      <view class="weekdays">
+        <view wx:for="{{weekDays}}" wx:key="*this" class="weekday">{{item}}</view>
+      </view>
+
+      <!-- 日期网格 -->
+      <view class="days-grid">
+        <view 
+          wx:for="{{calendarDays}}" 
+          wx:key="date"
+          class="day-cell"
+          data-date="{{item.date}}"
+          data-day="{{item.day}}"
+          bindtap="selectDay"
+        >
+          <view wx:if="{{item.day > 0}}" 
+                class="day-num {{item.date === selectedDate ? 'selected' : ''}} {{item.isToday ? 'today' : ''}}">
+            {{item.day}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 月度概览 -->
+    <view class="section">
+      <text class="section-title">月度概览</text>
+      <view class="overview-row">
+        <view class="overview-card">
+          <text class="overview-label">平均每日摄入</text>
+          <view class="overview-value">
+            <text class="value-num">{{monthlyStats.avgCals}}</text>
+            <text class="value-unit">kcal</text>
+          </view>
+          <view class="trend-tag red">
+            <text>↓ 5% 比上月</text>
+          </view>
+        </view>
+        <view class="overview-card">
+          <text class="overview-label">月度热量结余</text>
+          <view class="overview-value">
+            <text class="value-num">{{monthlyStats.calorieBalance > 0 ? '+' : ''}}{{monthlyStats.calorieBalance}}</text>
+            <text class="value-unit">kcal</text>
+          </view>
+          <view class="trend-tag {{monthlyStats.calorieBalance <= 0 ? 'green' : 'red'}}">
+            <text>{{monthlyStats.calorieBalance <= 0 ? '↓ 制造缺口' : '↑ 热量盈余'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 当日详情 -->
+    <view class="section">
+      <text class="section-title">{{selectedMonth}}月{{selectedDay}}日详情</text>
+      <view class="detail-card">
+        <!-- 卡路里信息 -->
+        <view class="calorie-row">
+          <view class="calorie-left">
+            <text class="calorie-label">今日摄入 {{isOver ? '🔥' : ''}}</text>
+            <view class="calorie-value {{isOver ? 'over' : ''}}">
+              <text class="cal-num">{{dailyStats.calories}}</text>
+              <text class="cal-unit">kcal</text>
+            </view>
+          </view>
+          <view class="calorie-right">
+            <text class="calorie-label">总计可摄入</text>
+            <view class="calorie-value">
+              <text class="cal-num dark">{{dailyTarget}}</text>
+              <text class="cal-unit">kcal</text>
+            </view>
+            <view class="target-detail">
+              <text>基础 {{user.targetCalories}}</text>
+              <text class="plus">+</text>
+              <text class="exercise">⚡ {{dailyBurned}}</text>
+            </view>
+          </view>
+        </view>
+
+        <!-- 进度条 -->
+        <view class="progress-bar">
+          <view class="progress-fill {{isOver ? 'over' : ''}}" style="width: {{percent}}%"></view>
+        </view>
+
+        <view class="progress-info">
+          <text class="progress-percent">进度 {{percent}}%</text>
+          <view class="remaining-tag {{isOver ? 'over' : ''}}">
+            <text>{{isOver ? '已超标' : '剩余'}} {{remaining}} kcal</text>
+          </view>
+        </view>
+
+        <!-- 营养卡片 -->
+        <view class="macro-grid">
+          <view class="macro-card">
+            <view class="macro-header">
+              <text class="macro-label">碳水</text>
+              <view class="macro-icon blue-icon">🌾</view>
+            </view>
+            <text class="macro-value">{{dailyStats.carbs}}g</text>
+            <text class="macro-percent">{{dailyStats.carbsPercent}}%</text>
+          </view>
+          <view class="macro-card">
+            <view class="macro-header">
+              <text class="macro-label">蛋白质</text>
+              <view class="macro-icon purple-icon">⚡</view>
+            </view>
+            <text class="macro-value">{{dailyStats.protein}}g</text>
+            <text class="macro-percent">{{dailyStats.proteinPercent}}%</text>
+          </view>
+          <view class="macro-card">
+            <view class="macro-header">
+              <text class="macro-label">脂肪</text>
+              <view class="macro-icon orange-icon">💧</view>
+            </view>
+            <text class="macro-value">{{dailyStats.fat}}g</text>
+            <text class="macro-percent">{{dailyStats.fatPercent}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+
+    </view>
+  </scroll-view>
+
+  <!-- 底部固定导航栏 (复制自Dashboard) -->
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="switchToHome">
+      <view class="nav-icon icon-home"></view>
+      <text class="nav-text">首页</text>
+    </view>
+    
+    <view class="nav-item active">
+      <view class="nav-icon icon-chart"></view>
+      <text class="nav-text">统计</text>
+    </view>
+    
+    <view class="nav-item nav-camera" bindtap="switchToCamera">
+      <view class="camera-button">
+        <view class="icon-camera"></view>
+      </view>
+    </view>
+    
+    <view class="nav-item" bindtap="goToHealth">
+      <view class="nav-icon icon-heart"></view>
+      <text class="nav-text">健康</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchToProfile">
+      <view class="nav-icon icon-user"></view>
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+
+</view>

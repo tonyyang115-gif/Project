@@ -1,0 +1,14 @@
+{
+    "name": "common",
+    "version": "1.0.0",
+    "description": "云函数公共模块",
+    "main": "dbAdapter.js",
+    "scripts": {},
+    "keywords": [
+        "cloud",
+        "database",
+        "adapter"
+    ],
+    "author": "",
+    "license": "ISC"
+}

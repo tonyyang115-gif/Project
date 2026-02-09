@@ -1,0 +1,7 @@
+{
+  "name": "SnapCal",
+  "description": "AI-powered diet tracking application that calculates calories from photos.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

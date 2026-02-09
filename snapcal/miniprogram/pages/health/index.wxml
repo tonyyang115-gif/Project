@@ -1,0 +1,168 @@
+<view class="page-wrapper">
+  <scroll-view type="list" scroll-y class="scroll-container" show-scrollbar="{{false}}">
+    <view class="health-container">
+        <!-- Header -->
+        <view class="header">
+            <view class="std-back-btn" bindtap="goBack"></view>
+            <text class="header-title">健康驿站</text>
+            <view class="placeholder"></view>
+        </view>
+
+        <!-- 瘦身大作战 Banner -->
+        <view class="banner banner-challenge">
+            <view class="banner-bg">⚔️</view>
+            <view class="banner-content">
+                <view class="banner-tag tag-yellow">热门活动</view>
+                <text class="banner-title">瘦身大作战</text>
+                <text class="banner-desc">与好友一起减脂，共同坚持更有动力!</text>
+                <view class="banner-btn">敬请期待</view>
+            </view>
+        </view>
+
+        <!-- 配料表识别 Banner -->
+        <view class="banner banner-scanner" bindtap="openIngredientScanner">
+            <view class="banner-bg">🧠</view>
+            <view class="banner-content">
+                <view class="banner-tag tag-green">AI 智能</view>
+                <text class="banner-title">配料表识别</text>
+                <text class="banner-desc">AI 智能识别配料安全性，守护健康饮食</text>
+                <view class="banner-btn btn-green">立即识别</view>
+            </view>
+        </view>
+
+        <!-- 工具网格 -->
+        <view class="section">
+            <text class="section-title">健康工具</text>
+            <view class="tools-grid">
+                <tool-card 
+                    tool="BMI" 
+                    icon="📊" 
+                    name="BMI 查询" 
+                    desc="了解体质指数" 
+                    iconColor="blue"
+                    bind:select="openTool" 
+                />
+                <tool-card 
+                    tool="BMR" 
+                    icon="🔥" 
+                    name="基础代谢" 
+                    desc="每日静息消耗" 
+                    iconColor="orange"
+                    bind:select="openTool"
+                />
+                <tool-card 
+                    tool="BFR" 
+                    icon="%" 
+                    name="体脂率" 
+                    desc="计算脂肪含量" 
+                    iconColor="purple"
+                    bind:select="openTool"
+                />
+                <tool-card 
+                    tool="RFM" 
+                    icon="📐" 
+                    name="相对脂肪" 
+                    desc="更精准的体脂" 
+                    iconColor="cyan"
+                    bind:select="openTool"
+                />
+                <tool-card 
+                    tool="WHR" 
+                    icon="↕️" 
+                    name="腰臀比" 
+                    desc="判定中心肥胖" 
+                    iconColor="indigo"
+                    bind:select="openTool"
+                />
+                <tool-card 
+                    tool="HR" 
+                    icon="❤️" 
+                    name="燃脂心率" 
+                    desc="高效运动区间" 
+                    iconColor="red"
+                    bind:select="openTool"
+                />
+            </view>
+        </view>
+    </view>
+  </scroll-view>
+
+  <!-- 工具弹窗组件 -->
+  <bmi-calculator 
+    visible="{{showBMI}}" 
+    userProfile="{{user}}"
+    bind:close="closeTool" 
+    bind:updateProfile="onUpdateProfile"
+  />
+
+  <bmr-calculator 
+    visible="{{showBMR}}" 
+    userProfile="{{user}}"
+    bind:close="closeTool" 
+    bind:updateProfile="onUpdateProfile"
+  />
+
+  <heart-rate-zone 
+    visible="{{showHR}}" 
+    userProfile="{{user}}"
+    bind:close="closeTool" 
+    bind:updateProfile="onUpdateProfile"
+  />
+
+  <!-- 独立高保真组件 -->
+  <whr-calculator 
+    visible="{{showWHR}}" 
+    userProfile="{{user}}"
+    bind:close="closeTool" 
+    bind:updateProfile="onUpdateProfile"
+  />
+
+  <bfr-calculator 
+    visible="{{showBFR}}" 
+    userProfile="{{user}}"
+    bind:close="closeTool" 
+    bind:updateProfile="onUpdateProfile"
+  />
+
+  <rfm-calculator 
+    visible="{{showRFM}}" 
+    userProfile="{{user}}"
+    bind:close="closeTool" 
+    bind:updateProfile="onUpdateProfile"
+  />
+
+  <ingredient-analysis
+    id="scanner"
+    visible="{{showScanner}}"
+    bind:close="closeTool" 
+  />
+
+  <!-- 底部固定导航栏 -->
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="switchToHome">
+      <view class="nav-icon icon-home"></view>
+      <text class="nav-text">首页</text>
+    </view>
+    
+    <view class="nav-item" bindtap="goToStats">
+      <view class="nav-icon icon-chart"></view>
+      <text class="nav-text">统计</text>
+    </view>
+    
+    <view class="nav-item nav-camera" bindtap="switchToCamera">
+      <view class="camera-button">
+        <view class="icon-camera"></view>
+      </view>
+    </view>
+    
+    <view class="nav-item active">
+      <view class="nav-icon icon-heart"></view>
+      <text class="nav-text">健康</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchToProfile">
+      <view class="nav-icon icon-user"></view>
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+</view>

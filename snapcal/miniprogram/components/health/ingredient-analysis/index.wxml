@@ -1,0 +1,94 @@
+<view class="tool-modal {{visible ? 'show' : ''}}" style="z-index: 10000;">
+  <view class="modal-mask" bindtap="onClose"></view>
+  <view class="modal-content full-screen">
+    
+    <view class="modal-header">
+      <text class="modal-title">配料成分分析</text>
+      <view class="close-btn" bindtap="onClose">×</view>
+    </view>
+
+    <scroll-view scroll-y class="modal-body">
+        
+        <!-- Loading State -->
+        <view class="loading-state" wx:if="{{analyzing}}">
+            <view class="scanner-anim">
+                <view class="scan-line"></view>
+            </view>
+            <text class="loading-text">AI 正在深度解析配料表...</text>
+            <text class="loading-sub">识别添加剂、过敏原及潜在健康风险</text>
+        </view>
+
+        <!-- Result State -->
+        <view class="result-container" wx:if="{{!analyzing && result}}">
+            
+            <!-- 顶部评分卡片 -->
+            <view class="score-section">
+                <view class="score-circle {{result.riskLevel}}">
+                    <text class="score-num">{{result.safetyScore}}</text>
+                    <text class="score-label">健康分</text>
+                </view>
+                <view class="score-info">
+                    <text class="product-name">{{result.productName || '识别结果'}}</text>
+                    <text class="score-summary">{{result.summary}}</text>
+                </view>
+            </view>
+
+            <!-- 风险概览 -->
+            <view class="risk-overview" wx:if="{{result.additives.length > 0 || hasHighRisk}}">
+                <view class="section-header">
+                    <text class="section-title">风险检测</text>
+                </view>
+                <view class="risk-tags">
+                    <view class="risk-tag high" wx:if="{{result.riskLevel === 'high'}}">高风险警示</view>
+                    <view class="risk-tag" wx:for="{{result.additives}}" wx:key="index">{{item}}</view>
+                </view>
+            </view>
+
+            <!-- AI 建议 -->
+            <view class="suggestion-box" wx:if="{{result.suggestions && result.suggestions.length}}">
+                <view class="ai-avatar">🤖</view>
+                <view class="suggestion-content">
+                    <view class="suggestion-item" wx:for="{{result.suggestions}}" wx:key="index">
+                        • {{item}}
+                    </view>
+                </view>
+            </view>
+
+            <!-- 成分详情列表 -->
+            <view class="ingredient-section">
+                <view class="section-header">
+                    <text class="section-title">成分深度解析</text>
+                    <text class="count-badge">共 {{result.ingredients.length}} 项</text>
+                </view>
+                
+                <view class="ing-list">
+                    <view class="ing-row" wx:for="{{result.ingredients}}" wx:key="index">
+                        <!-- 左侧图标 -->
+                        <view class="ing-type-icon {{item.type}}">
+                            <text wx:if="{{item.type === 'additive'}}">🧪</text>
+                            <text wx:elif="{{item.type === 'sugar'}}">🍬</text>
+                            <text wx:elif="{{item.type === 'fat'}}">💧</text>
+                            <text wx:elif="{{item.type === 'allergen'}}">⚠️</text>
+                            <text wx:else>🌾</text>
+                        </view>
+                        
+                        <!-- 中间内容 -->
+                        <view class="ing-main">
+                            <view class="ing-name-row">
+                                <text class="ing-name">{{item.name}}</text>
+                                <text class="risk-badge {{item.riskLevel}}" wx:if="{{item.riskLevel !== 'low'}}">
+                                    {{item.riskLevel === 'high' ? '高风险' : '需注意'}}
+                                </text>
+                            </view>
+                            <text class="ing-desc" wx:if="{{item.description}}">{{item.description}}</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+
+            <button class="re-scan-btn" bindtap="startScan">识别下一张</button>
+            <view class="safe-area-bottom"></view>
+        </view>
+    </scroll-view>
+  </view>
+</view>

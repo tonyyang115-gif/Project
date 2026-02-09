@@ -1,0 +1,100 @@
+<view class="tool-modal {{visible ? 'show' : ''}}">
+  <view class="modal-mask" bindtap="onClose"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">身体成分分析</text>
+      <view class="close-btn" bindtap="onClose">×</view>
+    </view>
+
+    <!-- 顶部 Tabs -->
+    <view class="tab-bar">
+        <view class="tab-item {{currentTab === 'BFR' ? 'active' : ''}}" data-tab="BFR" bindtap="switchTab">体脂率</view>
+        <view class="tab-item {{currentTab === 'RFM' ? 'active' : ''}}" data-tab="RFM" bindtap="switchTab">相对脂肪</view>
+        <view class="tab-item {{currentTab === 'WHR' ? 'active' : ''}}" data-tab="WHR" bindtap="switchTab">腰臀比</view>
+    </view>
+
+    <scroll-view scroll-y class="modal-body">
+      
+      <!-- BFR 结果 -->
+      <view class="result-card purple-theme" wx:if="{{currentTab === 'BFR'}}">
+        <view class="result-icon">%</view>
+        <text class="result-label">估算体脂率 (BFR)</text>
+        <text class="result-value">{{bfrResult}}%</text>
+        
+        <!-- BFR 刻度尺 -->
+        <view class="linear-scale-container">
+            <view class="scale-bar gradient-purple"></view>
+            <view class="scale-cursor" style="left: {{bfrResult > 35 ? 100 : (bfrResult < 5 ? 0 : (bfrResult - 5) / 30 * 100)}}%"></view>
+            <view class="scale-labels">
+                <text>偏瘦</text>
+                <text>标准</text>
+                <text>超标</text>
+            </view>
+        </view>
+        <text class="result-tip">基于 BMI 公式估算，仅供参考</text>
+      </view>
+
+      <!-- RFM 结果 (保持简单) -->
+      <view class="result-card cyan-theme" wx:if="{{currentTab === 'RFM'}}">
+        <view class="result-icon">📐</view>
+        <text class="result-label">相对脂肪量 (RFM)</text>
+        <text class="result-value">{{rfmResult}}%</text>
+        <text class="result-tip">基于身高腰围比，比 BMI 更准确反映体脂</text>
+      </view>
+
+      <!-- WHR 结果 -->
+      <view class="result-card indigo-theme" wx:if="{{currentTab === 'WHR'}}">
+        <view class="result-icon">↕️</view>
+        <text class="result-label">腰臀比 (WHR)</text>
+        <text class="result-value">{{whrResult.value}}</text>
+        
+        <!-- WHR 刻度尺 -->
+        <view class="linear-scale-container">
+            <view class="scale-bar split-colors"></view>
+            <!-- 假设男 0.9 女 0.85 为分界，这里简单以 0.9 为中心归一化展示 -->
+            <view class="scale-marker" style="left: 60%"></view> 
+            <view class="scale-cursor" style="left: {{whrResult.value > 1.2 ? 100 : (whrResult.value < 0.6 ? 0 : (whrResult.value - 0.6) / 0.6 * 100)}}%"></view>
+            <view class="scale-labels">
+                <text>梨型</text>
+                <text>苹果型(风险)</text>
+            </view>
+        </view>
+
+        <view class="status-tag {{whrResult.isHealthy ? 'green' : 'red'}}">
+            {{whrResult.isHealthy ? '健康' : '中心性肥胖风险'}}
+        </view>
+      </view>
+
+      <!-- 输入区 (根据Tab动态显示相关输入) -->
+      <view class="input-section">
+        
+        <!-- BFR 只需要基本信息 (已从Profile读取)，只需展示提示 -->
+        <view wx:if="{{currentTab === 'BFR'}}" class="info-block">
+            <text>计算基于您的身高({{height}}cm)、体重({{weight}}kg)、年龄({{age}})和性别。</text>
+        </view>
+
+        <!-- RFM 需要腰围 -->
+        <view class="input-group" wx:if="{{currentTab === 'RFM' || currentTab === 'WHR'}}">
+            <view class="label-row">
+                <text class="label">腰围 (cm)</text>
+                <text class="value-display">{{waist}}</text>
+            </view>
+            <slider min="50" max="150" value="{{waist}}" activeColor="#06b6d4" bindchanging="onWaistChange" bindchange="onWaistChange" />
+        </view>
+
+        <!-- WHR 需要臀围 -->
+        <view class="input-group" wx:if="{{currentTab === 'WHR'}}">
+            <view class="label-row">
+                <text class="label">臀围 (cm)</text>
+                <text class="value-display">{{hip}}</text>
+            </view>
+            <slider min="50" max="150" value="{{hip}}" activeColor="#6366f1" bindchanging="onHipChange" bindchange="onHipChange" />
+        </view>
+
+      </view>
+
+      <button class="save-btn purple-btn" bindtap="onSave" wx:if="{{currentTab !== 'BFR'}}">同步围度数据</button>
+      <view style="height: 40rpx;"></view>
+    </scroll-view>
+  </view>
+</view>

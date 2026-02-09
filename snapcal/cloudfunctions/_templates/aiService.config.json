@@ -1,0 +1,9 @@
+{
+    "permissions": {
+        "openapi": []
+    },
+    "envVariables": {
+        "QWEN_API_KEY": "sk-your-actual-api-key-here",
+        "ENV": "production"
+    }
+}

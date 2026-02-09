@@ -1,0 +1,5 @@
+<view class="avatar-container avatar-{{size}} {{customClass}}">
+  <image src="{{url || ''}}" mode="aspectFill" class="avatar-image" lazy-load="{{true}}" />
+</view>
+
+

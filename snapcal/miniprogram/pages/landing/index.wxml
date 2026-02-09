@@ -1,0 +1,173 @@
+<view class="landing-container {{showAgreement || showPrivacy ? 'is-locked' : ''}}">
+  <!-- 主内容区 - 居中显示 -->
+  <view class="main-content">
+    <!-- Logo -->
+    <view class="logo-container">
+      <image class="logo-image" src="/assets/images/logo.png" mode="aspectFill"></image>
+    </view>
+    
+    <!-- 标题和标语 -->
+    <view class="title">{{appName}}</view>
+    <view class="slogan">{{slogan}}</view>
+  </view>
+
+  <!-- 底部操作区 -->
+  <view class="bottom-actions">
+    <!-- 开始按钮 -->
+    <view 
+      class="start-btn {{agreed ? '' : 'disabled'}}" 
+      bindtap="handleStart"
+    >
+      开始记录
+    </view>
+
+    <!-- 登录链接 -->
+    <view class="login-link" bindtap="handleLogin">
+      已有账号? 登录
+    </view>
+
+    <!-- 协议复选框 -->
+    <view class="agreement-row">
+      <view 
+        class="checkbox {{agreed ? 'checked' : ''}}" 
+        bindtap="toggleAgreed"
+      >
+        <text wx:if="{{agreed}}" class="check-icon">✓</text>
+      </view>
+      <view class="agreement-text">
+        我已阅读并同意 
+        <text class="link" catchtap="showAgreementModal">《用户协议》</text>
+        和 
+        <text class="link" catchtap="showPrivacyModal">《隐私政策》</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 用户协议弹窗 -->
+  <view wx:if="{{showAgreement}}" class="modal-overlay" catchtap="closeAgreement" catchtouchmove="preventScroll">
+    <view class="modal-container" catchtap="" catchtouchmove="preventScroll">
+      <!-- 弹窗头部 -->
+      <view class="modal-header">
+        <view class="modal-title-row">
+          <view class="modal-icon">📄</view>
+          <text class="modal-title">用户协议</text>
+        </view>
+        <view class="close-btn" catchtap="closeAgreement">✕</view>
+      </view>
+
+      <!-- 弹窗内容 -->
+      <scroll-view class="modal-content" scroll-y>
+        <view class="section">
+          <view class="section-title">1. 服务说明</view>
+          <view class="section-text">
+            欢迎使用 SnapCal（以下简称"本应用"）。本应用是一款基于人工智能技术的健康管理工具，旨在辅助用户进行饮食记录、热量计算及身体数据管理。
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">2. 健康免责声明 (重要)</view>
+          <view class="warning-box">
+            本应用提供的所有数据（包括但不限于食物热量、营养成分、BMI分析、身体成分估算）均为基于AI算法的估算值，仅供参考。
+          </view>
+          <view class="section-text">
+            本应用不提供任何医疗建议、诊断或治疗。在开始任何饮食控制计划、运动计划或改变生活方式之前，请务必咨询专业医生或注册营养师。若您有饮食失调、孕期、糖尿病或其他慢性疾病，请遵医嘱使用。
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">3. 用户行为规范</view>
+          <view class="section-text">
+            您承诺仅将本应用用于个人非商业用途。您不得上传含有色情、暴力、政治敏感或侵犯他人版权的图片。若发现违规内容，我们保留封禁账号的权利。
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">4. 知识产权</view>
+          <view class="section-text">
+            本应用的所有设计、代码、算法及界面素材归 SnapCal 开发团队所有。未经授权，不得进行反向工程或抄袭。
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 弹窗底部按钮 -->
+      <view class="modal-footer">
+        <view class="confirm-btn" catchtap="closeAgreement">我已阅读并知晓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 隐私政策弹窗 -->
+  <view wx:if="{{showPrivacy}}" class="modal-overlay" catchtap="closePrivacy" catchtouchmove="preventScroll">
+    <view class="modal-container" catchtap="" catchtouchmove="preventScroll">
+      <!-- 弹窗头部 -->
+      <view class="modal-header">
+        <view class="modal-title-row">
+          <view class="modal-icon">🛡️</view>
+          <text class="modal-title">隐私政策</text>
+        </view>
+        <view class="close-btn" catchtap="closePrivacy">✕</view>
+      </view>
+
+      <!-- 弹窗内容 -->
+      <scroll-view class="modal-content" scroll-y>
+        <view class="section">
+          <view class="section-title">1. 我们收集的信息</view>
+          <view class="section-list">
+            <view class="list-item">
+              <text class="list-bullet">•</text>
+              <text><text class="bold">身体数据</text>：身高、体重、年龄、性别，用于计算基础代谢率和推荐热量。</text>
+            </view>
+            <view class="list-item">
+              <text class="list-bullet">•</text>
+              <text><text class="bold">上传内容</text>：您拍摄或上传的食物照片、配料表照片，仅用于AI识别分析。</text>
+            </view>
+            <view class="list-item">
+              <text class="list-bullet">•</text>
+              <text><text class="bold">使用记录</text>：您的饮食打卡记录和运动记录。</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">2. 数据的存储与安全</view>
+          <view class="section-text">
+            目前版本中，您的核心个人档案数据主要存储在您设备的<text class="bold">本地存储 (LocalStorage)</text> 中。这意味着如果您卸载应用或清除缓存，数据可能会丢失。
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">3. 第三方服务的使用</view>
+          <view class="section-text">
+            为了提供智能识别功能，我们会将您上传的图片数据传输给第三方人工智能服务商（如 Alibaba Qwen）进行处理。这些数据传输过程经过加密，且仅用于单次分析，不会用于其他商业用途。
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">4. 权限使用说明</view>
+          <view class="section-list">
+            <view class="list-item">
+              <text class="list-bullet">•</text>
+              <text><text class="bold">相机权限</text>：用于拍摄食物或配料表。</text>
+            </view>
+            <view class="list-item">
+              <text class="list-bullet">•</text>
+              <text><text class="bold">相册权限</text>：用于从相册选择图片进行识别。</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="section">
+          <view class="section-title">5. 联系我们</view>
+          <view class="section-text">
+            如对本隐私政策有任何疑问，请通过应用内的"反馈"功能联系我们。
+          </view>
+        </view>
+      </scroll-view>
+
+      <!-- 弹窗底部按钮 -->
+      <view class="modal-footer">
+        <view class="confirm-btn" catchtap="closePrivacy">我已阅读并知晓</view>
+      </view>
+    </view>
+  </view>
+</view>

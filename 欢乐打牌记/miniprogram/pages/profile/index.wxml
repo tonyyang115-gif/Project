@@ -1,0 +1,104 @@
+<!--pages/profile/index.wxml-->
+<view class="profile-container">
+  <view class="profile-hero">
+    <avatar url="{{currentUser.avatarUrl}}" alt="{{currentUser.name}}" size="xl" custom-class="hero-avatar" />
+    <text class="hero-name">{{currentUser.name}}</text>
+    
+    <view class="stats-row">
+      <view class="stat-item">
+        <text class="stat-value">{{totalRounds}}</text>
+        <text class="stat-label">累计局数</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item" bind:tap="viewHistory">
+        <text class="stat-value">{{historyCount}}</text>
+        <text class="stat-label">历史场次</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="profile-list">
+    <view class="list-group">
+      <view class="list-item" bind:tap="editAvatar">
+        <view class="list-item-left">
+          <text class="list-icon">🖼</text>
+          <text class="list-text">头像</text>
+        </view>
+        <view class="list-item-right">
+          <avatar url="{{currentUser.avatarUrl}}" alt="Small" size="xs" />
+          <text class="arrow">›</text>
+        </view>
+      </view>
+      <view class="list-item" bind:tap="editName">
+        <view class="list-item-left">
+          <text class="list-icon">👤</text>
+          <text class="list-text">昵称</text>
+        </view>
+        <view class="list-item-right">
+          <text class="list-value">{{currentUser.name}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="list-group">
+      <view class="list-item">
+        <view class="list-item-left">
+          <text class="list-icon">ℹ️</text>
+          <text class="list-text">关于我们</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+      <view class="list-item">
+        <view class="list-item-left">
+          <text class="list-icon">⚠️</text>
+          <text class="list-text">免责声明</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="footer-logo">
+    <text class="logo-icon">♠</text>
+    <text class="logo-text">欢乐打牌记</text>
+    <text class="version-text">版本号 v1.0</text>
+  </view>
+
+  <!-- 编辑昵称子模态框 -->
+  <view class="sub-modal {{activeEditField === 'name' ? 'show' : ''}}" wx:if="{{activeEditField === 'name'}}">
+    <view class="sub-modal-backdrop" bind:tap="cancelEdit"></view>
+    <view class="sub-modal-content">
+      <text class="sub-modal-title">修改昵称</text>
+      <input class="sub-modal-input" type="text" value="{{editName}}" bind:input="onNameInput" maxlength="12" placeholder="请输入昵称" />
+      <view class="sub-modal-buttons">
+        <button class="sub-modal-btn cancel" bind:tap="cancelEdit">取消</button>
+        <button class="sub-modal-btn confirm" bind:tap="saveName">保存</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 编辑头像子模态框 -->
+  <view class="sub-modal {{activeEditField === 'avatar' ? 'show' : ''}}" wx:if="{{activeEditField === 'avatar'}}">
+    <view class="sub-modal-backdrop" bind:tap="cancelEdit"></view>
+    <view class="sub-modal-content">
+      <text class="sub-modal-title">修改头像</text>
+      <view class="avatar-edit-section">
+        <view class="avatar-preview" bind:tap="uploadAvatar">
+          <avatar url="{{editAvatar}}" alt="Current" size="xl" custom-class="preview-avatar" />
+          <view class="upload-overlay">📷</view>
+        </view>
+        <text class="upload-hint">点击上传或选择下方预设</text>
+        <view class="preset-avatars">
+          <view wx:for="{{presetAvatars}}" wx:key="index" class="preset-avatar-item {{editAvatar === item ? 'selected' : ''}}" bind:tap="selectPresetAvatar" data-url="{{item}}">
+            <avatar url="{{item}}" alt="Preset" size="sm" />
+          </view>
+        </view>
+      </view>
+      <view class="sub-modal-buttons">
+        <button class="sub-modal-btn cancel" bind:tap="cancelEdit">取消</button>
+        <button class="sub-modal-btn confirm" bind:tap="saveAvatar">保存</button>
+      </view>
+    </view>
+  </view>
+</view>

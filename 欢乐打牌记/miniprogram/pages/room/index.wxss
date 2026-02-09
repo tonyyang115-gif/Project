@@ -1,0 +1,965 @@
+/* pages/room/index.wxss */
+.room-container {
+  min-height: 100vh;
+  background-color: #f6f7f9;
+  padding-bottom: 140rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.room-header {
+  background: linear-gradient(180deg, #eef2ff 0%, #f6f7f9 100%);
+  padding: 24rpx 32rpx 32rpx;
+  padding-top: 80rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  color: #4c88ff;
+  font-weight: bold;
+  font-size: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+.logo-icon {
+  background-color: #4c88ff;
+  color: #ffffff;
+  padding: 4rpx 8rpx;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.user-info-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+.user-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.user-desc {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.profile-btn {
+  background-color: transparent;
+  color: #4c88ff;
+  border: 2rpx solid #4c88ff;
+  padding: 8rpx 24rpx;
+  border-radius: 40rpx;
+  font-size: 24rpx;
+}
+
+.score-card {
+  background: linear-gradient(135deg, #4c88ff 0%, #3b76f6 100%);
+  border-radius: 24rpx;
+  padding: 36rpx 32rpx;
+  color: #ffffff;
+  box-shadow: 0 8rpx 24rpx rgba(76, 136, 255, 0.2);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.score-label {
+  font-size: 28rpx;
+  opacity: 0.9;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.score-value {
+  font-size: 80rpx;
+  font-weight: bold;
+  font-family: monospace;
+  margin-bottom: 32rpx;
+  display: block;
+}
+
+.score-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 24rpx;
+  opacity: 0.8;
+  border-top: 2rpx solid rgba(255, 255, 255, 0.2);
+  padding-top: 24rpx;
+}
+
+.room-content {
+  flex: 1;
+  padding: 24rpx 32rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.room-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.section-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.room-id {
+  font-size: 24rpx;
+  color: #666666;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 12rpx 24rpx;
+  border-radius: 40rpx;
+  border: 2rpx solid #4c88ff;
+  background-color: #ffffff;
+  color: #4c88ff;
+  font-size: 28rpx;
+  line-height: 1;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.share-icon {
+  font-size: 28rpx;
+}
+
+.share-text {
+  font-size: 28rpx;
+}
+
+.empty-state {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 24rpx;
+  padding: 100rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  margin-bottom: 16rpx;
+}
+
+.empty-hint {
+  font-size: 24rpx;
+  color: #999999;
+  margin-bottom: 32rpx;
+  text-align: center;
+  padding: 0 32rpx;
+}
+
+.invite-btn {
+  background: linear-gradient(135deg, #4c88ff 0%, #3b76f6 100%);
+  color: #ffffff;
+  padding: 16rpx 64rpx;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}
+
+.players-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.player-item {
+  background-color: #ffffff;
+  border-radius: 24rpx;
+  padding: 24rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 2rpx solid #f0f0f0;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.player-item.is-me {
+  background: linear-gradient(135deg, rgba(238, 242, 255, 0.8) 0%, #ffffff 100%);
+  border-color: rgba(76, 136, 255, 0.2);
+}
+
+.player-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.player-rank {
+  font-size: 36rpx;
+  width: 48rpx;
+  text-align: center;
+}
+
+.player-info {
+  flex: 1;
+}
+
+.player-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.player-score {
+  text-align: right;
+}
+
+.score-text {
+  font-size: 42rpx;
+  font-weight: bold;
+  font-family: monospace;
+  color: #cccccc;
+}
+
+.score-text.positive {
+  color: #fa9d3b;
+}
+
+.score-text.negative {
+  color: #07c160;
+}
+
+.floating-btn-wrapper {
+  position: fixed;
+  bottom: 180rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  width: 100%;
+  max-width: 750rpx;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.floating-btn {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background-color: #4c88ff;
+  color: #ffffff;
+  font-size: 48rpx;
+  font-weight: bold;
+  box-shadow: 0 16rpx 48rpx rgba(76, 136, 255, 0.4);
+  border: none;
+  pointer-events: auto;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border-top: 2rpx solid #f0f0f0;
+  display: flex;
+  z-index: 30;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.leave-btn,
+.settle-btn {
+  flex: 1;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  font-weight: 500;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.leave-btn {
+  background-color: #1a1a1a;
+}
+
+.leave-btn:active {
+  background-color: #000000;
+  opacity: 0.9;
+}
+
+.leave-btn text {
+  color: #ffffff;
+}
+
+.settle-btn {
+  background-color: #4c88ff;
+}
+
+.settle-btn:active {
+  background-color: #3b76f6;
+  opacity: 0.9;
+}
+
+.settle-btn text {
+  color: #ffffff;
+}
+
+/* 离开确认弹窗 */
+.action-sheet {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.action-sheet.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.action-sheet-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.action-sheet-content {
+  position: relative;
+  z-index: 10;
+  background-color: #f7f7f7;
+  border-radius: 32rpx 32rpx 0 0;
+  overflow: hidden;
+  padding-bottom: env(safe-area-inset-bottom);
+  width: 100%;
+  max-width: 750rpx;
+  margin: 0 auto;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.action-sheet-btn {
+  width: 100%;
+  height: 112rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34rpx;
+  border: none;
+  background-color: #ffffff;
+}
+
+.action-sheet-btn.confirm {
+  color: #fa5151;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+
+.action-sheet-btn.cancel {
+  color: #1a1a1a;
+}
+
+.action-sheet-gap {
+  height: 16rpx;
+  background-color: transparent;
+}
+
+/* 转积分模态框 */
+.transfer-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.transfer-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.transfer-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.transfer-modal-content {
+  position: relative;
+  z-index: 10;
+  background-color: #ffffff;
+  border-radius: 32rpx;
+  padding: 48rpx;
+  width: 90%;
+  max-width: 600rpx;
+  box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.2);
+  animation: zoomIn 0.3s ease;
+}
+
+@keyframes zoomIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.transfer-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48rpx;
+}
+
+.transfer-modal-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.transfer-modal-close {
+  font-size: 48rpx;
+  color: #999999;
+  line-height: 1;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.transfer-players {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 64rpx;
+  padding: 0 32rpx;
+}
+
+.transfer-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.transfer-player-name {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #666666;
+}
+
+.transfer-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.transfer-dots {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-bottom: 8rpx;
+}
+
+.transfer-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background-color: #cccccc;
+}
+
+.transfer-arrow-text {
+  font-size: 20rpx;
+  color: #999999;
+}
+
+.transfer-input-section {
+  margin-bottom: 48rpx;
+}
+
+.transfer-input-label {
+  display: block;
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #999999;
+  margin-bottom: 16rpx;
+  text-align: center;
+}
+
+.transfer-input {
+  width: 100%;
+  text-align: center;
+  font-size: 80rpx;
+  font-weight: bold;
+  font-family: monospace;
+  padding: 32rpx 0;
+  border-bottom: 4rpx solid #f0f0f0;
+  color: #1a1a1a;
+  margin-bottom: 16rpx;
+  box-sizing: border-box;
+}
+
+.transfer-input:focus {
+  border-bottom-color: #4c88ff;
+}
+
+.transfer-hint {
+  display: block;
+  font-size: 20rpx;
+  color: #999999;
+  text-align: center;
+  margin-top: 16rpx;
+}
+
+.transfer-hint-negative {
+  color: #fa5151;
+  font-weight: bold;
+}
+
+.transfer-hint-positive {
+  color: #07c160;
+  font-weight: bold;
+}
+
+.transfer-submit-btn {
+  width: 100%;
+  height: 88rpx;
+  background: linear-gradient(135deg, #4c88ff 0%, #3b76f6 100%);
+  color: #ffffff;
+  font-size: 32rpx;
+  font-weight: 500;
+  border-radius: 24rpx;
+  border: none;
+  box-shadow: 0 8rpx 24rpx rgba(76, 136, 255, 0.2);
+}
+
+.transfer-submit-btn::after {
+  border: none;
+}
+
+/* 积分明细模态框 */
+.score-detail-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.score-detail-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.score-detail-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.score-detail-modal-content {
+  position: relative;
+  z-index: 10;
+  background-color: #ffffff;
+  border-radius: 32rpx;
+  padding: 48rpx;
+  width: 90%;
+  max-width: 600rpx;
+  max-height: 80vh;
+  box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: zoomIn 0.3s ease;
+}
+
+.score-detail-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32rpx;
+  flex-shrink: 0;
+}
+
+.score-detail-modal-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.score-detail-modal-close {
+  font-size: 48rpx;
+  color: #999999;
+  line-height: 1;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-detail-modal-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.score-detail-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80rpx 40rpx;
+  color: #999999;
+}
+
+.score-detail-empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.score-detail-empty-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+.score-detail-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.score-detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+
+.score-detail-item:last-child {
+  border-bottom: none;
+}
+
+.score-detail-item-left {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  flex: 1;
+}
+
+.score-detail-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.score-detail-item-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.score-detail-item-time {
+  font-size: 20rpx;
+  color: #999999;
+}
+
+.score-detail-item-score {
+  font-size: 36rpx;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.score-detail-item-score.positive {
+  color: #fa9d3b;
+}
+
+.score-detail-item-score.negative {
+  color: #07c160;
+}
+
+/* 积分结算模态框 */
+.settlement-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.settlement-modal.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.settlement-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.settlement-modal-content {
+  position: relative;
+  z-index: 10;
+  background-color: #f6f7f9;
+  border-radius: 32rpx;
+  padding: 48rpx;
+  width: 90%;
+  max-width: 600rpx;
+  max-height: 90vh;
+  box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  animation: zoomIn 0.3s ease;
+}
+
+.settlement-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48rpx;
+  flex-shrink: 0;
+}
+
+.settlement-modal-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.settlement-modal-close {
+  font-size: 48rpx;
+  color: #999999;
+  line-height: 1;
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settlement-modal-body {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.settlement-winner {
+  background: linear-gradient(135deg, #4c88ff 0%, #3b76f6 100%);
+  border-radius: 32rpx;
+  padding: 48rpx;
+  margin-bottom: 32rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  color: #ffffff;
+  position: relative;
+  box-shadow: 0 8rpx 24rpx rgba(76, 136, 255, 0.2);
+}
+
+.settlement-winner-crown {
+  position: absolute;
+  top: -24rpx;
+  right: -24rpx;
+  font-size: 96rpx;
+  opacity: 0.5;
+}
+
+.settlement-winner-avatar {
+  border: 8rpx solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 24rpx;
+}
+
+.settlement-winner-name {
+  font-size: 40rpx;
+  font-weight: bold;
+  margin-bottom: 16rpx;
+}
+
+.settlement-winner-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 8rpx 24rpx;
+  border-radius: 40rpx;
+  font-size: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.settlement-winner-score {
+  font-size: 80rpx;
+  font-weight: bold;
+  font-family: monospace;
+}
+
+.settlement-transfers {
+  background-color: #ffffff;
+  border-radius: 32rpx;
+  padding: 40rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.settlement-transfers-header {
+  margin-bottom: 32rpx;
+}
+
+.settlement-transfers-title {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.settlement-no-transfers {
+  text-align: center;
+  padding: 40rpx;
+  color: #999999;
+  font-size: 28rpx;
+  background-color: #f5f5f5;
+  border-radius: 16rpx;
+}
+
+.settlement-transfer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.settlement-transfer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx;
+  background-color: #f5f5f5;
+  border-radius: 24rpx;
+  border: 2rpx solid #f0f0f0;
+}
+
+.settlement-transfer-info {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: 1;
+}
+
+.settlement-transfer-from {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+}
+
+.settlement-transfer-label {
+  font-size: 20rpx;
+  color: #999999;
+}
+
+.settlement-transfer-arrow {
+  font-size: 32rpx;
+  color: #cccccc;
+}
+
+.settlement-transfer-to {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+}
+
+.settlement-transfer-amount {
+  font-size: 40rpx;
+  font-weight: bold;
+  font-family: monospace;
+  color: #fa9d3b;
+}
+

@@ -1,0 +1,262 @@
+<view class="food-logger">
+  <!-- Header -->
+  <view class="header">
+    <view class="cancel-btn" bindtap="handleCancel">取消</view>
+    <text class="header-title">记录饮食</text>
+    <view 
+      class="save-btn {{detectedItems.length > 0 ? '' : 'disabled'}}" 
+      bindtap="handleSave"
+    >
+      保存 ({{detectedItems.length}})
+    </view>
+  </view>
+
+  <!-- 模式切换 -->
+  <view class="mode-tabs">
+    <view 
+      class="mode-tab {{mode === 'PHOTO' ? 'active' : ''}}" 
+      data-mode="PHOTO" 
+      bindtap="switchMode"
+    >
+      <text class="tab-icon">📷</text>
+      <text>拍照</text>
+    </view>
+    <view 
+      class="mode-tab {{mode === 'SEARCH' ? 'active' : ''}}" 
+      data-mode="SEARCH" 
+      bindtap="switchMode"
+    >
+      <text class="tab-icon">🔍</text>
+      <text>搜索</text>
+    </view>
+    <view 
+      class="mode-tab {{mode === 'MANUAL' ? 'active' : ''}}" 
+      data-mode="MANUAL" 
+      bindtap="switchMode"
+    >
+      <text class="tab-icon">⌨️</text>
+      <text>手输</text>
+    </view>
+  </view>
+
+  <!-- 内容区域 -->
+  <scroll-view class="content" scroll-y>
+    <!-- 餐次选择 -->
+    <view class="meal-selector">
+      <view 
+        wx:for="{{mealTypes}}" 
+        wx:key="*this"
+        class="meal-chip {{selectedMealType === item ? 'active' : ''}}"
+        data-meal="{{item}}"
+        bindtap="selectMealType"
+      >
+        {{item}}
+      </view>
+    </view>
+
+    <!-- 拍照模式 -->
+    <block wx:if="{{mode === 'PHOTO'}}">
+      <view wx:if="{{!imagePreview}}" class="photo-area" bindtap="openCamera">
+        <view class="photo-icon">📸</view>
+        <text class="photo-hint">点击拍摄食物</text>
+        <text class="photo-sub">AI 自动识别热量与营养</text>
+      </view>
+
+      <view wx:else class="preview-area">
+        <image src="{{imagePreview}}" mode="aspectFit" class="preview-image"/>
+        <view class="preview-overlay" bindtap="retakePhoto">
+          <text>点击重新拍摄</text>
+        </view>
+        <view wx:if="{{isAnalyzing}}" class="analyzing-overlay">
+          <view class="spinner"></view>
+          <text>AI 正在分析...</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 搜索模式 -->
+    <block wx:if="{{mode === 'SEARCH'}}">
+      <view class="search-card">
+        <text class="card-label">AI 智能搜索</text>
+        <view class="search-input-wrap">
+          <text class="search-icon">🔍</text>
+          <input 
+            type="text" 
+            placeholder="例如：一碗牛肉面" 
+            value="{{searchQuery}}"
+            bindinput="onSearchInput"
+            bindconfirm="handleSearch"
+            class="search-input"
+          />
+          <view class="search-btn" bindtap="handleSearch">
+            <text wx:if="{{!isAnalyzing}}">搜索</text>
+            <text wx:else>...</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 手动输入模式 -->
+    <block wx:if="{{mode === 'MANUAL'}}">
+      <view class="manual-card">
+        <view class="input-group">
+          <text class="input-label">食物名称</text>
+          <input 
+            placeholder="例如: 红烧排骨" 
+            value="{{manualForm.name}}"
+            data-field="name"
+            bindinput="onManualInput"
+            class="text-input-box"
+          />
+        </view>
+
+        <view class="input-row">
+          <view class="input-group half">
+            <text class="input-label">份量</text>
+            <input 
+              type="number" 
+              placeholder="1" 
+              value="{{manualForm.quantity}}"
+              data-field="quantity"
+              bindinput="onManualInput"
+              class="number-input"
+            />
+          </view>
+          <view class="input-group half">
+            <text class="input-label">单位</text>
+            <input 
+              placeholder="碗/个/g" 
+              value="{{manualForm.unit}}"
+              data-field="unit"
+              bindinput="onManualInput"
+              class="text-input-box"
+            />
+          </view>
+        </view>
+
+        <view class="input-group">
+          <text class="input-label">热量 (千卡)</text>
+          <input 
+            type="number" 
+            placeholder="0" 
+            value="{{manualForm.calories}}"
+            data-field="calories"
+            bindinput="onManualInput"
+            class="calorie-input"
+          />
+        </view>
+
+        <view class="macro-inputs">
+          <view class="macro-input">
+            <text class="macro-label">蛋白质(g)</text>
+            <input 
+              type="number" 
+              placeholder="0" 
+              value="{{manualForm.protein}}"
+              data-field="protein"
+              bindinput="onManualInput"
+            />
+          </view>
+          <view class="macro-input">
+            <text class="macro-label">碳水(g)</text>
+            <input 
+              type="number" 
+              placeholder="0" 
+              value="{{manualForm.carbs}}"
+              data-field="carbs"
+              bindinput="onManualInput"
+            />
+          </view>
+          <view class="macro-input">
+            <text class="macro-label">脂肪(g)</text>
+            <input 
+              type="number" 
+              placeholder="0" 
+              value="{{manualForm.fat}}"
+              data-field="fat"
+              bindinput="onManualInput"
+            />
+          </view>
+        </view>
+
+        <view class="add-btn" bindtap="addManualItem">
+          <text>+ 添加到列表</text>
+        </view>
+      </view>
+    </block>
+
+    <!-- 已添加列表 -->
+    <block wx:if="{{detectedItems.length > 0}}">
+      <view class="items-section">
+        <view class="section-header">
+          <text class="section-title">✓ 已添加 ({{detectedItems.length}})</text>
+          <view class="clear-btn" bindtap="clearAll">清空</view>
+        </view>
+
+        <view wx:for="{{detectedItems}}" wx:key="id" wx:for-item="foodItem" class="food-item">
+          <view class="item-header">
+            <view class="name-column">
+                <input 
+                class="item-name" 
+                value="{{foodItem.name}}"
+                data-id="{{foodItem.id}}"
+                data-field="name"
+                bindinput="updateItem"
+                />
+                <view class="health-score" wx:if="{{foodItem.healthScore > 0}}">
+                    <text class="health-label">健康指数: {{foodItem.healthScore}}</text>
+                    <view class="stars">
+                        <text class="star" wx:for="{{5}}" wx:key="*this" style="color: {{index < foodItem.healthScore / 2 ? '#FACC15' : '#E5E7EB'}}">★</text>
+                    </view>
+                </view>
+            </view>
+            <view class="remove-btn" data-id="{{foodItem.id}}" bindtap="removeItem">✕</view>
+          </view>
+
+
+          <view class="item-row">
+            <view class="item-field">
+              <text class="field-label">份量</text>
+              <view class="field-input">
+                <input 
+                  type="number" 
+                  value="{{foodItem.quantity}}"
+                  data-id="{{foodItem.id}}"
+                  data-field="quantity"
+                  bindinput="updateItem"
+                />
+                <text class="field-unit">{{foodItem.unit}}</text>
+              </view>
+            </view>
+            <view class="item-field">
+              <text class="field-label">热量</text>
+              <input 
+                type="number" 
+                value="{{foodItem.calories}}"
+                data-id="{{foodItem.id}}"
+                data-field="calories"
+                bindinput="updateItem"
+                class="calorie-value"
+              />
+            </view>
+          </view>
+
+          <view class="macro-row">
+            <view class="macro-item protein">
+              <text class="macro-value">{{foodItem.protein}}g</text>
+              <text class="macro-name">蛋白质</text>
+            </view>
+            <view class="macro-item carbs">
+              <text class="macro-value">{{foodItem.carbs}}g</text>
+              <text class="macro-name">碳水</text>
+            </view>
+            <view class="macro-item fat">
+              <text class="macro-value">{{foodItem.fat}}g</text>
+              <text class="macro-name">脂肪</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+</view>

@@ -1,0 +1,170 @@
+<!--pages/home/index.wxml-->
+<view class="home-container">
+  <view class="content-wrapper">
+    <view class="user-avatar-section" bind:tap="openProfileModal">
+      <view class="avatar-wrapper">
+        <avatar url="{{currentUser.avatarUrl}}" alt="{{currentUser.name}}" size="xl" custom-class="avatar-large" />
+        <view class="edit-badge">✎</view>
+      </view>
+    </view>
+
+    <view class="user-name-section" bind:tap="openProfileModal">
+      <text class="user-name">{{currentUser.name}}</text>
+      <text class="edit-icon-small">✎</text>
+    </view>
+
+    <text class="hint-text">点击头像或昵称可修改信息</text>
+
+    <button class="create-room-btn" bind:tap="createRoom">创建房间</button>
+    <button class="join-room-btn" bind:tap="joinRoom">加入房间</button>
+
+    <text class="instruction-text">使用说明</text>
+  </view>
+
+  <view class="footer">
+    <view class="footer-logo">
+      <text class="logo-icon">♠</text>
+      <text class="logo-text">欢乐打牌记</text>
+    </view>
+    <text class="footer-disclaimer">本程序仅供娱乐，请勿用于非法活动\n远离赌博，快乐生活</text>
+    <text class="footer-version">版本号 v1.0</text>
+  </view>
+
+  <!-- 个人中心模态框 -->
+  <view class="profile-modal {{showProfileModal ? 'show' : ''}}" wx:if="{{showProfileModal}}">
+    <view class="modal-backdrop" bind:tap="closeProfileModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <view class="modal-close" bind:tap="closeProfileModal">‹</view>
+        <view class="modal-title">个人中心</view>
+        <view class="modal-placeholder"></view>
+      </view>
+
+      <view class="modal-hero">
+        <avatar url="{{currentUser.avatarUrl}}" alt="{{currentUser.name}}" size="xl" custom-class="hero-avatar" />
+        <text class="hero-name">{{currentUser.name}}</text>
+        
+        <view class="stats-row">
+          <view class="stat-item">
+            <text class="stat-value">{{totalRounds}}</text>
+            <text class="stat-label">累计局数</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{historyCount}}</text>
+            <text class="stat-label">历史场次</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-list">
+        <view class="list-group">
+          <view class="list-item" bind:tap="editAvatar">
+            <view class="list-item-left">
+              <text class="list-icon">🖼</text>
+              <text class="list-text">头像</text>
+            </view>
+            <view class="list-item-right">
+              <avatar url="{{currentUser.avatarUrl}}" alt="Small" size="xs" />
+              <text class="arrow">›</text>
+            </view>
+          </view>
+          <view class="list-item" bind:tap="editName">
+            <view class="list-item-left">
+              <text class="list-icon">👤</text>
+              <text class="list-text">昵称</text>
+            </view>
+            <view class="list-item-right">
+              <text class="list-value">{{currentUser.name}}</text>
+              <text class="arrow">›</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="list-group">
+          <view class="list-item">
+            <view class="list-item-left">
+              <text class="list-icon">ℹ️</text>
+              <text class="list-text">关于我们</text>
+            </view>
+            <text class="arrow">›</text>
+          </view>
+          <view class="list-item">
+            <view class="list-item-left">
+              <text class="list-icon">⚠️</text>
+              <text class="list-text">免责声明</text>
+            </view>
+            <text class="arrow">›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 编辑昵称子模态框 -->
+    <view class="sub-modal {{activeEditField === 'name' ? 'show' : ''}}" wx:if="{{activeEditField === 'name'}}">
+      <view class="sub-modal-backdrop" bind:tap="cancelEdit"></view>
+      <view class="sub-modal-content">
+        <text class="sub-modal-title">修改昵称</text>
+        <input class="sub-modal-input" type="text" value="{{editName}}" bind:input="onNameInput" maxlength="12" placeholder="请输入昵称" />
+        <view class="sub-modal-buttons">
+          <button class="sub-modal-btn cancel" bind:tap="cancelEdit">取消</button>
+          <button class="sub-modal-btn confirm" bind:tap="saveName">保存</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 编辑头像子模态框 -->
+    <view class="sub-modal {{activeEditField === 'avatar' ? 'show' : ''}}" wx:if="{{activeEditField === 'avatar'}}">
+      <view class="sub-modal-backdrop" bind:tap="cancelEdit"></view>
+      <view class="sub-modal-content">
+        <text class="sub-modal-title">修改头像</text>
+        <view class="avatar-edit-section">
+          <view class="avatar-preview" bind:tap="uploadAvatar">
+            <avatar url="{{editAvatar}}" alt="Current" size="xl" custom-class="preview-avatar" />
+            <view class="upload-overlay">📷</view>
+          </view>
+          <text class="upload-hint">点击上传或选择下方预设</text>
+          <view class="preset-avatars">
+            <view wx:for="{{presetAvatars}}" wx:key="index" class="preset-avatar-item {{editAvatar === item ? 'selected' : ''}}" bind:tap="selectPresetAvatar" data-url="{{item}}">
+              <avatar url="{{item}}" alt="Preset" size="sm" />
+            </view>
+          </view>
+        </view>
+        <view class="sub-modal-buttons">
+          <button class="sub-modal-btn cancel" bind:tap="cancelEdit">取消</button>
+          <button class="sub-modal-btn confirm" bind:tap="saveAvatar">保存</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加入房间模态框 -->
+  <view class="join-room-modal {{showJoinRoomModal ? 'show' : ''}}" wx:if="{{showJoinRoomModal}}">
+    <view class="join-room-modal-backdrop" bind:tap="cancelJoinRoom"></view>
+    <view class="join-room-modal-content">
+      <view class="join-room-modal-header">
+        <text class="join-room-modal-title">加入房间</text>
+        <view class="join-room-modal-close" bind:tap="cancelJoinRoom">×</view>
+      </view>
+      
+      <view class="join-room-modal-body">
+        <text class="join-room-hint">请输入6位房间ID</text>
+        <input 
+          class="join-room-input" 
+          type="number" 
+          value="{{inputRoomId}}" 
+          bind:input="onRoomIdInput" 
+          placeholder="请输入房间ID"
+          maxlength="6"
+          confirm-type="done"
+        />
+        <text class="join-room-tip">房间ID由创建房间的玩家通过分享提供</text>
+      </view>
+
+      <view class="join-room-modal-buttons">
+        <button class="join-room-btn cancel" bind:tap="cancelJoinRoom">取消</button>
+        <button class="join-room-btn confirm" bind:tap="confirmJoinRoom">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

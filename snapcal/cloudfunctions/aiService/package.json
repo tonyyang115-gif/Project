@@ -1,0 +1,12 @@
+{
+    "name": "aiService",
+    "version": "1.0.0",
+    "description": "AI服务云函数 - 食物识别和营养分析",
+    "main": "index.js",
+    "scripts": {},
+    "dependencies": {
+        "wx-server-sdk": "latest"
+    },
+    "author": "",
+    "license": "ISC"
+}

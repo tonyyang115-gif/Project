@@ -1,0 +1,131 @@
+/* 复用基础 Modal 样式 */
+@import '../bmr-calculator/index.wxss'; 
+
+/* 靛蓝主题 */
+/* 靛蓝主题转 Mint */
+.result-card.indigo-theme {
+    background: #ecfdf5; /* Mint 50 */
+    border-color: #d1fae5;
+    align-items: stretch;
+}
+
+.shape-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 24rpx;
+}
+
+.shape-icon {
+    width: 120rpx;
+    height: 120rpx;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-bottom: 8rpx;
+    position: relative;
+}
+
+/* 用 CSS 模拟简单形状，或者使用 Emoji */
+.shape-icon::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 80rpx;
+}
+
+.shape-icon.apple::before { content: '🍎'; }
+.shape-icon.pear::before { content: '🍐'; }
+
+.shape-label {
+    font-size: 28rpx;
+    font-weight: 700;
+    color: #059669; /* Mint 600 */
+}
+
+.result-row {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 16rpx;
+    margin-bottom: 8rpx;
+}
+
+.result-value {
+    font-size: 64rpx;
+    font-weight: 800;
+    color: #047857; /* Mint 700 */
+}
+
+.status-badge {
+    padding: 6rpx 16rpx;
+    border-radius: 12rpx;
+    font-size: 22rpx;
+    font-weight: 700;
+}
+
+.status-badge.green { background: #dcfce7; color: #166534; }
+.status-badge.red { background: #fee2e2; color: #991b1b; }
+
+/* 刻度尺 */
+.linear-scale-container {
+    width: 100%;
+    margin: 32rpx 0;
+    position: relative;
+    padding-top: 20rpx;
+}
+
+.scale-bar {
+    height: 16rpx;
+    border-radius: 8rpx;
+    width: 100%;
+}
+
+.split-colors {
+    background: linear-gradient(90deg, #34d399 0%, #34d399 60%, #f87171 60%, #f87171 100%);
+}
+
+.scale-cursor {
+    position: absolute;
+    top: 10rpx;
+    width: 0; 
+    height: 0; 
+    border-left: 12rpx solid transparent;
+    border-right: 12rpx solid transparent;
+    border-top: 16rpx solid #047857; /* Mint Dark Cursor */
+    transform: translateX(-50%);
+    z-index: 2;
+}
+
+.scale-marker {
+    position: absolute;
+    top: 20rpx; 
+    left: 60%;
+    height: 16rpx;
+    width: 4rpx;
+    background: #fff;
+    z-index: 1;
+}
+
+.scale-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8rpx;
+    font-size: 20rpx;
+    color: #10b981; /* Mint 500 */
+    font-weight: 600;
+}
+
+.threshold-label {
+    position: absolute;
+    left: 60%;
+    transform: translateX(-50%);
+}
+
+.indigo-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.2);
+}

@@ -1,0 +1,1767 @@
+/* Dashboard 页面样式 - 完全还原原始设计 */
+
+.dashboard {
+    padding: 30rpx 40rpx;
+    padding-top: calc(env(safe-area-inset-top) + 100rpx); /* Clear the Capsule Button area */
+    padding-bottom: calc(180rpx + env(safe-area-inset-bottom));
+    max-width: 750rpx;
+    margin: 0 auto;
+    background: #F9FAFB;
+    min-height: 100vh;
+    /* transition: filter 0.3s; 可选：背景模糊 */
+}
+
+/* 滚动锁定类 */
+.dashboard.is-locked {
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* ========== 顶部Header ========== */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 48rpx;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+}
+
+.avatar {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    background: #E5E7EB;
+    overflow: hidden;
+    border: 4rpx solid #ffffff;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+}
+
+.avatar-placeholder {
+    width: 100%;
+    height: 100%;
+    background: #E8F8F0;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 32rpx;
+}
+
+
+/* ========== AI 扫描全屏动画 ========== */
+.scanning-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #000;
+    z-index: 999;
+    padding-top: env(safe-area-inset-top);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.scanning-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.scan-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.scan-img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.6; /* Dim the image */
+    filter: blur(10px);
+}
+
+.scan-grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(16, 185, 129, 0.2) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 185, 129, 0.2) 1px, transparent 1px);
+    background-size: 80rpx 80rpx;
+    z-index: 2;
+}
+
+.scan-line {
+    position: absolute;
+    width: 100%;
+    height: 4rpx;
+    background: #34D399;
+    box-shadow: 0 0 20rpx #10B981;
+    z-index: 3;
+    animation: scanMove 2s infinite linear;
+}
+
+@keyframes scanMove {
+    0% { top: 0; opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+}
+
+.scan-text {
+    position: relative;
+    z-index: 4;
+    color: #fff;
+    font-size: 32rpx;
+    font-weight: bold;
+    letter-spacing: 2rpx;
+    background: rgba(0,0,0,0.6);
+    padding: 16rpx 48rpx;
+    border-radius: 100rpx;
+    border: 1rpx solid rgba(255,255,255,0.2);
+}
+
+/* ========== AI 结果卡片 (Pro Max) ========== */
+.ai-result-sheet {
+    background: #FFFFFF;
+    border-radius: 40rpx 40rpx 0 0;
+    padding: 0 40rpx 40rpx 40rpx;
+    display: flex;
+    flex-direction: column;
+    gap: 32rpx;
+}
+
+/* 顶部 Handle */
+.handle-bar {
+    width: 80rpx;
+    height: 8rpx;
+    background: #E5E7EB;
+    border-radius: 4rpx;
+    margin: 20rpx auto 10rpx auto;
+}
+
+/* 1. 结果头部 */
+.result-header {
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+}
+
+.result-img {
+    width: 120rpx;
+    height: 120rpx;
+    border-radius: 24rpx;
+    border: 2rpx solid #F3F4F6;
+}
+
+.result-meta {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.meta-label {
+    font-size: 20rpx;
+    color: #34D399; /* Brand Green */
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1rpx;
+    margin-bottom: 4rpx;
+}
+
+.meta-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+}
+
+.meta-title-input {
+    font-size: 36rpx;
+    font-weight: 800;
+    color: #1F2937;
+    flex: 1;
+    height: 50rpx;
+}
+
+.edit-icon {
+    font-size: 28rpx;
+    color: #9CA3AF;
+}
+
+/* 2. 数据卡片 */
+.result-data-card {
+    background: #F9FAFB;
+    border-radius: 32rpx;
+    padding: 32rpx;
+    display: flex;
+    flex-direction: column;
+    gap: 24rpx;
+    border: 2rpx solid #F3F4F6;
+}
+
+.calories-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8rpx;
+}
+
+.cal-val {
+    font-size: 56rpx;
+    font-weight: 900;
+    color: #1F2937;
+    line-height: 1;
+}
+
+.cal-unit {
+    font-size: 24rpx;
+    font-weight: bold;
+    color: #6B7280;
+}
+
+.cal-label {
+    font-size: 20rpx;
+    color: #9CA3AF;
+    margin-left: auto;
+}
+
+.macros-grid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #FFFFFF;
+    border-radius: 24rpx;
+    padding: 20rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.02);
+}
+
+.macro-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4rpx;
+    flex: 1;
+}
+
+.macro-val {
+    font-size: 28rpx;
+    font-weight: 800;
+}
+
+.macro-val.protein { color: #8B5CF6; }
+.macro-val.carbs { color: #3B82F6; }
+.macro-val.fat { color: #F59E0B; }
+
+.macro-tag {
+    font-size: 20rpx;
+    color: #9CA3AF;
+}
+
+.macro-divider {
+    width: 2rpx;
+    height: 40rpx;
+    background: #E5E7EB;
+}
+
+/* 3. 餐次选择 */
+.meal-decision-area {
+    display: flex;
+    flex-direction: column;
+    gap: 16rpx;
+}
+
+.section-label {
+    font-size: 24rpx;
+    font-weight: bold;
+    color: #6B7280;
+}
+
+.meal-capsule-row {
+    display: flex;
+    gap: 16rpx;
+}
+
+.meal-capsule {
+    flex: 1;
+    height: 72rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #F3F4F6;
+    color: #6B7280;
+    font-size: 26rpx;
+    font-weight: 600;
+    border-radius: 36rpx;
+    transition: all 0.2s;
+    border: 2rpx solid transparent;
+}
+
+.meal-capsule.active {
+    background: #ECFDF5;
+    color: #059669;
+    border-color: #34D399;
+    box-shadow: 0 4rpx 12rpx rgba(52, 211, 153, 0.2);
+}
+
+/* 4. 底部按钮 */
+.result-actions {
+    display: flex;
+    gap: 24rpx;
+    margin-top: 16rpx;
+}
+
+.action-btn {
+    height: 96rpx;
+    border-radius: 48rpx;
+    font-size: 30rpx;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.action-btn.discard {
+    flex: 1;
+    background: #F3F4F6;
+    color: #6B7280;
+    border: 1px solid transparent; /* Fix border rendering */
+}
+
+.action-btn.save {
+    flex: 2;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #fff;
+    box-shadow: 0 8rpx 24rpx rgba(16, 185, 129, 0.3);
+    gap: 12rpx;
+}
+
+.action-btn.save:active {
+    transform: scale(0.98);
+}
+
+.btn-arrow {
+    font-size: 36rpx;
+    margin-bottom: 4rpx;
+}
+
+
+.greeting {
+    font-size: 20rpx;
+    color: #9CA3AF;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1rpx;
+    margin-bottom: 4rpx;
+}
+
+.date-text {
+    font-size: 32rpx;
+    font-weight: 800;
+    color: #111827;
+}
+
+.calendar-btn {
+    width: 80rpx;
+    height: 80rpx;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
+    border: 1rpx solid #F3F4F6;
+}
+
+.calendar-icon {
+    font-size: 40rpx;
+}
+
+/* ========== 主卡路里圆环卡片 - 白陶浮雕 V2 (Ceramic Depth Refined) ========== */
+.calorie-circle-card {
+    background: #F9FAFB;
+    border-radius: 50rpx;
+    padding: 64rpx;
+    /* 更柔和、更深的浮起效果 */
+    box-shadow: 
+        20rpx 20rpx 60rpx rgba(174, 174, 192, 0.4), 
+        -20rpx -20rpx 60rpx #FFFFFF;
+    margin-bottom: 64rpx;
+    position: relative;
+    overflow: visible;
+    text-align: center;
+    border: 1rpx solid rgba(255, 255, 255, 0.5); /* 极淡边框 */
+}
+
+/* 即使移除了卡片的动态浮起，圆环的容器需要特殊的交互层 */
+.circle-container {
+    position: relative;
+    width: 640rpx;
+    height: 640rpx;
+    margin: -32rpx auto;
+    
+    /* 强制居中修正 */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* 圆形进度环容器 - 添加心跳动效 */
+.progress-ring {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    /* 持续的微弱心跳，赋予界面生命力 */
+    animation: ceramic-pulse 3s ease-in-out infinite;
+}
+
+/* 陶瓷心跳呼吸动画 */
+@keyframes ceramic-pulse {
+    0% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0 rgba(16, 185, 129, 0));
+    }
+    50% {
+        transform: scale(1.015);
+        /* 配合缩放，阴影轻微扩散，产生呼吸感 */
+        filter: drop-shadow(0 4rpx 12rpx rgba(16, 185, 129, 0.2));
+    }
+    100% {
+        transform: scale(1);
+        filter: drop-shadow(0 0 0 rgba(16, 185, 129, 0));
+    }
+}
+
+/* 1. 轨道 (Track) */
+.ring-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 36rpx solid #F0F2F5; 
+    box-shadow: 
+        inset 6rpx 6rpx 12rpx rgba(174, 174, 192, 0.25), 
+        inset -6rpx -6rpx 12rpx #FFFFFF;
+    z-index: 1;
+}
+
+/* 2. 进度扇形 (Progress Pie) */
+/* 使用硬边缘渐变代替 Mask，兼容性最好 */
+.ring-progress-pie {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    z-index: 2;
+    background: conic-gradient(
+        from 0deg, 
+        #34D399 0deg, 
+        #10B981 var(--progress), 
+        transparent var(--progress), 
+        transparent 360deg
+    );
+    /* 进度条的高光/阴影需要简化，因为它是扇形 */
+    filter: drop-shadow(0 0 4rpx rgba(16, 185, 129, 0.3));
+}
+
+/* 3. 中心遮盖 (Hole Overlay) */
+/* 一个比轨道内径稍小的圆，盖住扇形的中心，形成圆环 */
+.ring-center-hole {
+    position: absolute;
+    /* Track宽36rpx。为了避免边缘锯齿露白，遮盖稍微小一点点或者刚好 */
+    /* inset = track-width. */
+    inset: 36rpx; 
+    border-radius: 50%;
+    background: #F9FAFB; /* 与卡片背景一致 (!important) */
+    z-index: 3;
+    
+    /* 可选：给内部增加一点点阴影增强立体感，或者保持平整 */
+    /* 这里稍微加一点 outward shadow 模拟轨道内壁的挤压感 ? */
+    /* 或者仅仅是 clean cut */
+}
+
+.circle-content {
+    position: absolute;
+    inset: 0; /* 恢复全尺寸，只是布局内容 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 16rpx;
+    /* 这是一个真正的镂空，不加背景 */
+    background: transparent;
+    z-index: 10;
+}
+
+.flame-icon {
+    font-size: 64rpx;
+    margin-bottom: 24rpx;
+    /* 实物化图标阴影 */
+    filter: drop-shadow(2rpx 4rpx 6rpx rgba(249, 115, 22, 0.2));
+}
+
+.remaining-value {
+    font-size: 136rpx;
+    font-weight: 800; /* 加粗回归，强调实体感 */
+    color: #374151; /* 深灰而非纯黑，更柔和 */
+    line-height: 1;
+    letter-spacing: -6rpx;
+    font-family: var(--font-number);
+    /* 文字雕刻感 (凸起) */
+    text-shadow: 2rpx 2rpx 0px #FFFFFF;
+}
+
+.remaining-label {
+    font-size: 28rpx;
+    color: #9CA3AF;
+    font-weight: bold;
+    margin-top: 8rpx;
+}
+
+.target-pill {
+    margin-top: 32rpx;
+    background: #F0FDF4;
+    color: #16A34A;
+    padding: 16rpx 32rpx;
+    border-radius: 50rpx;
+    font-size: 24rpx;
+    font-weight: bold;
+    box-shadow: 0 2rpx 8rpx rgba(74, 222, 128, 0.1);
+    border: 1rpx solid #BBF7D0;
+    text-align: center;
+}
+
+.target-main {
+    margin-bottom: 4rpx;
+}
+
+.target-value {
+    font-size: 28rpx;
+    font-weight: 800;
+}
+
+.target-detail {
+    font-size: 20rpx;
+    opacity: 0.8;
+}
+
+/* ========== 区块标题 ========== */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 8rpx;
+    margin-bottom: 32rpx;
+}
+
+.section-title {
+    font-size: 36rpx;
+    font-weight: 800;
+    color: #111827;
+}
+
+.section-link {
+    font-size: 24rpx;
+    color: #10B981;
+    font-weight: bold;
+}
+
+/* ========== 营养卡片网格 ========== */
+.nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24rpx;
+    margin-bottom: 64rpx;
+}
+
+.macro-card {
+    background: #ffffff;
+    padding: 32rpx;
+    border-radius: 32rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.02);
+    border: 1rpx solid #F9FAFB;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 256rpx;
+}
+
+.macro-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24rpx;
+}
+
+.macro-label {
+    font-size: 24rpx;
+    font-weight: bold;
+    color: #6B7280;
+}
+
+.macro-icon {
+    width: 24rpx;
+    height: 24rpx;
+    border-radius: 50%;
+    padding: 8rpx;
+    font-size: 24rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.purple-icon {
+    background: #F3E8FF;
+    color: #9333EA;
+}
+
+.blue-icon {
+    background: #DBEAFE;
+    color: #2563EB;
+}
+
+.orange-icon {
+    background: #FED7AA;
+    color: #EA580C;
+}
+
+.macro-value {
+    font-size: 40rpx;
+    font-weight: 800;
+    color: #111827;
+    line-height: 1;
+    margin-bottom: 4rpx;
+    font-family: var(--font-number);
+}
+
+.macro-unit {
+    font-size: 24rpx;
+    color: #9CA3AF;
+    font-weight: bold;
+    margin-left: 4rpx;
+}
+
+.macro-target {
+    font-size: 20rpx;
+    color: #D1D5DB;
+    font-weight: bold;
+    margin-bottom: 16rpx;
+}
+
+.progress-bar {
+    height: 12rpx;
+    width: 100%;
+    background: #F3F4F6;
+    border-radius: 50rpx;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 50rpx;
+    transition: width 1s ease-out;
+}
+
+.purple-bar {
+    background: #A855F7;
+}
+
+.blue-bar {
+    background: #07C160;
+}
+
+.orange-bar {
+    background: #F97316;
+}
+
+/* ========== 餐次记录列表 ========== */
+.meals-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16rpx;
+}
+
+.meal-section {
+    background: #ffffff;
+    border-radius: 48rpx;
+    padding: 40rpx;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.02);
+    border: 1rpx solid #F9FAFB;
+}
+
+.meal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32rpx;
+}
+
+.meal-info {
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+}
+
+.meal-icon {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36rpx;
+}
+
+/* 餐次图标背景色 */
+.bg-orange-50 { background: #FFF7ED; }
+.bg-blue-50 { background: #F0FDF4; }
+.bg-indigo-50 { background: #EEF2FF; }
+.bg-pink-50 { background: #FDF2F8; }
+.bg-red-50 { background: #FEF2F2; }
+
+/* 餐次图标文字色 */
+.text-orange-500 { color: #F97316; }
+.text-blue-500 { color: var(--primary-color); }
+.text-indigo-500 { color: #6366F1; }
+.text-pink-500 { color: #EC4899; }
+.text-red-500 { color: #EF4444; }
+
+.meal-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.meal-name {
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 4rpx;
+}
+
+.meal-calories {
+    font-size: 24rpx;
+    color: #9CA3AF;
+    font-weight: bold;
+}
+
+.meal-actions {
+    display: flex;
+    gap: 16rpx;
+}
+
+.meal-btn {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    padding: 12rpx 24rpx;
+    border-radius: 50rpx;
+    font-size: 20rpx;
+    font-weight: bold;
+}
+
+.btn-icon {
+    font-size: 24rpx;
+}
+
+.btn-text {
+    font-size: 20rpx;
+}
+
+.text-orange-600 { color: #EA580C; }
+.text-blue-600 { color: #059669; }
+.text-indigo-600 { color: #4F46E5; }
+.text-pink-600 { color: #DB2777; }
+
+.btn-secondary {
+    background: #F9FAFB;
+    color: #6B7280;
+}
+
+.add-exercise-btn {
+    width: 64rpx;
+    height: 64rpx;
+    background: #FFF7ED;
+    color: #F97316;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    font-weight: bold;
+}
+
+/* 餐次记录项 */
+.meal-logs {
+    display: flex;
+    flex-direction: column;
+    gap: 32rpx;
+    padding-left: 8rpx;
+}
+
+.empty-logs {
+    font-size: 24rpx;
+    color: #D1D5DB;
+    font-weight: 500;
+    padding-left: 96rpx;
+    padding-top: 8rpx;
+    padding-bottom: 8rpx;
+}
+
+.log-item {
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+    padding-left: 16rpx;
+}
+
+.log-image {
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 24rpx;
+    overflow: hidden;
+    background: #F9FAFB;
+}
+
+.food-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.food-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40rpx;
+    background: #F9FAFB;
+}
+
+.log-details {
+    flex: 1;
+}
+
+.log-name {
+    font-size: 28rpx;
+    font-weight: bold;
+    color: #111827;
+    margin-bottom: 4rpx;
+}
+
+.log-calories {
+    font-size: 24rpx;
+    color: #9CA3AF;
+    font-weight: 500;
+}
+
+
+
+/* ========== 统一饮食记录弹窗 (底部抽屉) ========== */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #FFFFFF;
+    border-radius: 40rpx 40rpx 0 0;
+    padding: 40rpx;
+    padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+    z-index: 2001;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh; /* 防止超高 */
+}
+
+.bottom-sheet.show {
+    transform: translateY(0);
+}
+
+/* 1. 头部 */
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32rpx;
+}
+
+.header-btn {
+    font-size: 28rpx;
+    padding: 12rpx 24rpx;
+    border-radius: 32rpx;
+}
+
+.header-btn.cancel {
+    color: #6B7280; /* Gray 500 */
+}
+
+.header-btn.save {
+    background: #F3F4F6;
+    color: #9CA3AF;
+    font-weight: bold;
+}
+
+.header-title {
+    font-size: 36rpx;
+    font-weight: 800;
+    color: #111827;
+}
+
+/* 2. Tabs - 重新设计图标 */
+.log-tabs {
+    display: flex;
+    background: #F3F4F6;
+    border-radius: 24rpx;
+    padding: 8rpx;
+    margin-bottom: 32rpx;
+}
+
+.tab-item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12rpx;
+    padding: 20rpx 0;
+    border-radius: 20rpx;
+    font-size: 28rpx;
+    color: #9CA3AF;
+    font-weight: bold;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.tab-item.active {
+    background: #FFFFFF;
+    color: var(--primary-dark); 
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.tab-icon {
+    width: 36rpx;
+    height: 36rpx;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Icon A: Camera (CSS Drawn) */
+.tab-icon.camera::before {
+    content: '';
+    position: absolute;
+    width: 32rpx;
+    height: 24rpx;
+    border: 3rpx solid currentColor;
+    border-radius: 6rpx;
+    bottom: 4rpx;
+}
+.tab-icon.camera::after {
+    content: '';
+    position: absolute;
+    width: 12rpx;
+    height: 12rpx;
+    border: 3rpx solid currentColor;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -10%);
+}
+
+/* Icon B: Search (CSS Drawn) */
+.tab-icon.search::before {
+    content: '';
+    position: absolute;
+    width: 24rpx;
+    height: 24rpx;
+    border: 3rpx solid currentColor;
+    border-radius: 50%;
+    top: 2rpx;
+    left: 2rpx;
+}
+.tab-icon.search::after {
+    content: '';
+    position: absolute;
+    width: 10rpx;
+    height: 3rpx;
+    background: currentColor;
+    bottom: 6rpx;
+    right: 4rpx;
+    transform: rotate(45deg);
+    border-radius: 2rpx;
+}
+
+/* Icon C: Pen (CSS Drawn) */
+.tab-icon.pen::before {
+    content: '';
+    position: absolute;
+    width: 4rpx;
+    height: 24rpx;
+    background: currentColor;
+    transform: rotate(45deg);
+    top: 4rpx;
+    right: 8rpx;
+    border-radius: 2rpx;
+    box-shadow: -6rpx 6rpx 0 currentColor; /* Double line handle */
+}
+.tab-icon.pen::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 6rpx solid transparent;
+    border-right: 6rpx solid transparent;
+    border-top: 10rpx solid currentColor;
+    bottom: 2rpx;
+    left: 4rpx;
+    transform: rotate(45deg);
+}
+
+/* 3. 餐次选择 */
+.meal-selector {
+    display: flex;
+    gap: 24rpx;
+    margin-bottom: 48rpx;
+    overflow-x: auto; /* 允许横向滚动（虽然现在可能够放） */
+    padding-bottom: 4rpx;
+}
+
+.meal-pill {
+    padding: 16rpx 40rpx;
+    border-radius: 40rpx;
+    font-size: 28rpx;
+    font-weight: 800;
+    background: #F9FAFB;
+    color: #9CA3AF;
+    transition: all 0.2s ease;
+    border: none; /*移除边框，更现代*/
+}
+
+.meal-pill.active {
+    background: #111827;
+    color: #FFFFFF;
+    box-shadow: 0 8rpx 20rpx rgba(17, 24, 39, 0.2);
+    transform: translateY(-2rpx);
+}
+
+/* 4. 内容区域 */
+.log-content-area {
+    /* 主要是为了承载不同模式的内容 */
+}
+
+/* 模式A: 拍照 */
+.camera-trigger {
+    border: 4rpx dashed #E5E7EB; /* Lighter dashed line */
+    border-radius: 40rpx;
+    height: 480rpx; /* Taller area */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #F9FAFB;
+    transition: all 0.3s;
+}
+
+.camera-trigger:active {
+    background: #F3F4F6;
+    border-color: #D1D5DB;
+}
+
+/* 大相机图标容器 */
+.camera-circle {
+    width: 160rpx;
+    height: 160rpx;
+    background: #FFFFFF;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 32rpx;
+    box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.05); /* Soft shadow bubble */
+    position: relative;
+}
+
+/* CSS Drawn Large Camera */
+.camera-icon-lg {
+    width: 80rpx;
+    height: 64rpx;
+    position: relative;
+    color: var(--primary-color); /* Mint brand color */
+}
+
+.camera-icon-lg::before {
+    /* Camera Body */
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 5rpx solid currentColor;
+    border-radius: 16rpx;
+    background: rgba(16, 185, 129, 0.05); /* Tint */
+}
+
+.camera-icon-lg::after {
+    /* Lens */
+    content: '';
+    position: absolute;
+    width: 32rpx;
+    height: 32rpx;
+    border: 5rpx solid currentColor;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 6rpx rgba(255, 255, 255, 0.8) inset; /* Gap */
+}
+
+/* Top button hint */
+.camera-circle::after {
+    content: '';
+    position: absolute;
+    top: 40rpx;
+    right: 46rpx;
+    width: 10rpx;
+    height: 6rpx;
+    background: var(--primary-color);
+    border-radius: 4rpx;
+}
+
+.camera-text {
+    font-size: 36rpx;
+    font-weight: 900;
+    color: #1F2937;
+    margin-bottom: 12rpx;
+}
+
+.camera-subtext {
+    font-size: 26rpx;
+    color: #9CA3AF;
+    font-weight: 600;
+}
+
+/* 模式B: 搜索 */
+.search-box {
+    display: flex;
+    align-items: center;
+    background: #F9FAFB;
+    padding: 32rpx;
+    border-radius: 32rpx;
+    gap: 24rpx;
+    border: 2rpx solid transparent;
+    transition: all 0.3s;
+}
+
+.search-box:focus-within {
+    background: #FFFFFF;
+    border-color: var(--primary-color);
+    box-shadow: 0 8rpx 24rpx rgba(16, 185, 129, 0.1);
+}
+
+/* CSS Search Icon Small */
+.search-icon-sm {
+    width: 32rpx;
+    height: 32rpx;
+    position: relative;
+    color: #9CA3AF;
+}
+
+.search-box:focus-within .search-icon-sm {
+    color: var(--primary-color);
+}
+
+.search-icon-sm::before {
+    content: '';
+    position: absolute;
+    width: 24rpx;
+    height: 24rpx;
+    border: 4rpx solid currentColor;
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+}
+
+.search-icon-sm::after {
+    content: '';
+    position: absolute;
+    width: 10rpx;
+    height: 4rpx;
+    background: currentColor;
+    bottom: 2rpx;
+    right: 0;
+    transform: rotate(45deg);
+    border-radius: 4rpx;
+}
+
+/* 模式C: 手动输入 */
+.manual-mode {
+    display: flex;
+    flex-direction: column;
+    gap: 32rpx;
+}
+
+.form-row {
+    display: flex;
+    gap: 24rpx;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12rpx;
+}
+
+.form-group.grow {
+    flex: 1;
+}
+
+.form-group.half {
+    width: 48%; /* Slightly less than 50 to accommodate gap */
+}
+
+.label {
+    font-size: 24rpx;
+    font-weight: bold;
+    color: #9CA3AF;
+}
+
+.input-underline {
+    border-bottom: 2rpx solid #E5E7EB;
+    padding: 16rpx 0;
+    font-size: 40rpx;
+    font-weight: bold;
+    color: #111827;
+}
+
+.input-underline:focus {
+    border-bottom-color: #3B82F6;
+}
+
+.input-box {
+    background: #F9FAFB;
+    height: 88rpx;
+    border-radius: 16rpx;
+    padding: 0 24rpx;
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #111827;
+    text-align: center;
+}
+
+.text-input-box {
+    height: 112rpx;
+    background: #F3F4F6;
+    border-radius: 24rpx;
+    padding: 0 32rpx;
+    font-size: 32rpx;
+    font-weight: bold;
+    box-sizing: border-box;
+    width: 100%;
+    color: #111827;
+}
+
+/* 热量特殊样式 */
+.calories-input-wrapper {
+    background: #FFF7ED; /* Orange 50 */
+    height: 100rpx;
+    border-radius: 20rpx;
+    display: flex;
+    align-items: center;
+    padding: 0 32rpx;
+    justify-content: space-between;
+}
+
+.input-calories {
+    font-size: 48rpx;
+    font-weight: 800;
+    color: #EA580C; /* Orange 600 */
+    flex: 1;
+    height: 100%;
+}
+
+.flame-suffix {
+    font-size: 40rpx;
+    color: #F97316;
+}
+
+/* 宏量营养素 */
+.macros-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24rpx;
+}
+
+.macro-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12rpx;
+    align-items: center;
+}
+
+.macro-input-group .input-box {
+    width: 100%;
+    text-align: center;
+}
+
+/* 底部按钮 */
+.add-list-btn {
+    background: #6B7280; /* Gray 500 */
+    color: #FFFFFF;
+    border-radius: 20rpx;
+    height: 100rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32rpx;
+    font-weight: bold;
+    margin-top: 16rpx;
+    width: 100% !important; /* Override button default width */
+}
+
+/* ========== 运动记录弹窗专属样式 ========== */
+
+/* 1. 运动类型网格 */
+.exercise-type-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20rpx;
+    margin-bottom: 40rpx;
+}
+
+.exercise-grid-item {
+    aspect-ratio: 1;
+    background: #FFFFFF;
+    border: 2rpx solid #F3F4F6;
+    border-radius: 32rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12rpx;
+    transition: all 0.2s;
+}
+
+.exercise-grid-item.active {
+    border-color: #2563EB; /* Blue border */
+    background: #EFF6FF;   /* Light Blue bg */
+    box-shadow: 0 4rpx 12rpx rgba(37, 99, 235, 0.1);
+}
+
+.grid-icon {
+    font-size: 40rpx;
+}
+
+.grid-name {
+    font-size: 24rpx;
+    color: #6B7280;
+    font-weight: bold;
+}
+
+.exercise-grid-item.active .grid-name {
+    color: #2563EB;
+}
+
+/* 2. 通用卡片容器 */
+.exercise-card {
+    background: #FFFFFF;
+    border-radius: 40rpx;
+    padding: 32rpx;
+    margin-bottom: 24rpx;
+    border: 1rpx solid #F9FAFB;
+}
+
+.card-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    margin-bottom: 24rpx;
+}
+
+.card-icon {
+    font-size: 32rpx;
+}
+
+.card-title {
+    font-size: 28rpx;
+    font-weight: 800;
+    color: #374151;
+}
+
+/* 3. 时长滑块 */
+.duration-card {
+    background: #F9FAFB; /* Slightly grey for contrast */
+}
+
+.slider-row {
+    display: flex;
+    align-items: center;
+    gap: 24rpx;
+}
+
+.duration-slider {
+    flex: 1;
+    margin: 0; 
+}
+
+.duration-display {
+    display: flex;
+    align-items: baseline;
+    gap: 4rpx;
+    min-width: 120rpx;
+    justify-content: flex-end;
+}
+
+.duration-val {
+    font-size: 48rpx;
+    font-weight: 800;
+    color: #111827;
+    font-family: var(--font-number);
+}
+
+.duration-unit {
+    font-size: 24rpx;
+    color: #9CA3AF;
+    font-weight: bold;
+}
+
+/* 4. 结果卡片 (优化版) */
+.result-card {
+    background: #FFF7ED; /* Orange 50 */
+    border: 2rpx solid #FFEDD5;
+}
+
+.result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24rpx;
+}
+
+.result-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.result-label {
+    font-size: 28rpx;
+    font-weight: 800;
+    color: #9A3412; /* Darker Orange */
+}
+
+.result-sub {
+    font-size: 22rpx;
+    color: #F97316;
+    margin-top: 4rpx;
+    opacity: 0.8;
+}
+
+.result-input-group {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    border-bottom: 2rpx dashed #F97316; /* Dashed line indicates editable */
+    padding-bottom: 4rpx;
+}
+
+.calories-huge-input {
+    font-size: 64rpx; /* Slightly smaller but still hero */
+    font-weight: 800;
+    color: #C2410C;
+    text-align: right;
+    width: 140rpx;
+    height: 80rpx;
+    font-family: var(--font-number);
+}
+
+.edit-icon {
+    font-size: 28rpx;
+    opacity: 0.6;
+}
+
+.result-divider {
+    height: 2rpx;
+    background: rgba(249, 115, 22, 0.1);
+    margin-bottom: 16rpx;
+}
+
+.result-footer {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    font-size: 22rpx;
+    color: #C2410C;
+    opacity: 0.7;
+    font-weight: 500;
+}
+
+/* 5. 滚动区域特别处理 */
+.exercise-scroll-content {
+    max-height: 75vh;
+    overflow-y: scroll;
+    padding-bottom: 80rpx; /* Adjusted to 80rpx as requested */
+}
+
+/* ========== 食物列表模式样式 (List Mode) ========== */
+.tab-content.list-mode {
+    padding: 0 24rpx;
+}
+
+.food-card-item {
+    background: #FFFFFF;
+    border-radius: 32rpx;
+    padding: 24rpx;
+    margin-bottom: 24rpx;
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+    border: 1rpx solid rgba(0, 0, 0, 0.03);
+}
+
+/* 1. 头部标题行 */
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12rpx;
+}
+
+.card-title-input {
+    font-size: 36rpx;
+    font-weight: 600;
+    color: #1F2937;
+    flex: 1;
+}
+
+.card-close-btn {
+    width: 48rpx;
+    height: 48rpx;
+    line-height: 44rpx;
+    text-align: center;
+    background: #F3F4F6;
+    color: #9CA3AF;
+    border-radius: 50%;
+    font-size: 32rpx;
+}
+
+/* 2. 健康评分行 */
+.card-health-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 32rpx;
+    padding-bottom: 24rpx;
+    border-bottom: 1rpx dashed #E5E7EB;
+}
+
+.health-label {
+    font-size: 24rpx;
+    color: #6B7280;
+    margin-right: 16rpx;
+}
+
+.stars {
+    display: flex;
+    gap: 4rpx;
+}
+
+.star {
+    font-size: 24rpx;
+    color: #E5E7EB;
+}
+
+.star.active {
+    color: #FBBF24;
+}
+
+/* 3.主要输入区 (份量 & 热量) */
+.card-main-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24rpx;
+    gap: 24rpx;
+}
+
+.input-block {
+    background: #F9FAFB;
+    border-radius: 20rpx;
+    padding: 20rpx;
+}
+
+.input-block.portion-block {
+    flex: 1;
+}
+
+.input-block.calories-block {
+    flex: 1;
+    background: #FFFBEB; /* 淡黄色背景强调热量 */
+}
+
+.input-label {
+    font-size: 22rpx;
+    color: #6B7280;
+    display: block;
+    margin-bottom: 12rpx;
+}
+
+/* 份量输入行 */
+.portion-inputs {
+    display: flex;
+    align-items: baseline;
+    gap: 8rpx;
+}
+
+.portion-val {
+    font-size: 40rpx;
+    font-weight: 700;
+    color: #1F2937;
+    width: 80rpx;
+    height: 48rpx;
+}
+
+.portion-unit {
+    font-size: 28rpx;
+    color: #4B5563;
+    width: 60rpx;
+}
+
+/* 热量输入 */
+.calories-val {
+    font-size: 40rpx;
+    font-weight: 700;
+    color: #D97706;
+    height: 48rpx;
+}
+
+/* 4. 三色营养素网格 */
+.card-macro-grid {
+    display: flex;
+    gap: 16rpx;
+}
+
+.macro-box {
+    flex: 1;
+    border-radius: 20rpx;
+    padding: 16rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.macro-box.green-box { background: #ECFDF5; }
+.macro-box.blue-box { background: #EFF6FF; }
+.macro-box.orange-box { background: #FFF7ED; }
+
+.macro-val {
+    font-size: 32rpx;
+    font-weight: 700;
+    text-align: center;
+    height: 40rpx;
+    margin-bottom: 4rpx;
+}
+
+.macro-sub {
+    font-size: 20rpx;
+}
+
+.green-text { color: #059669; }
+.blue-text { color: #2563EB; }
+.orange-text { color: #D97706; }
+
+/* 底部按钮 */
+.add-more-btn {
+    background: #F3F4F6;
+    color: #4B5563;
+    border-radius: 50rpx;
+    font-size: 28rpx;
+    border: none;
+    margin-top: 12rpx;
+}
+
+
+.ai-nutrient-item.highlight {
+    background: #FFF7ED;
+    border-color: #FED7AA;
+}
+
+.ai-nutrient-label {
+    font-size: 24rpx;
+    color: #6B7280;
+    margin-bottom: 8rpx;
+}
+
+.ai-nutrient-input-row {
+    display: flex;
+    align-items: baseline;
+    gap: 4rpx;
+}
+
+.ai-nutrient-val {
+    font-size: 36rpx;
+    font-weight: 800;
+    color: #111827;
+    width: 120rpx;
+    height: 48rpx;
+}
+
+.ai-nutrient-unit {
+    font-size: 24rpx;
+    color: #9CA3AF;
+    font-weight: bold;
+}
+
+.ai-actions {
+    display: flex;
+    gap: 24rpx;
+}
+
+.ai-btn {
+    flex: 1;
+    height: 96rpx;
+    border-radius: 48rpx;
+    font-size: 30rpx;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ai-btn.cancel {
+    background: #F3F4F6;
+    color: #6B7280;
+}
+
+.ai-btn.confirm {
+    background: #111827;
+    color: #FFFFFF;
+    box-shadow: 0 8rpx 24rpx rgba(17, 24, 39, 0.25);
+}

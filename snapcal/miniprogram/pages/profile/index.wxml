@@ -1,0 +1,279 @@
+<view class="profile-container">
+  <!-- 使用 scroll-view 替换原生滚动，保持与其他页面一致的体验 -->
+  <scroll-view class="scroll-view" scroll-y enable-flex enhanced show-scrollbar="{{false}}">
+    <view class="scroll-content-wrapper">
+      <!-- 主页面 -->
+      <block wx:if="{{subPage === 'MAIN'}}">
+        <view class="header">
+          <text class="header-title">个人设置</text>
+        </view>
+
+        <view class="content">
+          <!-- 用户卡片 -->
+          <view class="user-card">
+            <view class="user-info">
+              <view class="avatar" bindtap="goToPersonal">
+                <image wx:if="{{user.avatarUrl}}" class="avatar-img" src="{{user.avatarUrl}}" mode="aspectFill" />
+                <text wx:else class="avatar-text">{{user.name ? user.name[0] : '?'}}</text>
+                <view class="edit-icon">✎</view>
+              </view>
+              <view class="user-text">
+                <text class="user-name">{{user.name || '未设置'}}</text>
+                <text class="user-hint">记得午休哦~</text>
+              </view>
+            </view>
+
+            <view class="stats-row">
+              <view class="stat-item">
+                <view class="stat-icon blue">📊</view>
+                <text class="stat-value">{{bmi}}</text>
+                <text class="stat-label">BMI</text>
+              </view>
+              <view class="stat-item">
+                <view class="stat-icon green">📈</view>
+                <text class="stat-value">{{user.weight}}</text>
+                <text class="stat-label">体重(kg)</text>
+              </view>
+              <view class="stat-item">
+                <view class="stat-icon purple">🎯</view>
+                <text class="stat-value">{{user.targetWeight}}</text>
+                <text class="stat-label">目标(kg)</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 健康管理 -->
+          <view class="menu-card">
+            <text class="menu-title">健康管理</text>
+            <view class="menu-item" bindtap="goToPersonal">
+              <view class="menu-icon blue">👤</view>
+              <text class="menu-label">个人资料</text>
+              <text class="menu-arrow">›</text>
+            </view>
+            <view class="menu-item" bindtap="goToNutrition">
+              <view class="menu-icon pink">❤️</view>
+              <text class="menu-label">营养目标设置</text>
+              <text class="menu-arrow">›</text>
+            </view>
+          </view>
+
+          <!-- 系统设置 -->
+          <view class="menu-card">
+            <text class="menu-title">系统设置</text>
+            <view class="menu-item" bindtap="goToHelp">
+              <view class="menu-icon gray">❓</view>
+              <text class="menu-label">帮助与反馈</text>
+              <text class="menu-arrow">›</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 个人资料子页面 -->
+      <block wx:elif="{{subPage === 'PERSONAL'}}">
+        <view class="sub-header">
+          <view></view> <!-- Placeholder to maintain space-between layout for centering title -->
+          <text class="sub-title">个人资料</text>
+          <view class="save-btn" bindtap="savePersonal">保存</view>
+        </view>
+
+        <view class="content">
+          <!-- 头像编辑区 -->
+          <view class="avatar-edit-card">
+            <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+              <image class="avatar-preview" src="{{editAvatar || (user.avatarUrl || '')}}" mode="aspectFill"></image>
+              <view class="edit-badge">✎</view>
+            </button>
+            <text class="avatar-tip">点击修改头像</text>
+            
+            <!-- 推荐头像 (横向滚动) -->
+            <view class="recommend-section">
+                <text class="recommend-title">推荐头像</text>
+                <scroll-view class="avatar-scroll-view" scroll-x enable-flex>
+                    <view class="avatar-scroll-list">
+                        <view class="default-avatar-item {{editAvatar === item ? 'active' : ''}}" 
+                              wx:for="{{defaultAvatars}}" 
+                              wx:key="index" 
+                              bindtap="onSelectDefaultAvatar" 
+                              data-path="{{item}}">
+                            <image class="def-avatar-img" src="{{item}}" mode="aspectFill"></image>
+                            <view class="selected-mark" wx:if="{{editAvatar === item}}">✓</view>
+                        </view>
+                    </view>
+                </scroll-view>
+            </view>
+          </view>
+
+          <view class="form-card">
+            <view class="form-row">
+              <text class="form-label">昵称</text>
+              <input class="form-input" value="{{editName}}" bindinput="onNameInput" />
+            </view>
+            <view class="form-row">
+              <text class="form-label">性别</text>
+              <view class="gender-toggle">
+                <view class="gender-btn {{editGender === '男' ? 'active male' : ''}}" data-gender="男" bindtap="selectGender">男</view>
+                <view class="gender-btn {{editGender === '女' ? 'active female' : ''}}" data-gender="女" bindtap="selectGender">女</view>
+              </view>
+            </view>
+            <view class="form-row">
+              <text class="form-label">年龄</text>
+              <view class="adjuster">
+                <view class="adj-btn" data-delta="-1" bindtap="adjustAge">−</view>
+                <text class="adj-value">{{editAge}}</text>
+                <view class="adj-btn" data-delta="1" bindtap="adjustAge">+</view>
+              </view>
+            </view>
+          </view>
+
+          <view class="form-card">
+            <view class="form-row">
+              <text class="form-label">身高 (cm)</text>
+              <view class="adjuster">
+                <view class="adj-btn" data-delta="-1" bindtap="adjustHeight">−</view>
+                <text class="adj-value">{{editHeight}}</text>
+                <view class="adj-btn" data-delta="1" bindtap="adjustHeight">+</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <!-- 营养目标子页面 -->
+      <block wx:elif="{{subPage === 'NUTRITION'}}">
+        <view class="sub-header">
+          <view class="std-back-btn" bindtap="goBack"></view>
+          <text class="sub-title">营养目标</text>
+          <view class="save-btn" bindtap="saveNutrition">保存</view>
+        </view>
+
+        <view class="content">
+          <!-- 目标体重 -->
+          <view class="target-card">
+            <text class="target-label">目标体重</text>
+            <view class="target-adjuster">
+              <view class="adj-btn-large" data-delta="-0.5" bindtap="adjustTargetWeight">−</view>
+              <view class="target-value">
+                <text class="target-number">{{editTargetWeight}}</text>
+                <text class="target-unit">kg</text>
+              </view>
+              <view class="adj-btn-large" data-delta="0.5" bindtap="adjustTargetWeight">+</view>
+            </view>
+          </view>
+
+          <!-- 主要目标 -->
+          <view class="section">
+            <text class="section-title">主要目标</text>
+            <view class="goal-grid">
+              <view class="goal-btn {{editGoal === '减脂' ? 'active' : ''}}" data-goal="减脂" bindtap="selectGoal">减脂</view>
+              <view class="goal-btn {{editGoal === '保持' ? 'active' : ''}}" data-goal="保持" bindtap="selectGoal">保持</view>
+              <view class="goal-btn {{editGoal === '增肌' ? 'active' : ''}}" data-goal="增肌" bindtap="selectGoal">增肌</view>
+            </view>
+          </view>
+
+          <!-- 饮食偏好 -->
+          <view class="section">
+            <text class="section-title">饮食偏好</text>
+            <view class="diet-grid">
+              <view class="diet-btn {{editDiet === 'balanced' ? 'active' : ''}}" data-diet="balanced" bindtap="selectDiet">
+                <text class="diet-name">均衡饮食</text>
+                <text wx:if="{{editDiet === 'balanced'}}" class="check">✓</text>
+              </view>
+              <view class="diet-btn {{editDiet === 'lowCarb' ? 'active' : ''}}" data-diet="lowCarb" bindtap="selectDiet">
+                <text class="diet-name">低碳水</text>
+                <text wx:if="{{editDiet === 'lowCarb'}}" class="check">✓</text>
+              </view>
+              <view class="diet-btn {{editDiet === 'highProtein' ? 'active' : ''}}" data-diet="highProtein" bindtap="selectDiet">
+                <text class="diet-name">高蛋白</text>
+                <text wx:if="{{editDiet === 'highProtein'}}" class="check">✓</text>
+              </view>
+              <view class="diet-btn {{editDiet === 'vegan' ? 'active' : ''}}" data-diet="vegan" bindtap="selectDiet">
+                <text class="diet-name">全素食</text>
+                <text wx:if="{{editDiet === 'vegan'}}" class="check">✓</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 自定义热量 -->
+          <view class="calories-card">
+            <text class="calories-label">🔥 自定义热量目标</text>
+            <view class="calories-input-wrap">
+              <input class="calories-input" type="number" value="{{editCalories}}" bindinput="onCaloriesInput" />
+              <text class="calories-unit">kcal</text>
+            </view>
+            <text class="calories-hint">根据您的资料建议: {{user.targetCalories}} kcal</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 帮助与反馈子页面 -->
+      <block wx:elif="{{subPage === 'HELP'}}">
+        <view class="sub-header">
+          <view class="std-back-btn" bindtap="goBack"></view>
+          <text class="sub-title">帮助与反馈</text>
+          <view class="save-btn"></view>
+        </view>
+
+        <view class="content">
+          <view class="section">
+            <text class="section-title">📖 常见问题</text>
+            <view class="faq-card">
+              <view class="faq-item">
+                <text>如何修改我的体重目标?</text>
+                <text class="faq-arrow">›</text>
+              </view>
+              <view class="faq-item">
+                <text>食物识别不准确怎么办?</text>
+                <text class="faq-arrow">›</text>
+              </view>
+              <view class="faq-item">
+                <text>如何连接健康设备?</text>
+                <text class="faq-arrow">›</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="section">
+            <text class="section-title">💬 问题反馈</text>
+            <view class="feedback-card">
+              <textarea class="feedback-input" placeholder="请描述您遇到的问题或建议..."></textarea>
+              <view class="submit-btn" bindtap="submitFeedback">提交反馈</view>
+            </view>
+          </view>
+
+          <view class="version">SnapCal v1.0.0</view>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
+
+
+  <!-- 底部固定导航栏 (复制自Dashboard) -->
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="switchToHome">
+      <view class="nav-icon icon-home"></view>
+      <text class="nav-text">首页</text>
+    </view>
+    
+    <view class="nav-item" bindtap="goToStats">
+      <view class="nav-icon icon-chart"></view>
+      <text class="nav-text">统计</text>
+    </view>
+    
+    <view class="nav-item nav-camera" bindtap="switchToCamera">
+      <view class="camera-button">
+        <view class="icon-camera"></view>
+      </view>
+    </view>
+    
+    <view class="nav-item" bindtap="goToHealth">
+      <view class="nav-icon icon-heart"></view>
+      <text class="nav-text">健康</text>
+    </view>
+    
+    <view class="nav-item active">
+      <view class="nav-icon icon-user"></view>
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+</view>

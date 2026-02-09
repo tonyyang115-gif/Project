@@ -1,0 +1,14 @@
+{
+    "navigationBarTitleText": "健康驿站",
+    "usingComponents": {
+        "tool-card": "../../components/health/tool-card/index",
+        "bmi-calculator": "../../components/health/bmi-calculator/index",
+        "bmr-calculator": "../../components/health/bmr-calculator/index",
+        "heart-rate-zone": "../../components/health/heart-rate-zone/index",
+        "whr-calculator": "../../components/health/whr-calculator/index",
+        "bfr-calculator": "../../components/health/bfr-calculator/index",
+        "rfm-calculator": "../../components/health/rfm-calculator/index",
+        "ingredient-analysis": "../../components/health/ingredient-analysis/index"
+    },
+    "navigationStyle": "custom"
+}

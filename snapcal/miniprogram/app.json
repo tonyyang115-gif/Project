@@ -1,0 +1,35 @@
+{
+    "pages": [
+        "pages/landing/index",
+        "pages/onboarding/index",
+        "pages/dashboard/index",
+        "pages/profile/index",
+        "pages/stats/index",
+        "pages/health/index",
+        "pages/food-logger/index",
+        "pages/exercise-logger/index"
+    ],
+    "cloud": true,
+    "lazyCodeLoading": "requiredComponents",
+    "renderer": "skyline",
+    "rendererOptions": {
+        "skyline": {
+            "defaultDisplayBlock": true,
+            "defaultContentBox": true
+        }
+    },
+    "componentFramework": "glass-easel",
+    "window": {
+        "navigationStyle": "custom",
+        "backgroundColor": "#F7F8FA"
+    },
+    "permission": {
+        "scope.userLocation": {
+            "desc": "你的位置信息将用于运动记录"
+        }
+    },
+    "requiredPrivateInfos": [
+        "getLocation",
+        "chooseLocation"
+    ]
+}

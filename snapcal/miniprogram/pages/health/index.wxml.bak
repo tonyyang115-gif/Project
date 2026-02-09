@@ -1,0 +1,289 @@
+<view class="page-wrapper">
+  <scroll-view type="list" scroll-y class="scroll-container" show-scrollbar="{{false}}">
+    <view class="health-container">
+  <!-- 主页面 -->
+  <block wx:if="{{!activeTool}}">
+    <!-- Header -->
+    <view class="header">
+      <view class="back-btn" bindtap="goBack">←</view>
+      <text class="header-title">健康驿站</text>
+      <view class="placeholder"></view>
+    </view>
+
+    <view class="content">
+      <!-- 瘦身大作战 Banner -->
+      <view class="banner banner-blue">
+        <view class="banner-bg">⚔️🏆</view>
+        <view class="banner-content">
+          <view class="banner-tag tag-yellow">热门活动</view>
+          <text class="banner-title">瘦身大作战</text>
+          <text class="banner-desc">与好友一起减脂，共同坚持更有动力!</text>
+          <view class="banner-btn">立即参与</view>
+        </view>
+      </view>
+
+      <!-- 配料表识别 Banner -->
+      <view class="banner banner-green" bindtap="openIngredientScanner">
+        <view class="banner-bg">🔬🛡️</view>
+        <view class="banner-content">
+          <view class="banner-tag tag-green">AI智能</view>
+          <text class="banner-title">配料表识别</text>
+          <text class="banner-desc">AI智能识别配料安全性，守护健康饮食</text>
+          <view class="banner-btn btn-green">立即识别</view>
+        </view>
+      </view>
+
+      <!-- 健康工具 -->
+      <view class="section">
+        <text class="section-title">健康工具</text>
+        <view class="tools-grid">
+          <view class="tool-card" data-tool="BMI" bindtap="selectTool">
+            <view class="tool-icon icon-blue">📊</view>
+            <text class="tool-name">BMI查询</text>
+            <text class="tool-desc">了解你的体质指数</text>
+          </view>
+          <view class="tool-card" data-tool="BMR" bindtap="selectTool">
+            <view class="tool-icon icon-orange">🔥</view>
+            <text class="tool-name">基础代谢率</text>
+            <text class="tool-desc">计算每日消耗热量</text>
+          </view>
+          <view class="tool-card" data-tool="BFR" bindtap="selectTool">
+            <view class="tool-icon icon-purple">%</view>
+            <text class="tool-name">体脂率</text>
+            <text class="tool-desc">计算身体脂肪含量</text>
+          </view>
+          <view class="tool-card" data-tool="RFM" bindtap="selectTool">
+            <view class="tool-icon icon-cyan">📐</view>
+            <text class="tool-name">相对脂肪量</text>
+            <text class="tool-desc">更精准的体脂评估</text>
+          </view>
+          <view class="tool-card" data-tool="WHR" bindtap="selectTool">
+            <view class="tool-icon icon-indigo">↕️</view>
+            <text class="tool-name">腰臀比</text>
+            <text class="tool-desc">判定中心性肥胖</text>
+          </view>
+          <view class="tool-card" data-tool="HR" bindtap="selectTool">
+            <view class="tool-icon icon-red">❤️</view>
+            <text class="tool-name">燃脂心率</text>
+            <text class="tool-desc">高效燃脂运动区间</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- BMI计算器 -->
+  <block wx:if="{{activeTool === 'BMI'}}">
+    <view class="tool-page">
+      <view class="header">
+        <view class="back-btn" bindtap="goBackToMain">←</view>
+        <text class="header-title">BMI 计算器</text>
+        <view class="placeholder"></view>
+      </view>
+      <view class="content">
+        <view class="result-card">
+          <text class="result-label">您的 BMI 指数</text>
+          <text class="result-value {{bmiColor}}">{{bmi}}</text>
+          <view class="result-status status-{{bmiColor}}">{{bmiStatus}}</view>
+        </view>
+        <view class="info-card">
+          <text class="info-title">BMI 标准参考</text>
+          <view class="info-row">
+            <text class="info-label">偏瘦</text>
+            <text class="info-value">&lt; 18.5</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">正常</text>
+            <text class="info-value">18.5 - 23.9</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">超重</text>
+            <text class="info-value">24.0 - 27.9</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">肥胖</text>
+            <text class="info-value">≥ 28.0</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- BMR计算器 -->
+  <block wx:if="{{activeTool === 'BMR'}}">
+    <view class="tool-page">
+      <view class="header">
+        <view class="back-btn" bindtap="goBackToMain">←</view>
+        <text class="header-title">基础代谢率 (BMR)</text>
+        <view class="placeholder"></view>
+      </view>
+      <view class="content">
+        <view class="result-card border-orange">
+          <view class="result-icon icon-orange-bg">🔥</view>
+          <text class="result-label">每日静息消耗</text>
+          <text class="result-value">{{bmr}}</text>
+          <text class="result-unit">kcal / 天</text>
+        </view>
+        <view class="info-card">
+          <text class="info-text">基础代谢率是指您在清醒且极端安静的状态下，不受肌肉活动、环境温度、食物及精神紧张等影响时的能量代谢率。</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- BFR体脂率 -->
+  <block wx:if="{{activeTool === 'BFR'}}">
+    <view class="tool-page">
+      <view class="header">
+        <view class="back-btn" bindtap="goBackToMain">←</view>
+        <text class="header-title">体脂率 (BFR)</text>
+        <view class="placeholder"></view>
+      </view>
+      <view class="content">
+        <view class="result-card border-purple">
+          <view class="result-icon icon-purple-bg">%</view>
+          <text class="result-label">估算体脂率</text>
+          <text class="result-value">{{bfr}}%</text>
+          <text class="result-unit">基于 BMI 公式估算</text>
+        </view>
+        <view class="tip-card">
+          <text>注：此结果仅基于公式估算，可能与实际体脂率存在偏差。建议结合专业设备测量。</text>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- RFM相对脂肪量 -->
+  <block wx:if="{{activeTool === 'RFM'}}">
+    <view class="tool-page">
+      <view class="header">
+        <view class="back-btn" bindtap="goBackToMain">←</view>
+        <text class="header-title">相对脂肪量 (RFM)</text>
+        <view class="placeholder"></view>
+      </view>
+      <view class="content">
+        <view class="input-card">
+          <text class="input-label">请输入腰围 (cm)</text>
+          <view class="stepper">
+            <view class="stepper-btn" data-delta="-1" bindtap="adjustWaist">−</view>
+            <text class="stepper-value">{{waist}}</text>
+            <view class="stepper-btn" data-delta="1" bindtap="adjustWaist">+</view>
+          </view>
+          <view class="divider"></view>
+          <text class="result-label">RFM 指数</text>
+          <text class="result-value cyan">{{rfm}}%</text>
+        </view>
+        <text class="tip-text">RFM (Relative Fat Mass) 是一种被认为比 BMI 更准确的体脂评估方式，仅需身高和腰围数据。</text>
+      </view>
+    </view>
+  </block>
+
+  <!-- WHR腰臀比 -->
+  <block wx:if="{{activeTool === 'WHR'}}">
+    <view class="tool-page">
+      <view class="header">
+        <view class="back-btn" bindtap="goBackToMain">←</view>
+        <text class="header-title">腰臀比 (WHR)</text>
+        <view class="placeholder"></view>
+      </view>
+      <view class="content">
+        <view class="input-card">
+          <view class="slider-group">
+            <text class="slider-label">腰围 (cm)</text>
+            <slider min="50" max="150" value="{{waistWhr}}" show-value bindchange="onWaistWhrChange" activeColor="#6366f1"/>
+          </view>
+          <view class="slider-group">
+            <text class="slider-label">臀围 (cm)</text>
+            <slider min="50" max="150" value="{{hip}}" show-value bindchange="onHipChange" activeColor="#6366f1"/>
+          </view>
+          <view class="divider"></view>
+          <text class="result-label">腰臀比</text>
+          <text class="result-value indigo">{{whr}}</text>
+          <view class="result-status {{whrHealthy ? 'status-green' : 'status-red'}}">
+            {{whrHealthy ? '健康范围' : '中心性肥胖风险'}}
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 燃脂心率 -->
+  <block wx:if="{{activeTool === 'HR'}}">
+    <view class="tool-page">
+      <view class="header">
+        <view class="back-btn" bindtap="goBackToMain">←</view>
+        <text class="header-title">燃脂心率</text>
+        <view class="placeholder"></view>
+      </view>
+      <view class="content">
+        <view class="result-card border-red">
+          <view class="result-icon icon-red-bg pulse">❤️</view>
+          <text class="result-label">最佳燃脂区间</text>
+          <view class="hr-value">
+            <text class="hr-num">{{burnMin}} - {{burnMax}}</text>
+            <text class="hr-unit">bpm</text>
+          </view>
+          <text class="result-unit">最大心率: {{maxHr}} bpm</text>
+        </view>
+        <view class="hr-zones">
+          <text class="zones-title">心率区间说明</text>
+          <view class="zone-item">
+            <view class="zone-bar gray"></view>
+            <view class="zone-info">
+              <text class="zone-name">热身/恢复 (50-60%)</text>
+              <text class="zone-range">{{maxHr * 0.5}} - {{maxHr * 0.6}} bpm</text>
+            </view>
+          </view>
+          <view class="zone-item highlight">
+            <view class="zone-bar red"></view>
+            <view class="zone-info">
+              <text class="zone-name red-text">燃脂区间 (60-80%)</text>
+              <text class="zone-range">{{burnMin}} - {{burnMax}} bpm</text>
+            </view>
+          </view>
+          <view class="zone-item">
+            <view class="zone-bar orange"></view>
+            <view class="zone-info">
+              <text class="zone-name">心肺强化 (80-90%)</text>
+              <text class="zone-range">{{maxHr * 0.8}} - {{maxHr * 0.9}} bpm</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+
+    </view>
+  </scroll-view>
+
+  <!-- 底部固定导航栏 (复制自Dashboard) -->
+  <view class="bottom-nav">
+    <view class="nav-item" bindtap="switchToHome">
+      <view class="nav-icon icon-home"></view>
+      <text class="nav-text">首页</text>
+    </view>
+    
+    <view class="nav-item" bindtap="goToStats">
+      <view class="nav-icon icon-chart"></view>
+      <text class="nav-text">统计</text>
+    </view>
+    
+    <view class="nav-item nav-camera" bindtap="switchToCamera">
+      <view class="camera-button">
+        <view class="icon-camera"></view>
+      </view>
+    </view>
+    
+    <view class="nav-item active">
+      <view class="nav-icon icon-heart"></view>
+      <text class="nav-text">健康</text>
+    </view>
+    
+    <view class="nav-item" bindtap="switchToProfile">
+      <view class="nav-icon icon-user"></view>
+      <text class="nav-text">我的</text>
+    </view>
+  </view>
+
+</view>

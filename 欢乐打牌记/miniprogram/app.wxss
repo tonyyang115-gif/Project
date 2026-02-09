@@ -1,0 +1,75 @@
+/* app.wxss - 全局样式 */
+page {
+  background-color: #f6f7f9;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 全局容器最大宽度限制 */
+page,
+view,
+text {
+  box-sizing: border-box;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 750rpx;
+  margin: 0 auto;
+}
+
+/* 通用样式 */
+.btn-primary {
+  background-color: #4c88ff;
+  color: #ffffff;
+}
+
+.btn-primary:active {
+  background-color: #3b76f6;
+}
+
+.text-primary {
+  color: #4c88ff;
+}
+
+.bg-primary {
+  background-color: #4c88ff;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: #ffffff;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+/* 滚动容器 */
+.scroll-view {
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 全局宽度限制 */
+page,
+view {
+  max-width: 100%;
+}
+
+/* 文本溢出处理 */
+text {
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+/* 图片自适应 */
+image {
+  max-width: 100%;
+  height: auto;
+}
+

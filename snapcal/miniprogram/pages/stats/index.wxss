@@ -1,0 +1,413 @@
+/* 页面容器 - 占满全屏 */
+.page-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* 防止页面级滚动 */
+}
+
+/* 滚动区域 - 占据剩余空间 */
+.scroll-container {
+  flex: 1;
+  height: 100%;
+  width: 100%;
+}
+
+.stats-container {
+  min-height: 100%;
+  background: #f8fafc;
+  padding-bottom: calc(200rpx + env(safe-area-inset-bottom));
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  padding-top: calc(env(safe-area-inset-top) + 20px);
+  background: #fff;
+}
+
+.back-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #374151;
+  background: #f1f5f9;
+  border-radius: 12px;
+}
+
+.header-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.placeholder {
+  width: 40px;
+}
+
+/* Content */
+.content {
+  padding: 16px 20px;
+}
+
+/* Calendar Card */
+.calendar-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  margin-bottom: 24px;
+}
+
+.month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.nav-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #9ca3af;
+  background: #f8fafc;
+  border-radius: 8px;
+}
+
+.month-text {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 16px;
+}
+
+.weekday {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #d1d5db;
+}
+
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px 0;
+}
+
+.day-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.day-num {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.day-num.today {
+  color: #2563eb;
+  background: #eff6ff;
+}
+
+.day-num.selected {
+  color: #fff;
+  background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  transform: scale(1.1);
+}
+
+/* Section */
+.section {
+  margin-bottom: 24px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 16px;
+  display: block;
+}
+
+/* Overview Row */
+.overview-row {
+  display: flex;
+  gap: 12px;
+}
+
+.overview-card {
+  flex: 1;
+  background: #fff;
+  padding: 20px;
+  border-radius: 24px;
+  border: 1px solid #f1f5f9;
+}
+
+.overview-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ca3af;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.overview-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.value-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.value-unit {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.trend-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.trend-tag.red {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.trend-tag.green {
+  background: #f0fdf4;
+  color: #22c55e;
+}
+
+/* Detail Card */
+.detail-card {
+  background: #fff;
+  padding: 24px;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.calorie-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.calorie-left,
+.calorie-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.calorie-right {
+  align-items: flex-end;
+}
+
+.calorie-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.calorie-value {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.cal-num {
+  font-size: 28px;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.cal-num.dark {
+  font-size: 20px;
+  color: #111827;
+}
+
+.calorie-value.over .cal-num {
+  color: #ef4444;
+}
+
+.cal-unit {
+  font-size: 14px;
+  font-weight: 700;
+  color: #d1d5db;
+}
+
+.target-detail {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding: 4px 8px;
+  background: #f8fafc;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.target-detail .plus {
+  color: #d1d5db;
+}
+
+.target-detail .exercise {
+  color: #22c55e;
+}
+
+/* Progress Bar */
+.progress-bar {
+  height: 12px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb 0%, #3b82f6 100%);
+  border-radius: 6px;
+  transition: width 0.8s ease;
+}
+
+.progress-fill.over {
+  background: linear-gradient(90deg, #ef4444 0%, #f87171 100%);
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.progress-percent {
+  font-size: 10px;
+  font-weight: 700;
+  color: #9ca3af;
+}
+
+.remaining-tag {
+  padding: 4px 12px;
+  background: #f0fdf4;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #22c55e;
+}
+
+.remaining-tag.over {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+/* Macro Grid */
+/* Macro Card Styles */
+.macro-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.macro-card {
+  background: #f9fafb;
+  padding: 16px;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.macro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.macro-label {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 600;
+}
+
+.macro-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.purple-icon {
+  background: #f3f0ff;
+  color: #7c3aed;
+}
+
+.blue-icon {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.orange-icon {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+.macro-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #1f2937;
+  margin-bottom: 2px;
+}
+
+.macro-percent {
+  font-size: 10px;
+  font-weight: 700;
+  color: #d1d5db;
+}
