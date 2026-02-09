@@ -33,3 +33,11 @@ cloudfunctions/*/config.json
 # API 密钥
 **/QWEN_API_KEY.txt
 **/api_keys.json
+
+# WeChat Mini Program Private Config
+project.private.config.json
+miniprogram/envList.js
+
+# AI Agent Artifacts
+.agent/
+.gemini/
