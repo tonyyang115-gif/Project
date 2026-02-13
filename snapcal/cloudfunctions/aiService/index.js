@@ -4,6 +4,8 @@ const { QwenProvider } = require('./ai/qwenProvider')
 
 const INGREDIENT_RISK_LEVELS = new Set(['low', 'medium', 'high'])
 const INGREDIENT_TYPES = new Set(['common', 'additive', 'allergen', 'sugar', 'fat'])
+const RATE_LIMIT_PER_MINUTE = 6
+const DAILY_QUOTA_LIMIT = 80
 
 /**
  * 从环境变量读取API Key
@@ -157,6 +159,9 @@ async function analyzeIngredients(db, event, openid, cloud) {
     const fileIdToCleanup = cleanupFileId || (imageUrl.startsWith('cloud://') ? imageUrl : null)
 
     try {
+        phase = 'rate_limit'
+        await enforceRateLimit(db, openid, 'analyzeIngredients')
+
         // 处理 cloud:// 链接
         phase = 'resolve_temp_url'
         let targetUrl = imageUrl
@@ -365,5 +370,40 @@ async function safeDeleteCloudFile(cloud, fileID) {
             fileID,
             message: error.message
         })
+    }
+}
+
+async function enforceRateLimit(db, openid, action) {
+    const now = Date.now()
+    const windowStart = now - 60 * 1000
+    const date = new Date().toISOString().split('T')[0]
+    const command = db.command
+
+    const minuteQuery = await db.collection('ai_usage')
+        .where({
+            _openid: openid,
+            action,
+            timestamp: command.gte(windowStart)
+        })
+        .count()
+
+    if (minuteQuery.total >= RATE_LIMIT_PER_MINUTE) {
+        const error = new Error('请求过于频繁，请稍后再试')
+        error.code = 'RATE_LIMITED'
+        throw error
+    }
+
+    const dailyQuery = await db.collection('ai_usage')
+        .where({
+            _openid: openid,
+            action,
+            date
+        })
+        .count()
+
+    if (dailyQuery.total >= DAILY_QUOTA_LIMIT) {
+        const error = new Error('今日识别次数已达上限，请明日再试')
+        error.code = 'QUOTA_EXCEEDED'
+        throw error
     }
 }
