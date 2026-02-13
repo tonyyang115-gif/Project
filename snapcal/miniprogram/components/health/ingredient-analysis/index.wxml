@@ -1,6 +1,7 @@
 <view class="tool-modal {{visible ? 'show' : ''}}" style="z-index: 10000;">
   <view class="modal-mask" bindtap="onClose"></view>
   <view class="modal-content full-screen">
+    <view class="sheet-grabber"></view>
     
     <view class="modal-header">
       <text class="modal-title">配料成分分析</text>
@@ -11,11 +12,27 @@
         
         <!-- Loading State -->
         <view class="loading-state" wx:if="{{analyzing}}">
-            <view class="scanner-anim">
-                <view class="scan-line"></view>
+            <view class="loading-panel">
+                <view class="scanner-anim">
+                    <view class="scan-line"></view>
+                    <view class="scan-shimmer"></view>
+                </view>
+                <view class="loading-copy">
+                    <text class="loading-text">正在解析配料表</text>
+                    <text class="loading-sub">已识别文本 · 正在评估添加剂与风险</text>
+                </view>
+                <view class="loading-steps">
+                    <view class="step-chip active">OCR提取</view>
+                    <view class="step-chip active">成分归类</view>
+                    <view class="step-chip">风险评估</view>
+                </view>
+                <view class="loading-skeleton">
+                    <view class="skeleton-row"></view>
+                    <view class="skeleton-row short"></view>
+                    <view class="skeleton-row"></view>
+                </view>
             </view>
-            <text class="loading-text">AI 正在深度解析配料表...</text>
-            <text class="loading-sub">识别添加剂、过敏原及潜在健康风险</text>
+            <button class="loading-wait-btn" disabled>请稍候...</button>
         </view>
 
         <!-- Result State -->
@@ -65,11 +82,11 @@
                     <view class="ing-row" wx:for="{{result.ingredients}}" wx:key="index">
                         <!-- 左侧图标 -->
                         <view class="ing-type-icon {{item.type}}">
-                            <text wx:if="{{item.type === 'additive'}}">🧪</text>
-                            <text wx:elif="{{item.type === 'sugar'}}">🍬</text>
-                            <text wx:elif="{{item.type === 'fat'}}">💧</text>
-                            <text wx:elif="{{item.type === 'allergen'}}">⚠️</text>
-                            <text wx:else>🌾</text>
+                            <view class="shape shape-additive" wx:if="{{item.type === 'additive'}}"></view>
+                            <view class="shape shape-sugar" wx:elif="{{item.type === 'sugar'}}"></view>
+                            <view class="shape shape-fat" wx:elif="{{item.type === 'fat'}}"></view>
+                            <view class="shape shape-allergen" wx:elif="{{item.type === 'allergen'}}"></view>
+                            <view class="shape shape-common" wx:else></view>
                         </view>
                         
                         <!-- 中间内容 -->
@@ -77,6 +94,7 @@
                             <view class="ing-name-row">
                                 <text class="ing-name">{{item.name}}</text>
                                 <text class="risk-badge {{item.riskLevel}}" wx:if="{{item.riskLevel !== 'low'}}">
+                                    <text class="risk-dot {{item.riskLevel}}"></text>
                                     {{item.riskLevel === 'high' ? '高风险' : '需注意'}}
                                 </text>
                             </view>
@@ -88,6 +106,14 @@
 
             <button class="re-scan-btn" bindtap="startScan">识别下一张</button>
             <view class="safe-area-bottom"></view>
+        </view>
+
+        <!-- Empty Fallback State -->
+        <view class="empty-state" wx:if="{{!analyzing && !result}}">
+            <view class="empty-icon">📷</view>
+            <text class="empty-title">请先选择配料表图片</text>
+            <text class="empty-desc">支持拍摄或从相册选择，AI 将自动分析成分与风险</text>
+            <button class="empty-action-btn" bindtap="startScan">选择图片开始识别</button>
         </view>
     </scroll-view>
   </view>

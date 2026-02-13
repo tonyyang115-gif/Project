@@ -16,11 +16,40 @@ Component({
     },
 
     methods: {
-        onClose() {
+        resetState() {
+            this.setData({ result: null, analyzing: false, hasHighRisk: false, requestId: '' })
+        },
+
+        doClose() {
             this.triggerEvent('close')
             setTimeout(() => {
-                this.setData({ result: null, analyzing: false, hasHighRisk: false })
+                this.resetState()
             }, 300)
+        },
+
+        onClose() {
+            if (this.data.analyzing) {
+                wx.showModal({
+                    title: '中断识别？',
+                    content: '当前正在分析配料表，关闭后本次识别将中断。',
+                    confirmText: '中断',
+                    cancelText: '继续等待',
+                    confirmColor: '#ef4444',
+                    success: (res) => {
+                        if (res.confirm) {
+                            this.doClose()
+                        }
+                    }
+                })
+                return
+            }
+
+            this.doClose()
+        },
+
+        isUserCancelError(error) {
+            const msg = String((error && (error.errMsg || error.message)) || '').toLowerCase()
+            return msg.includes('cancel')
         },
 
         startScan() {
@@ -31,8 +60,19 @@ Component({
                 success: async (res) => {
                     this.analyzeImage(res.tempFiles[0].tempFilePath)
                 },
-                fail: () => {
-                    // User cancelled, maybe do nothing or close if initial
+                fail: (err) => {
+                    // 取消后若当前无结果，直接关闭，避免出现空白弹层
+                    if (this.isUserCancelError(err)) {
+                        if (!this.data.result && !this.data.analyzing) {
+                            this.onClose()
+                        }
+                        return
+                    }
+
+                    wx.showToast({ title: '无法访问相机或相册', icon: 'none' })
+                    if (!this.data.result && !this.data.analyzing) {
+                        this.onClose()
+                    }
                 }
             })
         },
@@ -62,6 +102,7 @@ Component({
 
                 if (aiResult.success && aiResult.data) {
                     const data = this.normalizeResult(aiResult.data)
+                    if (this.data.requestId !== requestId) return
 
                     // Simple check for high risk to toggle UI state
                     const hasHighRisk = data.riskLevel === 'high' ||
@@ -72,16 +113,20 @@ Component({
                         hasHighRisk
                     })
                 } else {
+                    if (this.data.requestId !== requestId) return
                     wx.showToast({ title: '识别失败，请重试', icon: 'none' })
                     this.onClose()
                 }
 
             } catch (error) {
+                if (this.data.requestId !== requestId) return
                 console.error('[Ingredient] Analysis failed', error)
                 wx.showToast({ title: '服务繁忙，请稍后', icon: 'none' })
                 this.onClose()
             } finally {
-                this.setData({ analyzing: false })
+                if (this.data.requestId === requestId) {
+                    this.setData({ analyzing: false })
+                }
             }
         },
 

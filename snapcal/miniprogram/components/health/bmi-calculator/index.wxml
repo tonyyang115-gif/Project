@@ -40,9 +40,9 @@
               <view class="needle-pivot"></view>
             </view>
             
-            <!-- 中心玻璃罩 -->
-            <view class="gauge-center-glass">
-              <view class="value-container">
+            <!-- 外圈数字舱 -->
+            <view class="gauge-value-orbit {{result.color}}">
+              <view class="value-container orbit">
                 <text class="bmi-value {{result.color}}">{{result.value}}</text>
                 <text class="bmi-label">BMI</text>
               </view>
@@ -78,6 +78,17 @@
             <text class="label">身高 (cm)</text>
             <text class="value-display">{{tempHeight}}</text>
           </view>
+          <view class="manual-input-row">
+            <input
+              class="manual-input"
+              type="digit"
+              value="{{tempHeight}}"
+              maxlength="3"
+              placeholder="请输入身高"
+              bindinput="onHeightInput"
+            />
+            <text class="manual-unit">cm</text>
+          </view>
           <slider min="100" max="230" value="{{tempHeight}}" activeColor="#10B981" bindchanging="onHeightChange" bindchange="onHeightChange" />
         </view>
 
@@ -85,6 +96,17 @@
           <view class="label-row">
             <text class="label">体重 (kg)</text>
             <text class="value-display">{{tempWeight}}</text>
+          </view>
+          <view class="manual-input-row">
+            <input
+              class="manual-input"
+              type="digit"
+              value="{{tempWeight}}"
+              maxlength="5"
+              placeholder="请输入体重"
+              bindinput="onWeightInput"
+            />
+            <text class="manual-unit">kg</text>
           </view>
           <slider min="30" max="150" value="{{tempWeight}}" activeColor="#10B981" bindchanging="onWeightChange" bindchange="onWeightChange" />
         </view>

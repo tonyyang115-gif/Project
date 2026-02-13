@@ -32,6 +32,12 @@ Component({
         }
     },
 
+    lifetimes: {
+        attached() {
+            this.calculate()
+        }
+    },
+
     methods: {
         // 关闭弹窗
         onClose() {
@@ -48,6 +54,38 @@ Component({
         onWeightChange(e) {
             const val = e.detail.value
             this.setData({ tempWeight: val })
+            this.calculate()
+        },
+
+        onHeightInput(e) {
+            const input = String(e.detail.value || '').replace(/[^\d.]/g, '')
+            if (!input) {
+                return
+            }
+
+            const numeric = Math.round(Number(input))
+            if (!Number.isFinite(numeric)) {
+                return
+            }
+
+            const clamped = Math.max(100, Math.min(230, numeric))
+            this.setData({ tempHeight: clamped })
+            this.calculate()
+        },
+
+        onWeightInput(e) {
+            const input = String(e.detail.value || '').replace(/[^\d.]/g, '')
+            if (!input) {
+                return
+            }
+
+            const numeric = Math.round(Number(input))
+            if (!Number.isFinite(numeric)) {
+                return
+            }
+
+            const clamped = Math.max(30, Math.min(150, numeric))
+            this.setData({ tempWeight: clamped })
             this.calculate()
         },
 

@@ -26,6 +26,11 @@ Page({
         this.loadUserProfile()
     },
 
+    isUserCancelError(error) {
+        const msg = String((error && (error.errMsg || error.message)) || '').toLowerCase()
+        return msg.includes('cancel')
+    },
+
     loadUserProfile() {
         const profile = wx.getStorageSync('userProfile')
         if (profile) {
@@ -170,10 +175,34 @@ Page({
 
     // 配料表识别
     openIngredientScanner() {
-        this.setData({ showScanner: true }, () => {
-            const scanner = this.selectComponent('#scanner')
-            if (scanner) {
-                scanner.startScan()
+        wx.chooseMedia({
+            count: 1,
+            mediaType: ['image'],
+            sourceType: ['camera', 'album'],
+            success: (res) => {
+                const filePath = res && res.tempFiles && res.tempFiles[0] && res.tempFiles[0].tempFilePath
+                if (!filePath) {
+                    wx.showToast({ title: '未获取到图片，请重试', icon: 'none' })
+                    return
+                }
+
+                // 仅在用户选图成功后展示分析弹层
+                this.setData({ showScanner: true }, () => {
+                    const scanner = this.selectComponent('#scanner')
+                    if (scanner && typeof scanner.analyzeImage === 'function') {
+                        scanner.analyzeImage(filePath)
+                    } else {
+                        this.setData({ showScanner: false })
+                        wx.showToast({ title: '组件加载失败，请重试', icon: 'none' })
+                    }
+                })
+            },
+            fail: (err) => {
+                if (this.isUserCancelError(err)) {
+                    return
+                }
+
+                wx.showToast({ title: '无法访问相机或相册', icon: 'none' })
             }
         })
     },
@@ -204,4 +233,3 @@ Page({
         })
     }
 })
-
