@@ -77,7 +77,7 @@ class QwenProvider {
             return result
         } catch (error) {
             console.error('[QwenProvider] 图片识别失败', error)
-            throw new Error(`AI识别失败: ${error.message}`)
+            throw this._toProviderError(error, 'AI_PROVIDER_ERROR', `AI识别失败: ${error.message}`)
         }
     }
 
@@ -122,17 +122,25 @@ class QwenProvider {
             const response = await this._request(requestBody)
             const content = response.output?.choices?.[0]?.message?.content?.[0]?.text
 
-            if (!content) throw new Error('AI无响应')
+            if (!content) {
+                throw this._buildError('AI_PARSE_ERROR', 'AI无响应')
+            }
 
             const clean = content.replace(/```json\n?|\n?```/g, '')
             const jsonMatch = clean.match(/\{[\s\S]*\}/)
 
-            if (!jsonMatch) throw new Error('格式解析失败')
+            if (!jsonMatch) {
+                throw this._buildError('AI_PARSE_ERROR', '格式解析失败')
+            }
 
-            return JSON.parse(jsonMatch[0])
+            try {
+                return JSON.parse(jsonMatch[0])
+            } catch (error) {
+                throw this._buildError('AI_PARSE_ERROR', `JSON解析失败: ${error.message}`)
+            }
         } catch (error) {
             console.error('[QwenProvider] 配料分析失败', error)
-            throw new Error(`AI分析失败: ${error.message}`)
+            throw this._toProviderError(error, 'AI_PROVIDER_ERROR', `AI分析失败: ${error.message}`)
         }
     }
 
@@ -182,7 +190,7 @@ class QwenProvider {
             return JSON.parse(jsonMatch[0])
         } catch (error) {
             console.error('[QwenProvider] 营养分析失败', error)
-            throw new Error(`营养分析失败: ${error.message}`)
+            throw this._toProviderError(error, 'AI_PROVIDER_ERROR', `营养分析失败: ${error.message}`)
         }
     }
 
@@ -195,7 +203,7 @@ class QwenProvider {
 
         return new Promise((resolve, reject) => {
             const timeoutId = setTimeout(() => {
-                reject(new Error('AI_TIMEOUT'))
+                reject(this._buildError('AI_TIMEOUT', 'AI_TIMEOUT'))
             }, this.timeout)
 
             const postData = JSON.stringify(body)
@@ -224,7 +232,7 @@ class QwenProvider {
                     clearTimeout(timeoutId)
 
                     if (res.statusCode !== 200) {
-                        reject(new Error(`API请求失败: ${res.statusCode}`))
+                        reject(this._buildError('AI_PROVIDER_ERROR', `API请求失败: ${res.statusCode}`))
                         return
                     }
 
@@ -232,31 +240,48 @@ class QwenProvider {
                         const result = JSON.parse(data)
 
                         if (result.code) {
-                            reject(new Error(`API错误: ${result.code} - ${result.message}`))
+                            reject(this._buildError('AI_PROVIDER_ERROR', `API错误: ${result.code} - ${result.message}`))
                             return
                         }
 
                         resolve(result)
                     } catch (error) {
-                        reject(new Error(`JSON解析失败: ${error.message}`))
+                        reject(this._buildError('AI_PROVIDER_ERROR', `JSON解析失败: ${error.message}`))
                     }
                 })
             })
 
             req.on('error', (error) => {
                 clearTimeout(timeoutId)
-                reject(new Error(`网络请求失败: ${error.message}`))
+                reject(this._buildError('AI_PROVIDER_ERROR', `网络请求失败: ${error.message}`))
             })
 
             req.on('timeout', () => {
                 clearTimeout(timeoutId)
                 req.destroy()
-                reject(new Error('AI_TIMEOUT'))
+                reject(this._buildError('AI_TIMEOUT', 'AI_TIMEOUT'))
             })
 
             req.write(postData)
             req.end()
         })
+    }
+
+    _buildError(code, message) {
+        const error = new Error(message)
+        error.code = code
+        return error
+    }
+
+    _toProviderError(error, fallbackCode, fallbackMessage) {
+        if (error && error.code) {
+            return error
+        }
+
+        const wrapped = new Error(fallbackMessage)
+        wrapped.code = fallbackCode
+        wrapped.cause = error
+        return wrapped
     }
 }
 

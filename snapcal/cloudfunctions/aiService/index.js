@@ -2,6 +2,9 @@
 const { DBAdapter, initCloud } = require('./dbAdapter')
 const { QwenProvider } = require('./ai/qwenProvider')
 
+const INGREDIENT_RISK_LEVELS = new Set(['low', 'medium', 'high'])
+const INGREDIENT_TYPES = new Set(['common', 'additive', 'allergen', 'sugar', 'fat'])
+
 /**
  * 从环境变量读取API Key
  * 优先级: 云端环境变量 > 本地 env.local.js
@@ -139,36 +142,90 @@ async function analyzeFoodImage(db, event, openid, cloud) {
  */
 async function analyzeIngredients(db, event, openid, cloud) {
     const data = event.data || event
-    const { imageUrl } = data
+    const { imageUrl, cleanupFileId } = data
+    const requestId = data.requestId || `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    let phase = 'validate'
+    const startTime = Date.now()
+    let providerLatency = null
 
-    if (!imageUrl) throw new Error('缺少图片')
-
-    // 处理 cloud:// 链接
-    let targetUrl = imageUrl
-    if (imageUrl.startsWith('cloud://')) {
-        const res = await cloud.getTempFileURL({ fileList: [imageUrl] })
-        if (res.fileList?.[0]?.tempFileURL) targetUrl = res.fileList[0].tempFileURL
+    if (!imageUrl) {
+        const error = new Error('缺少图片')
+        error.code = 'INVALID_INPUT'
+        throw error
     }
 
-    if (!QWEN_API_KEY) throw new Error('API Key未配置')
+    const fileIdToCleanup = cleanupFileId || (imageUrl.startsWith('cloud://') ? imageUrl : null)
 
-    const qwen = new QwenProvider(QWEN_API_KEY)
+    try {
+        // 处理 cloud:// 链接
+        phase = 'resolve_temp_url'
+        let targetUrl = imageUrl
+        if (imageUrl.startsWith('cloud://')) {
+            const res = await cloud.getTempFileURL({ fileList: [imageUrl] })
+            if (res.fileList?.[0]?.tempFileURL) {
+                targetUrl = res.fileList[0].tempFileURL
+            } else {
+                const error = new Error('图片链接转换失败')
+                error.code = 'TEMP_URL_RESOLVE_FAILED'
+                throw error
+            }
+        }
 
-    const startTime = Date.now()
-    const result = await qwen.analyzeIngredientImage(targetUrl)
-    const duration = Date.now() - startTime
+        if (!QWEN_API_KEY) {
+            const error = new Error('API Key未配置')
+            error.code = 'CONFIG_MISSING'
+            throw error
+        }
 
-    await logAIUsage(db, {
-        openid,
-        action: 'analyzeIngredients',
-        success: true,
-        duration,
-        env: event.__env
-    })
+        const qwen = new QwenProvider(QWEN_API_KEY)
 
-    return {
-        success: true,
-        data: result
+        phase = 'provider_call'
+        const providerStart = Date.now()
+        const rawResult = await qwen.analyzeIngredientImage(targetUrl)
+        providerLatency = Date.now() - providerStart
+
+        phase = 'normalize_result'
+        const normalizedResult = normalizeIngredientResult(rawResult)
+        const duration = Date.now() - startTime
+
+        phase = 'log_success'
+        await logAIUsage(db, {
+            openid,
+            action: 'analyzeIngredients',
+            success: true,
+            duration,
+            providerLatency,
+            phase,
+            requestId,
+            env: event.__env
+        })
+
+        return {
+            success: true,
+            data: normalizedResult,
+            requestId
+        }
+    } catch (error) {
+        const duration = Date.now() - startTime
+        const errorCode = error.code || 'UNKNOWN_ERROR'
+
+        await logAIUsage(db, {
+            openid,
+            action: 'analyzeIngredients',
+            success: false,
+            duration,
+            providerLatency,
+            phase,
+            requestId,
+            errorCode,
+            errorMessage: error.message,
+            env: event.__env
+        })
+
+        error.code = errorCode
+        throw error
+    } finally {
+        await safeDeleteCloudFile(cloud, fileIdToCleanup)
     }
 }
 
@@ -219,6 +276,12 @@ async function logAIUsage(db, data) {
                 action: data.action,
                 success: data.success,
                 duration: data.duration,
+                providerLatency: data.providerLatency || null,
+                phase: data.phase || null,
+                requestId: data.requestId || null,
+                errorCode: data.errorCode || null,
+                errorMessage: data.errorMessage || null,
+                env: data.env || null,
                 timestamp: Date.now(),
                 date: new Date().toISOString().split('T')[0]
             }
@@ -226,5 +289,81 @@ async function logAIUsage(db, data) {
     } catch (error) {
         console.error('[aiService] 记录AI使用失败', error)
         // 不抛出错误，避免影响主流程
+    }
+}
+
+function normalizeIngredientResult(raw) {
+    const source = raw && typeof raw === 'object' ? raw : {}
+    const ingredients = Array.isArray(source.ingredients)
+        ? source.ingredients.map(normalizeIngredientItem).filter(Boolean)
+        : []
+    const additives = Array.isArray(source.additives)
+        ? source.additives.map((item) => String(item || '').trim()).filter(Boolean)
+        : []
+    const suggestions = Array.isArray(source.suggestions)
+        ? source.suggestions.map((item) => String(item || '').trim()).filter(Boolean)
+        : []
+
+    const normalizedRisk = normalizeRiskLevel(source.riskLevel)
+    const highRiskInIngredients = ingredients.some((item) => item.riskLevel === 'high')
+    const riskLevel = normalizedRisk || (highRiskInIngredients ? 'high' : 'low')
+
+    return {
+        productName: String(source.productName || '未知食品'),
+        safetyScore: normalizeScore(source.safetyScore),
+        riskLevel,
+        summary: String(source.summary || '未识别到可用结论'),
+        ingredients,
+        additives,
+        suggestions
+    }
+}
+
+function normalizeIngredientItem(item) {
+    if (!item || typeof item !== 'object') {
+        return null
+    }
+
+    const name = String(item.name || '').trim()
+    if (!name) {
+        return null
+    }
+
+    const type = INGREDIENT_TYPES.has(item.type) ? item.type : 'common'
+    const riskLevel = normalizeRiskLevel(item.riskLevel) || 'low'
+    const description = String(item.description || '').trim()
+
+    return {
+        name,
+        type,
+        riskLevel,
+        description
+    }
+}
+
+function normalizeRiskLevel(level) {
+    return INGREDIENT_RISK_LEVELS.has(level) ? level : null
+}
+
+function normalizeScore(score) {
+    const value = Number(score)
+    if (!Number.isFinite(value)) {
+        return 60
+    }
+    return Math.max(0, Math.min(100, Math.round(value)))
+}
+
+async function safeDeleteCloudFile(cloud, fileID) {
+    if (!fileID || typeof fileID !== 'string' || !fileID.startsWith('cloud://')) {
+        return
+    }
+
+    try {
+        await cloud.deleteFile({ fileList: [fileID] })
+    } catch (error) {
+        console.warn('[aiService] 临时图片清理失败', {
+            fileID,
+            message: error.message
+        })
     }
 }
