@@ -11,7 +11,8 @@ Component({
     data: {
         analyzing: false,
         result: null,
-        hasHighRisk: false
+        hasHighRisk: false,
+        requestId: ''
     },
 
     methods: {
@@ -37,7 +38,8 @@ Component({
         },
 
         async analyzeImage(filePath) {
-            this.setData({ analyzing: true, result: null })
+            const requestId = `ing_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+            this.setData({ analyzing: true, result: null, requestId })
 
             try {
                 const cloud = await initSharedCloud()
@@ -51,15 +53,19 @@ Component({
                 // 2. Call AI Service with NEW Action
                 const aiResult = await call('aiService', {
                     action: 'analyzeIngredients',
-                    data: { imageUrl: uploadResult.fileID }
+                    data: {
+                        imageUrl: uploadResult.fileID,
+                        cleanupFileId: uploadResult.fileID,
+                        requestId
+                    }
                 })
 
                 if (aiResult.success && aiResult.data) {
-                    const data = aiResult.data
+                    const data = this.normalizeResult(aiResult.data)
 
                     // Simple check for high risk to toggle UI state
                     const hasHighRisk = data.riskLevel === 'high' ||
-                        (data.ingredients && data.ingredients.some(i => i.riskLevel === 'high'))
+                        data.ingredients.some(i => i.riskLevel === 'high')
 
                     this.setData({
                         result: data,
@@ -76,6 +82,27 @@ Component({
                 this.onClose()
             } finally {
                 this.setData({ analyzing: false })
+            }
+        },
+
+        normalizeResult(data) {
+            const source = data && typeof data === 'object' ? data : {}
+            const ingredients = Array.isArray(source.ingredients) ? source.ingredients : []
+            const additives = Array.isArray(source.additives) ? source.additives : []
+            const suggestions = Array.isArray(source.suggestions) ? source.suggestions : []
+            const riskLevel = ['low', 'medium', 'high'].includes(source.riskLevel) ? source.riskLevel : 'low'
+            const safetyScore = Number.isFinite(Number(source.safetyScore))
+                ? Math.max(0, Math.min(100, Math.round(Number(source.safetyScore))))
+                : 60
+
+            return {
+                productName: source.productName || '识别结果',
+                safetyScore,
+                riskLevel,
+                summary: source.summary || '未识别到可用结论',
+                ingredients,
+                additives,
+                suggestions
             }
         }
     }

@@ -34,7 +34,7 @@
             </view>
 
             <!-- 风险概览 -->
-            <view class="risk-overview" wx:if="{{result.additives.length > 0 || hasHighRisk}}">
+            <view class="risk-overview" wx:if="{{(result.additives && result.additives.length > 0) || hasHighRisk}}">
                 <view class="section-header">
                     <text class="section-title">风险检测</text>
                 </view>
@@ -58,7 +58,7 @@
             <view class="ingredient-section">
                 <view class="section-header">
                     <text class="section-title">成分深度解析</text>
-                    <text class="count-badge">共 {{result.ingredients.length}} 项</text>
+                    <text class="count-badge">共 {{(result.ingredients && result.ingredients.length) || 0}} 项</text>
                 </view>
                 
                 <view class="ing-list">
