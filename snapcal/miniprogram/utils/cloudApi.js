@@ -23,6 +23,11 @@ export async function call(name, data = {}) {
     // 这只用于业务逻辑判断（如集合前缀），不影响底层连接
     data.__env = envVersion === 'release' ? 'prod' : 'dev'
 
+    // 注入请求ID，便于云端幂等和日志追踪
+    if (!data.requestId) {
+        data.requestId = `req_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
+    }
+
     console.log(`[云函数调用] ${name}`, {
         env: data.__env,
         envVersion,
