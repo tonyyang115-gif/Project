@@ -1,6 +1,6 @@
 // 引入DBAdapter和初始化工具
 const { DBAdapter, initCloud } = require('./dbAdapter')
-const { QwenProvider } = require('./ai/qwenProvider')
+const { createAIProvider } = require('./ai/providerFactory')
 
 const INGREDIENT_RISK_LEVELS = new Set(['low', 'medium', 'high'])
 const INGREDIENT_TYPES = new Set(['common', 'additive', 'allergen', 'sugar', 'fat'])
@@ -118,7 +118,7 @@ async function analyzeFoodImage(db, event, openid, cloud) {
     if (!QWEN_API_KEY) {
         throw new Error('服务未配置 QWEN_API_KEY，请联系管理员或查看控制台日志')
     }
-    const qwen = new QwenProvider(QWEN_API_KEY)
+    const qwen = createAIProvider('qwen', QWEN_API_KEY)
 
     // 调用AI识别
     const startTime = Date.now()
@@ -207,7 +207,8 @@ async function analyzeIngredients(db, event, openid, cloud) {
             throw error
         }
 
-        const qwen = new QwenProvider(QWEN_API_KEY)
+        const qwen = createAIProvider('qwen', QWEN_API_KEY)
+        const promptVersion = qwen.getPromptVersion('ingredientImage')
 
         phase = 'provider_call'
         const providerStart = Date.now()
@@ -225,6 +226,7 @@ async function analyzeIngredients(db, event, openid, cloud) {
             success: true,
             duration,
             providerLatency,
+            promptVersion,
             phase,
             requestId,
             env: event.__env
@@ -249,6 +251,7 @@ async function analyzeIngredients(db, event, openid, cloud) {
             success: false,
             duration,
             providerLatency,
+            promptVersion: null,
             phase,
             requestId,
             errorCode,
@@ -280,7 +283,7 @@ async function analyzeNutrition(db, event, openid) {
         throw new Error('服务未配置 QWEN_API_KEY')
     }
 
-    const qwen = new QwenProvider(QWEN_API_KEY)
+    const qwen = createAIProvider('qwen', QWEN_API_KEY)
 
     const startTime = Date.now()
     const result = await qwen.analyzeNutrition(foodName, quantity)
@@ -312,6 +315,7 @@ async function logAIUsage(db, data) {
                 success: data.success,
                 duration: data.duration,
                 providerLatency: data.providerLatency || null,
+                promptVersion: data.promptVersion || null,
                 phase: data.phase || null,
                 requestId: data.requestId || null,
                 errorCode: data.errorCode || null,
@@ -533,4 +537,11 @@ async function saveImageCache(db, openid, action, cacheKey, result) {
     } catch (error) {
         console.warn('[aiService] 缓存写入失败', { message: error.message })
     }
+}
+
+module.exports.__test__ = {
+    normalizeIngredientResult,
+    normalizeIngredientItem,
+    normalizeRiskLevel,
+    normalizeScore
 }

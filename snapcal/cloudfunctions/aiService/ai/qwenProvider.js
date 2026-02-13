@@ -10,6 +10,11 @@ class QwenProvider {
         this.apiKey = apiKey
         this.apiEndpoint = 'https://dashscope.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation'
         this.timeout = 30000  // 30秒超时
+        this.promptVersions = {
+            foodImage: 'food-image-v1',
+            ingredientImage: 'ingredient-image-v1',
+            nutrition: 'nutrition-v1'
+        }
     }
 
     /**
@@ -142,6 +147,10 @@ class QwenProvider {
             console.error('[QwenProvider] 配料分析失败', error)
             throw this._toProviderError(error, 'AI_PROVIDER_ERROR', `AI分析失败: ${error.message}`)
         }
+    }
+
+    getPromptVersion(task) {
+        return this.promptVersions[task] || 'unknown'
     }
 
     /**
