@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+      - bugfix/**
+      - codex/**
+
+jobs:
+  ai-contract-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloudfunctions/aiService
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: cloudfunctions/aiService/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run ingredient contract test
+        run: npm run test:contract

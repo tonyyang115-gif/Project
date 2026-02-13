@@ -168,7 +168,7 @@ export const Landing: React.FC<LandingProps> = ({ onStart }) => {
 
                     <section>
                         <h3 className="text-base font-bold text-gray-900 mb-2">3. 第三方服务的使用</h3>
-                        <p>为了提供智能识别功能，我们会将您上传的图片数据传输给第三方人工智能服务商（如 Google Gemini 或 Alibaba Qwen）进行处理。这些数据传输过程经过加密，且仅用于单次分析，不会用于其他商业用途。</p>
+                        <p>为了提供智能识别功能，我们会将您上传的图片数据传输给第三方人工智能服务商（如 Google Gemini 或 Alibaba Qwen）进行处理。这些数据传输过程经过加密，且仅用于单次分析，不会用于其他商业用途。配料识别所上传的临时图片默认在分析完成后删除，最晚不超过 24 小时。</p>
                     </section>
 
                     <section>
