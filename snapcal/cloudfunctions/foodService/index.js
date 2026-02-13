@@ -157,15 +157,12 @@ async function getMonthlyStats(db, openid, data) {
         return { success: false, error: '缺少年月参数' }
     }
 
-    const startStr = `${year}-${String(month).padStart(2, '0')}-01`
-    // 计算下个月初作为结束界限，或者直接计算当月最后一天
-    // 简单方式：字符串比较 'YYYY-MM-01' <= date <= 'YYYY-MM-31'
-    const endStr = `${year}-${String(month).padStart(2, '0')}-31`
-
+    const monthStr = `${year}-${String(month).padStart(2, '0')}`
+    const startStr = `${monthStr}-01`
+    const endStr = `${monthStr}-31`
     const collection = db.collection('food_entries')
     const _ = db.command
 
-    // 获取当月所有记录 (最多1000条，一般够用)
     const result = await collection
         .where({
             openid,

@@ -60,9 +60,19 @@
           <!-- 系统设置 -->
           <view class="menu-card">
             <text class="menu-title">系统设置</text>
+            <view class="menu-item" bindtap="goToDataMgmt">
+              <view class="menu-icon orange">🗂️</view>
+              <text class="menu-label">数据管理</text>
+              <text class="menu-arrow">›</text>
+            </view>
             <view class="menu-item" bindtap="goToHelp">
               <view class="menu-icon gray">❓</view>
               <text class="menu-label">帮助与反馈</text>
+              <text class="menu-arrow">›</text>
+            </view>
+            <view class="menu-item" bindtap="goToAbout">
+              <view class="menu-icon teal">ℹ️</view>
+              <text class="menu-label">关于 SnapCal</text>
               <text class="menu-arrow">›</text>
             </view>
           </view>
@@ -218,30 +228,132 @@
           <view class="section">
             <text class="section-title">📖 常见问题</text>
             <view class="faq-card">
-              <view class="faq-item">
-                <text>如何修改我的体重目标?</text>
-                <text class="faq-arrow">›</text>
-              </view>
-              <view class="faq-item">
-                <text>食物识别不准确怎么办?</text>
-                <text class="faq-arrow">›</text>
-              </view>
-              <view class="faq-item">
-                <text>如何连接健康设备?</text>
-                <text class="faq-arrow">›</text>
+              <view class="faq-item-wrap" wx:for="{{faqList}}" wx:key="index">
+                <view class="faq-item" bindtap="toggleFaq" data-index="{{index}}">
+                  <text class="faq-question">{{item.q}}</text>
+                  <text class="faq-arrow {{item.open ? 'open' : ''}}">{{item.open ? '⌃' : '›'}}</text>
+                </view>
+                <view class="faq-answer {{item.open ? 'show' : ''}}">
+                  <text>{{item.a}}</text>
+                </view>
               </view>
             </view>
           </view>
 
           <view class="section">
             <text class="section-title">💬 问题反馈</text>
-            <view class="feedback-card">
-              <textarea class="feedback-input" placeholder="请描述您遇到的问题或建议..."></textarea>
-              <view class="submit-btn" bindtap="submitFeedback">提交反馈</view>
+            <view class="feedback-card native">
+              <view class="feedback-desc">
+                <text>遇到问题或有功能建议？</text>
+                <text>点击下方按钮，直接向开发者反馈。</text>
+              </view>
+              <button class="submit-btn native-feedback" open-type="feedback">提交反馈</button>
             </view>
           </view>
 
-          <view class="version">SnapCal v1.0.0</view>
+          <view class="version">SnapCal v{{appVersion}}</view>
+        </view>
+      </block>
+
+      <!-- 数据管理子页面 -->
+      <block wx:elif="{{subPage === 'DATA_MGMT'}}">
+        <view class="sub-header">
+          <view class="std-back-btn" bindtap="goBack"></view>
+          <text class="sub-title">数据管理</text>
+          <view class="save-btn"></view>
+        </view>
+
+        <view class="content">
+          <view class="section">
+            <text class="section-title">📊 数据操作</text>
+            <view class="data-mgmt-card">
+              <view class="data-mgmt-item" bindtap="exportData">
+                <view class="data-mgmt-icon">📤</view>
+                <view class="data-mgmt-info">
+                  <text class="data-mgmt-label">导出饮食数据</text>
+                  <text class="data-mgmt-desc">复制本月饮食记录摘要到剪贴板</text>
+                </view>
+              </view>
+              <view class="data-mgmt-item" bindtap="clearLocalCache">
+                <view class="data-mgmt-icon">🗑️</view>
+                <view class="data-mgmt-info">
+                  <text class="data-mgmt-label">清除本地缓存</text>
+                  <text class="data-mgmt-desc">清除本地存储的临时数据</text>
+                </view>
+              </view>
+            </view>
+          </view>
+
+          <view class="data-warning">
+            <text>⚠️ 清除缓存不会删除云端已同步的数据</text>
+          </view>
+        </view>
+      </block>
+
+      <!-- 关于子页面 -->
+      <block wx:elif="{{subPage === 'ABOUT'}}">
+        <view class="sub-header">
+          <view class="std-back-btn" bindtap="goBack"></view>
+          <text class="sub-title">关于 SnapCal</text>
+          <view class="save-btn"></view>
+        </view>
+
+        <view class="content">
+          <view class="about-logo-card">
+            <image class="about-logo-img" src="/assets/icons/logo.png" mode="aspectFit" />
+            <text class="about-name">SnapCal</text>
+            <text class="about-version">v{{appVersion}}</text>
+            <text class="about-slogan">智能饮食管理，轻松记录每一餐</text>
+          </view>
+
+          <!-- 产品特色 -->
+          <view class="about-features-card">
+            <view class="about-feature-item">
+              <text class="about-feature-icon">📸</text>
+              <view class="about-feature-text">
+                <text class="about-feature-title">AI 智能识别</text>
+                <text class="about-feature-desc">拍照即可分析食物营养</text>
+              </view>
+            </view>
+            <view class="about-feature-item">
+              <text class="about-feature-icon">📊</text>
+              <view class="about-feature-text">
+                <text class="about-feature-title">营养数据追踪</text>
+                <text class="about-feature-desc">热量、蛋白质、碳水一目了然</text>
+              </view>
+            </view>
+            <view class="about-feature-item">
+              <text class="about-feature-icon">🎯</text>
+              <view class="about-feature-text">
+                <text class="about-feature-title">个性化目标</text>
+                <text class="about-feature-desc">定制你的减脂/增肌计划</text>
+              </view>
+            </view>
+            <view class="about-feature-item">
+              <text class="about-feature-icon">🏃</text>
+              <view class="about-feature-text">
+                <text class="about-feature-title">运动消耗记录</text>
+                <text class="about-feature-desc">全面记录每日能量收支</text>
+              </view>
+            </view>
+          </view>
+
+          <!-- 使用统计 -->
+          <view class="about-stats-card">
+            <view class="about-stat-item">
+              <text class="about-stat-value">{{usageDays}}</text>
+              <text class="about-stat-label">已使用天数</text>
+            </view>
+            <view class="about-stat-divider"></view>
+            <view class="about-stat-item">
+              <text class="about-stat-value">{{totalMeals}}</text>
+              <text class="about-stat-label">累计记录餐数</text>
+            </view>
+          </view>
+
+          <view class="about-footer">
+            <text>© 2024-2025 SnapCal Team</text>
+          </view>
         </view>
       </block>
     </view>

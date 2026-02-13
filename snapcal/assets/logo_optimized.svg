@@ -1,0 +1,35 @@
+<svg width="144" height="144" viewBox="0 0 144 144" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background: Warm Orange-Red -->
+  <rect x="0" y="0" width="144" height="144" rx="22" fill="#FF6B6B"/>
+  
+  <!-- Main Composition Group -->
+  <!-- Shifted slightly up (-2px) to visually center the whole block with the new AI position -->
+  <g transform="translate(72, 63)">
+    <!-- Icon: Apple + Flame -->
+    <g transform="translate(0, -6) scale(0.66)">
+      <!-- Main Apple Shape (White) -->
+      <path d="M0,-35 C-20,-35 -35,-20 -35,5 C-35,30 -15,45 0,55 C15,45 35,30 35,5 C35,-20 20,-35 0,-35" 
+            fill="white" stroke="none"/>
+      
+      <!-- Flame/Calorie Core (Orange Cutout) -->
+      <path d="M0,15 C-8,15 -12,5 -12,-5 C-12,-15 -5,-25 0,-35 C5,-25 12,-15 12,-5 C12,5 8,15 0,15" 
+            fill="#FF6B6B"/>
+            
+      <!-- Leaf (White) -->
+      <path d="M0,-38 Q10,-55 25,-45 Q15,-35 0,-38" fill="white"/>
+    </g>
+    
+    <!-- Text Elements -->
+    <g transform="translate(0, 50)">
+      <!-- "SnapCal" - Centered, Bold -->
+      <!-- Adjusted letter-spacing for better readability -->
+      <text x="-6" y="0" font-family="Arial, sans-serif" font-weight="bold" font-size="16" fill="white" text-anchor="middle" letter-spacing="0.5">SnapCal</text>
+      
+      <!-- "AI" - Further Optimized Size and Position (V3) -->
+      <!-- Increased font-size from 11 to 14 -->
+      <!-- Adjusted x from 32 to 34 (more breathing room) -->
+      <!-- Adjusted y from -8 to -10 (aligned with cap height more agressively) -->
+      <text x="34" y="-10" font-family="Arial, sans-serif" font-weight="900" font-size="14" fill="white" text-anchor="start" opacity="0.95">AI</text>
+    </g>
+  </g>
+</svg>

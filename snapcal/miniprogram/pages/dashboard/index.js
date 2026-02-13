@@ -133,6 +133,9 @@ Page({
         // 食物列表 (多卡片模式)
         foodList: [],
 
+        // 搜索相关
+        searchQuery: '',
+
         // 运动相关数据
         showExerciseModal: false,
         tempExercise: {
@@ -492,6 +495,62 @@ Page({
     switchLogTab(e) {
         const tab = e.currentTarget.dataset.tab
         this.setData({ logTab: tab })
+    },
+
+    // 搜索输入处理
+    onSearchInput(e) {
+        this.setData({ searchQuery: e.detail.value })
+    },
+
+    // 执行食物搜索 (AI 分析)
+    async handleSearchFood() {
+        const { searchQuery } = this.data
+        if (!searchQuery.trim()) return
+
+        this.setData({ analyzing: true, analyzingText: '正在分析食物营养...' })
+
+        try {
+            const result = await call('aiService', {
+                action: 'analyzeNutrition',
+                data: { foodName: searchQuery }
+            })
+
+            this.setData({ analyzing: false })
+
+            if (result.success && result.data) {
+                // 将搜索结果预填入编辑区域
+                this.setData({
+                    tempFoodName: result.data.name || searchQuery,
+                    tempNutrients: {
+                        calories: result.data.calories || 0,
+                        protein: result.data.protein || 0,
+                        carbs: result.data.carbs || 0,
+                        fat: result.data.fat || 0
+                    },
+                    searchQuery: '',
+                    logTab: 'manual' // 切换到手输模式以便编辑
+                })
+                wx.showToast({ title: '已获取营养信息', icon: 'success' })
+            } else {
+                wx.showToast({ title: '未找到该食物', icon: 'none' })
+            }
+        } catch (error) {
+            this.setData({ analyzing: false })
+            console.error('[Dashboard] 搜索食物失败:', error)
+            // 失败时使用默认值
+            this.setData({
+                tempFoodName: searchQuery,
+                tempNutrients: {
+                    calories: 200,
+                    protein: 10,
+                    carbs: 25,
+                    fat: 8
+                },
+                searchQuery: '',
+                logTab: 'manual'
+            })
+            wx.showToast({ title: '使用默认估算值', icon: 'none' })
+        }
     },
 
     // 切换餐次

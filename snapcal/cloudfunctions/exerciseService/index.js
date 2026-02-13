@@ -140,13 +140,12 @@ async function getMonthlyStats(db, openid, data) {
         return { success: false, error: '缺少年月参数' }
     }
 
-    const startStr = `${year}-${String(month).padStart(2, '0')}-01`
-    const endStr = `${year}-${String(month).padStart(2, '0')}-31`
-
+    const monthStr = `${year}-${String(month).padStart(2, '0')}`
+    const startStr = `${monthStr}-01`
+    const endStr = `${monthStr}-31`
     const collection = db.collection('exercise_entries')
     const _ = db.command
 
-    // 获取当月所有记录
     const result = await collection
         .where({
             openid,

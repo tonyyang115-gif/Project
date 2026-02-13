@@ -1,3 +1,7 @@
+/* ============================================
+   BMI 高级仪表盘 - Premium Glass Gauge
+   ============================================ */
+
 /* 弹窗容器 */
 .tool-modal {
     position: fixed;
@@ -20,8 +24,8 @@
     position: absolute;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
 }
 
 .modal-content {
@@ -29,13 +33,14 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: #fff;
-    border-radius: 40rpx 40rpx 0 0;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 48rpx 48rpx 0 0;
     transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-    max-height: 85vh;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    max-height: 88vh;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 -20rpx 80rpx rgba(0, 0, 0, 0.15);
 }
 
 .tool-modal.show .modal-content {
@@ -43,255 +48,500 @@
 }
 
 .modal-header {
-    padding: 32rpx 40rpx;
+    padding: 36rpx 44rpx;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1rpx solid #f3f4f6;
+    border-bottom: 1rpx solid rgba(0, 0, 0, 0.06);
 }
 
 .modal-title {
-    font-size: 32rpx;
+    font-size: 34rpx;
     font-weight: 800;
-    color: #1f2937;
+    color: #0f172a;
+    letter-spacing: 1rpx;
 }
 
 .close-btn {
-    font-size: 40rpx;
-    color: #9ca3af;
-    padding: 10rpx;
+    width: 56rpx;
+    height: 56rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 44rpx;
+    color: #94a3b8;
+    background: #f1f5f9;
+    border-radius: 50%;
+    transition: all 0.2s;
+}
+
+.close-btn:active {
+    background: #e2e8f0;
+    transform: scale(0.95);
 }
 
 .modal-body {
-    padding: 40rpx;
+    padding: 32rpx 40rpx;
     overflow-y: auto;
 }
 
-/* 结果展示区 - 仪表盘 */
+/* ============================================
+   高级仪表盘区域
+   ============================================ */
 .result-section {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 40rpx;
-    background: #ffffff;
-    border-radius: 40rpx;
-    padding: 40rpx;
-    box-shadow: 0 8rpx 32rpx rgba(0,0,0,0.04);
+    margin-bottom: 32rpx;
 }
 
-.speedometer-container {
-    position: relative;
-    width: 400rpx;
-    height: 220rpx; /* Half circle height + margin */
+.gauge-wrapper {
+    width: 100%;
     display: flex;
     justify-content: center;
-    /* overflow: hidden; Removed to prevent clipping of edges */
-    margin-bottom: 24rpx;
+    padding: 24rpx 0 16rpx;
 }
 
-.speedometer-gauge {
+/* 仪表盘底座 - 玻璃态 */
+.gauge-base {
     position: relative;
+    width: 420rpx;
+    height: 240rpx;
+    display: flex;
+    justify-content: center;
+}
+
+/* ============================================
+   分段弧形轨道
+   ============================================ */
+.gauge-segments {
+    position: absolute;
+    top: 0;
+    left: 10rpx;
     width: 400rpx;
     height: 200rpx;
-    /* overflow: hidden; Removed to allow needle overflow if needed, but masked by container */
+    overflow: hidden;
 }
 
-/* 1. 仪表盘轨道系统 */
-/* 背景灰轨 */
-.gauge-bg-track {
+.segment {
     position: absolute;
     top: 0;
     left: 0;
     width: 400rpx;
-    height: 200rpx;
-    border-radius: 200rpx 200rpx 0 0;
-    background: #f3f4f6; /* Grey base */
-    /* Hollow mask - match the colored track */
-    /* Hollow mask - match the colored track */
-    -webkit-mask-image: radial-gradient(circle at 50% 100%, transparent 68%, black 69%);
-    mask-image: radial-gradient(circle at 50% 100%, transparent 68%, black 69%);
-    z-index: 1;
+    height: 400rpx;
+    border-radius: 50%;
+    border: 28rpx solid transparent;
+    box-sizing: border-box;
+    clip-path: inset(0 0 50% 0);
 }
 
-/* 彩虹进度轨 */
-.gauge-track {
-    width: 400rpx;
-    height: 200rpx; /* Half height */
-    border-radius: 200rpx 200rpx 0 0; /* Semi-circle shape */
+/* 偏瘦区域 - 蓝色 15-18.5 (31.5°) */
+.seg-underweight {
+    border-color: #60a5fa;
+    transform: rotate(-90deg);
+    clip-path: polygon(50% 50%, 50% 0%, 67% 0%, 67% 50%);
     background: conic-gradient(
-        from 270deg at 50% 100%, /* Center at bottom */
-        #3b82f6 0deg,   /* 偏瘦 start */
-        #3b82f6 30deg,  /* 18.5 split */
-        #22c55e 30deg,  
-        #22c55e 90deg,  /* 24 split */
-        #f97316 90deg,
-        #f97316 135deg, /* 28 split */
-        #ef4444 135deg,
-        #ef4444 180deg,
-        transparent 180deg
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        rgba(96, 165, 250, 0.15) 0deg 31.5deg,
+        transparent 31.5deg
     );
-    /* Mask inner to make it a THIN arc - centered at bottom */
-    /* Increase transparent area to 68% for thinner, hollow look */
-    /* Mask inner to make it a THIN arc - centered at bottom */
-    /* Increase transparent area to 68% for thinner, hollow look */
-    -webkit-mask-image: radial-gradient(circle at 50% 100%, transparent 68%, black 69%);
-    mask-image: radial-gradient(circle at 50% 100%, transparent 68%, black 69%);
-    position: relative;
-    z-index: 2;
-    /* Soft shadow for floating effect */
-    filter: drop-shadow(0 4rpx 12rpx rgba(0,0,0,0.1)); 
 }
 
-/* 2. 刻度线 (Ticks) */
-.gauge-ticks {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
+/* 正常区域 - 绿色 18.5-24 (49.5°) */
+.seg-normal {
+    border-color: #34d399;
+    transform: rotate(-58.5deg);
+    clip-path: polygon(50% 50%, 50% 0%, 78% 0%, 78% 50%);
+    background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        rgba(52, 211, 153, 0.15) 0deg 49.5deg,
+        transparent 49.5deg
+    );
 }
 
-.tick {
+/* 超重区域 - 橙色 24-28 (36°) */
+.seg-overweight {
+    border-color: #fb923c;
+    transform: rotate(-9deg);
+    clip-path: polygon(50% 50%, 50% 0%, 70% 0%, 70% 50%);
+    background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        rgba(251, 146, 60, 0.15) 0deg 36deg,
+        transparent 36deg
+    );
+}
+
+/* 肥胖区域 - 红色 28-35 (63°) */
+.seg-obese {
+    border-color: #f87171;
+    transform: rotate(27deg);
+    clip-path: polygon(50% 50%, 50% 0%, 85% 0%, 85% 50%);
+    background: conic-gradient(
+        from 0deg at 50% 50%,
+        transparent 0deg,
+        rgba(248, 113, 113, 0.15) 0deg 63deg,
+        transparent 63deg
+    );
+}
+
+/* 使用更简洁的conic-gradient实现 */
+.gauge-segments {
+    width: 400rpx;
+    height: 200rpx;
     position: absolute;
     top: 0;
-    left: 50%;
-    width: 2rpx;
-    height: 20rpx;
-    background: rgba(255,255,255,0.8);
-    transform-origin: 50% 200rpx; /* Center of the full circle */
+    left: 10rpx;
+    border-radius: 200rpx 200rpx 0 0;
+    background: conic-gradient(
+        from 270deg at 50% 100%,
+        /* 偏瘦 - 蓝色 */
+        #3b82f6 0deg 31.5deg,
+        /* 正常 - 绿色 */
+        #22c55e 31.5deg 81deg,
+        /* 超重 - 橙色 */
+        #f97316 81deg 117deg,
+        /* 肥胖 - 红色 */
+        #ef4444 117deg 180deg,
+        transparent 180deg
+    );
+    -webkit-mask-image: radial-gradient(circle at 50% 100%, transparent 60%, black 61%, black 85%, transparent 86%);
+    mask-image: radial-gradient(circle at 50% 100%, transparent 60%, black 61%, black 85%, transparent 86%);
+    box-shadow: 
+        inset 0 4rpx 16rpx rgba(0, 0, 0, 0.1),
+        0 8rpx 24rpx rgba(0, 0, 0, 0.08);
 }
 
-.t-18-5 { transform: rotate(-60deg); } /* approx for 18.5 */
-.t-24   { transform: rotate(0deg); }   /* approx for 24 (center?) No, 24 is mid-high. */
-/* Re-mapping logic: 
-   Range 15 -> 35 (Span 20)
-   180 degrees. 9 deg per BMI unit.
-   Start (15) = -90deg.
-   18.5 = 15 + 3.5 => 3.5 * 9 = 31.5 deg from start => -58.5 deg
-   24 = 15 + 9 => 9 * 9 = 81 deg from start => -9 deg
-   28 = 15 + 13 => 13 * 9 = 117 deg from start => +27 deg
-*/
-.t-18-5 { transform: translateX(-50%) rotate(-58.5deg); }
-.t-24   { transform: translateX(-50%) rotate(-9deg); }
-.t-28   { transform: translateX(-50%) rotate(27deg); }
-
-
-/* 3. 指针 (Needle - Pro Max Style) */
-.needle-container {
+/* 发光效果层 */
+.gauge-glow {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    width: 0;
-    height: 0;
-    z-index: 10;
-    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy spring */
+    top: 0;
+    left: 10rpx;
+    width: 400rpx;
+    height: 200rpx;
+    border-radius: 200rpx 200rpx 0 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
 }
 
-.needle {
+.gauge-glow.blue {
+    background: radial-gradient(ellipse at 20% 80%, rgba(59, 130, 246, 0.4) 0%, transparent 50%);
+    opacity: 1;
+}
+
+.gauge-glow.green {
+    background: radial-gradient(ellipse at 40% 60%, rgba(34, 197, 94, 0.4) 0%, transparent 50%);
+    opacity: 1;
+}
+
+.gauge-glow.orange {
+    background: radial-gradient(ellipse at 65% 60%, rgba(249, 115, 22, 0.4) 0%, transparent 50%);
+    opacity: 1;
+}
+
+.gauge-glow.red {
+    background: radial-gradient(ellipse at 80% 80%, rgba(239, 68, 68, 0.4) 0%, transparent 50%);
+    opacity: 1;
+}
+
+/* ============================================
+   刻度标签
+   ============================================ */
+.gauge-labels {
     position: absolute;
-    bottom: -16rpx; /* Push down to center pivot */
-    left: -6rpx;
-    width: 12rpx;
-    height: 180rpx; /* Length */
-    background: #1f2937;
-    /* Tapered shape using clip-path or border-radius */
-    border-radius: 50% 50% 4rpx 4rpx;
-    transform-origin: 50% calc(100% - 16rpx); /* Pivot around the circle center */
-    
-    /* Simulate Pivot Point via Pseudo-element */
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
+    width: 400rpx;
+    height: 200rpx;
+    left: 10rpx;
+    z-index: 5;
 }
 
-/* Pivot Circle */
-.needle::after {
-    content: '';
+.gauge-labels text {
     position: absolute;
-    bottom: 10rpx; /* Center it */
-    width: 24rpx;
-    height: 24rpx;
-    background: #fff;
-    border: 6rpx solid #1f2937;
-    border-radius: 50%;
-    box-shadow: 0 2rpx 4rpx rgba(0,0,0,0.2);
-}
-
-/* 4. 中心盖板 (Center Cap) & Value */
-.gauge-center {
-    position: absolute;
-    bottom: -10rpx;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    z-index: 20;
-}
-
-.bmi-value {
-    font-size: 64rpx;
-    font-weight: 900;
-    color: #1f2937;
-    line-height: 1;
+    font-size: 20rpx;
+    font-weight: 700;
+    color: #64748b;
     font-family: var(--font-number);
 }
 
-.bmi-unit {
-    font-size: 24rpx;
+.label-min {
+    bottom: 6rpx;
+    left: -16rpx;
+}
+
+.label-18 {
+    top: 52rpx;
+    left: 28rpx;
+    transform: rotate(-30deg);
+}
+
+.label-24 {
+    top: -8rpx;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.label-28 {
+    top: 52rpx;
+    right: 28rpx;
+    transform: rotate(30deg);
+}
+
+.label-max {
+    bottom: 6rpx;
+    right: -16rpx;
+}
+
+/* ============================================
+   精致指针
+   ============================================ */
+.needle-assembly {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    margin-left: 10rpx;
+    width: 0;
+    height: 0;
+    z-index: 15;
+    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform-origin: center center;
+}
+
+.needle-body {
+    position: absolute;
+    bottom: 0;
+    left: -4rpx;
+    width: 8rpx;
+    height: 140rpx;
+    background: linear-gradient(180deg, 
+        #1e293b 0%, 
+        #334155 40%,
+        #475569 100%
+    );
+    border-radius: 4rpx 4rpx 2rpx 2rpx;
+    transform-origin: bottom center;
+    box-shadow: 
+        2rpx 0 8rpx rgba(0, 0, 0, 0.3),
+        -1rpx 0 4rpx rgba(255, 255, 255, 0.1);
+}
+
+.needle-tip {
+    position: absolute;
+    top: -16rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 6rpx solid transparent;
+    border-right: 6rpx solid transparent;
+    border-bottom: 20rpx solid #1e293b;
+    filter: drop-shadow(0 -2rpx 4rpx rgba(0, 0, 0, 0.2));
+}
+
+.needle-pivot {
+    position: absolute;
+    bottom: -16rpx;
+    left: -16rpx;
+    width: 32rpx;
+    height: 32rpx;
+    background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+    border-radius: 50%;
+    border: 4rpx solid #1e293b;
+    box-shadow: 
+        0 4rpx 12rpx rgba(0, 0, 0, 0.25),
+        inset 0 2rpx 4rpx rgba(255, 255, 255, 0.8),
+        inset 0 -2rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   中心玻璃罩 & 数值显示
+   ============================================ */
+.gauge-center-glass {
+    position: absolute;
+    bottom: -20rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: 10rpx;
+    width: 160rpx;
+    height: 80rpx;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(248, 250, 252, 0.9) 100%
+    );
+    border-radius: 80rpx 80rpx 16rpx 16rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 
+        0 8rpx 32rpx rgba(0, 0, 0, 0.12),
+        inset 0 2rpx 8rpx rgba(255, 255, 255, 0.9),
+        inset 0 -2rpx 8rpx rgba(0, 0, 0, 0.05);
+    z-index: 20;
+}
+
+.value-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 8rpx;
+}
+
+.bmi-value {
+    font-size: 48rpx;
+    font-weight: 900;
+    line-height: 1;
+    font-family: var(--font-number);
+    background: linear-gradient(180deg, #1e293b 0%, #475569 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.bmi-value.blue {
+    background: linear-gradient(180deg, #2563eb 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.bmi-value.green {
+    background: linear-gradient(180deg, #16a34a 0%, #22c55e 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.bmi-value.orange {
+    background: linear-gradient(180deg, #ea580c 0%, #f97316 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.bmi-value.red {
+    background: linear-gradient(180deg, #dc2626 0%, #ef4444 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+.bmi-label {
+    font-size: 18rpx;
     font-weight: 700;
-    color: #9cb3c9;
-    margin-top: 4rpx;
+    color: #94a3b8;
+    letter-spacing: 2rpx;
+    margin-top: 2rpx;
 }
 
-/* 状态药丸 */
-.status-pill {
-    padding: 8rpx 24rpx;
-    border-radius: 30rpx;
-    font-size: 24rpx;
+/* ============================================
+   状态胶囊 - 发光效果
+   ============================================ */
+.status-capsule {
+    position: relative;
+    padding: 12rpx 32rpx;
+    border-radius: 40rpx;
+    margin-top: 32rpx;
+    overflow: hidden;
+}
+
+.capsule-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.6;
+    filter: blur(8rpx);
+}
+
+.capsule-text {
+    position: relative;
+    font-size: 26rpx;
     font-weight: 800;
-    margin-top: 20rpx;
+    letter-spacing: 2rpx;
+    z-index: 1;
 }
 
-.status-pill.green { background: #dcfce7; color: #166534; }
-.status-pill.blue { background: #dbeafe; color: #1e40af; }
-.status-pill.orange { background: #ffedd5; color: #9a3412; }
-.status-pill.red { background: #fee2e2; color: #991b1b; }
+.status-capsule.blue {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    box-shadow: 0 4rpx 20rpx rgba(59, 130, 246, 0.3);
+}
+.status-capsule.blue .capsule-text { color: #1d4ed8; }
+.status-capsule.blue .capsule-glow { background: #3b82f6; }
 
-/* 建议提示 */
-.tips-box {
+.status-capsule.green {
+    background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+    box-shadow: 0 4rpx 20rpx rgba(34, 197, 94, 0.3);
+}
+.status-capsule.green .capsule-text { color: #15803d; }
+.status-capsule.green .capsule-glow { background: #22c55e; }
+
+.status-capsule.orange {
+    background: linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%);
+    box-shadow: 0 4rpx 20rpx rgba(249, 115, 22, 0.3);
+}
+.status-capsule.orange .capsule-text { color: #c2410c; }
+.status-capsule.orange .capsule-glow { background: #f97316; }
+
+.status-capsule.red {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    box-shadow: 0 4rpx 20rpx rgba(239, 68, 68, 0.3);
+}
+.status-capsule.red .capsule-text { color: #b91c1c; }
+.status-capsule.red .capsule-glow { background: #ef4444; }
+
+/* ============================================
+   健康建议卡片
+   ============================================ */
+.advice-card {
     display: flex;
     align-items: flex-start;
-    background: #f9fafb;
-    padding: 24rpx;
-    border-radius: 20rpx;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 24rpx 28rpx;
+    border-radius: 24rpx;
     width: 100%;
-    margin-top: 24rpx;
+    margin-top: 28rpx;
+    border: 1rpx solid rgba(0, 0, 0, 0.04);
+    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
 }
 
-.tip-icon {
-    font-size: 32rpx;
-    margin-right: 16rpx;
-    margin-top: 4rpx;
+.advice-icon {
+    width: 56rpx;
+    height: 56rpx;
+    border-radius: 16rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28rpx;
+    margin-right: 20rpx;
+    flex-shrink: 0;
 }
 
-.tip-text {
+.advice-icon.blue { background: rgba(59, 130, 246, 0.15); }
+.advice-icon.green { background: rgba(34, 197, 94, 0.15); }
+.advice-icon.orange { background: rgba(249, 115, 22, 0.15); }
+.advice-icon.red { background: rgba(239, 68, 68, 0.15); }
+
+.advice-text {
     font-size: 26rpx;
-    color: #4b5563;
-    line-height: 1.5;
+    color: #475569;
+    line-height: 1.6;
     flex: 1;
-    text-align: left;
     font-weight: 500;
 }
 
-/* 输入区 */
+/* ============================================
+   输入控制区
+   ============================================ */
 .input-section {
-    background: #f9fafb;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     padding: 32rpx;
-    border-radius: 24rpx;
-    margin-bottom: 40rpx;
+    border-radius: 28rpx;
+    margin-bottom: 32rpx;
+    border: 1rpx solid rgba(0, 0, 0, 0.04);
 }
 
 .input-group {
-    margin-bottom: 40rpx;
+    margin-bottom: 36rpx;
 }
 
 .input-group:last-child {
@@ -306,27 +556,35 @@
 
 .label {
     font-size: 28rpx;
-    color: #4b5563;
+    color: #475569;
     font-weight: 600;
 }
 
 .value-display {
     font-size: 32rpx;
-    color: #1f2937;
+    color: #0f172a;
     font-weight: 800;
+    font-family: var(--font-number);
 }
 
+/* ============================================
+   保存按钮
+   ============================================ */
 .save-btn {
-    background: #1f2937;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     color: #fff;
     border-radius: 50rpx;
     font-size: 30rpx;
-    font-weight: 600;
-    padding: 24rpx 0;
+    font-weight: 700;
+    padding: 28rpx 0;
     width: 100%;
+    border: none;
+    box-shadow: 0 8rpx 24rpx rgba(30, 41, 59, 0.3);
+    transition: all 0.2s ease;
 }
 
 .save-btn:active {
     opacity: 0.9;
     transform: scale(0.98);
+    box-shadow: 0 4rpx 12rpx rgba(30, 41, 59, 0.2);
 }

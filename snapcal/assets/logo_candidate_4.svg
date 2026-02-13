@@ -2,21 +2,20 @@
   <rect x="0" y="0" width="144" height="144" rx="22" fill="#FF6B6B"/>
   
   <g transform="translate(72, 63)">
+    <!-- Icon Group -->
     <g transform="translate(0, -5) scale(0.68)">
       <!-- Main Apple Shape (White) -->
       <path d="M0,-35 C-20,-35 -35,-20 -35,5 C-35,30 -15,45 0,55 C15,45 35,30 35,5 C35,-20 20,-35 0,-35" 
             fill="white" stroke="none"/>
       
       <!-- Flame/Calorie Core (Orange Cutout) -->
-      <!-- MAXIMIZED: Significantly widened the flame/core shape to be a text container first, flame second -->
-      <!-- New Width approx 44px (-22 to 22). This dominates the center -->
-      <path d="M0,19 C-14,19 -22,5 -22,-8 C-22,-22 -10,-32 0,-42 C10,-32 22,-22 22,-8 C22,5 14,19 0,19" 
+      <!-- Slightly enlarged flame to fit text better if needed, but keeping original path mostly to maintain shape -->
+      <path d="M0,15 C-8,15 -12,5 -12,-5 C-12,-15 -5,-25 0,-35 C5,-25 12,-15 12,-5 C12,5 8,15 0,15" 
             fill="#FF6B6B"/>
             
       <!-- AI Text Inside Flame -->
-      <!-- MAXIMIZED: Increased font-size to 20, Extra Black Weight -->
-      <!-- This is likely the physical limit before breaking the apple shape -->
-      <text x="0" y="-1" font-family="Arial, sans-serif" font-weight="900" font-size="20" fill="white" text-anchor="middle" letter-spacing="-1">AI</text>
+      <!-- Centered roughly at y=-5 inside the flame -->
+      <text x="0" y="-2" font-family="Arial, sans-serif" font-weight="900" font-size="10" fill="white" text-anchor="middle">AI</text>
 
       <!-- Leaf (White) -->
       <path d="M0,-38 Q10,-55 25,-45 Q15,-35 0,-38" fill="white"/>
@@ -24,6 +23,7 @@
     
     <!-- Text Elements -->
     <g transform="translate(0, 50)">
+      <!-- "SnapCal" - Centered, Bold -->
       <text x="0" y="0" font-family="Arial, sans-serif" font-weight="bold" font-size="16" fill="white" text-anchor="middle" letter-spacing="0.5">SnapCal</text>
     </g>
   </g>

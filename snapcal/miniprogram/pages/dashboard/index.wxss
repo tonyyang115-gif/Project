@@ -871,12 +871,14 @@
 
 
 
-/* ========== 统一饮食记录弹窗 (底部抽屉) ========== */
+/* ========== 统一饮食记录弹窗 (底部抽屉) - Premium Style ========== */
 
 .modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 2000;
     opacity: 0;
     visibility: hidden;
@@ -893,60 +895,78 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: #FFFFFF;
-    border-radius: 40rpx 40rpx 0 0;
-    padding: 40rpx;
+    background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+    border-radius: 48rpx 48rpx 0 0;
+    padding: 36rpx 40rpx;
     padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
     z-index: 2001;
     transform: translateY(100%);
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.1);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 -20rpx 80rpx rgba(0, 0, 0, 0.15);
     display: flex;
     flex-direction: column;
-    max-height: 85vh; /* 防止超高 */
+    max-height: 88vh;
 }
 
 .bottom-sheet.show {
     transform: translateY(0);
 }
 
-/* 1. 头部 */
+/* 1. 头部 - 使用主色调 */
 .log-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 32rpx;
+    margin-bottom: 28rpx;
+    padding-bottom: 24rpx;
+    border-bottom: 1rpx solid rgba(16, 185, 129, 0.08);
 }
 
 .header-btn {
     font-size: 28rpx;
-    padding: 12rpx 24rpx;
-    border-radius: 32rpx;
+    font-weight: 600;
+    padding: 14rpx 28rpx;
+    border-radius: 40rpx;
+    transition: all 0.2s ease;
 }
 
 .header-btn.cancel {
-    color: #6B7280; /* Gray 500 */
+    color: #6B7280;
+    background: #f3f4f6;
+}
+
+.header-btn.cancel:active {
+    background: #e5e7eb;
+    transform: scale(0.97);
 }
 
 .header-btn.save {
-    background: #F3F4F6;
-    color: #9CA3AF;
-    font-weight: bold;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #ffffff;
+    font-weight: 700;
+    box-shadow: 0 4rpx 16rpx rgba(16, 185, 129, 0.3);
+}
+
+.header-btn.save:active {
+    transform: scale(0.97);
+    box-shadow: 0 2rpx 8rpx rgba(16, 185, 129, 0.25);
 }
 
 .header-title {
-    font-size: 36rpx;
+    font-size: 34rpx;
     font-weight: 800;
-    color: #111827;
+    color: #1F2937;
+    letter-spacing: 1rpx;
 }
 
-/* 2. Tabs - 重新设计图标 */
+/* 2. Tabs - 主色调风格 */
 .log-tabs {
     display: flex;
-    background: #F3F4F6;
-    border-radius: 24rpx;
+    background: var(--primary-light, #ECFDF5);
+    border-radius: 28rpx;
     padding: 8rpx;
-    margin-bottom: 32rpx;
+    margin-bottom: 28rpx;
+    box-shadow: inset 0 2rpx 4rpx rgba(16, 185, 129, 0.06);
 }
 
 .tab-item {
@@ -956,19 +976,19 @@
     justify-content: center;
     gap: 12rpx;
     padding: 20rpx 0;
-    border-radius: 20rpx;
+    border-radius: 22rpx;
     font-size: 28rpx;
-    color: #9CA3AF;
-    font-weight: bold;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #6B7280;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
     overflow: hidden;
 }
 
 .tab-item.active {
-    background: #FFFFFF;
-    color: var(--primary-dark); 
-    box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+    background: #ffffff;
+    color: var(--primary-dark, #059669);
+    box-shadow: 0 4rpx 20rpx rgba(16, 185, 129, 0.15);
 }
 
 .tab-icon {
@@ -979,8 +999,6 @@
     align-items: center;
     justify-content: center;
 }
-
-/* Icon A: Camera (CSS Drawn) */
 .tab-icon.camera::before {
     content: '';
     position: absolute;
@@ -1051,67 +1069,67 @@
     transform: rotate(45deg);
 }
 
-/* 3. 餐次选择 */
+/* 3. 餐次选择 - 主色调胶囊 */
 .meal-selector {
     display: flex;
-    gap: 24rpx;
-    margin-bottom: 48rpx;
-    overflow-x: auto; /* 允许横向滚动（虽然现在可能够放） */
+    gap: 20rpx;
+    margin-bottom: 40rpx;
+    overflow-x: auto;
     padding-bottom: 4rpx;
 }
 
 .meal-pill {
-    padding: 16rpx 40rpx;
+    padding: 16rpx 36rpx;
     border-radius: 40rpx;
-    font-size: 28rpx;
-    font-weight: 800;
-    background: #F9FAFB;
-    color: #9CA3AF;
-    transition: all 0.2s ease;
-    border: none; /*移除边框，更现代*/
+    font-size: 26rpx;
+    font-weight: 700;
+    background: var(--primary-light, #ECFDF5);
+    color: #6B7280;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border: 1rpx solid rgba(16, 185, 129, 0.1);
+    white-space: nowrap;
 }
 
 .meal-pill.active {
-    background: #111827;
-    color: #FFFFFF;
-    box-shadow: 0 8rpx 20rpx rgba(17, 24, 39, 0.2);
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 8rpx 24rpx rgba(16, 185, 129, 0.3);
     transform: translateY(-2rpx);
+    border-color: transparent;
 }
 
-/* 4. 内容区域 */
-.log-content-area {
-    /* 主要是为了承载不同模式的内容 */
-}
-
-/* 模式A: 拍照 */
+/* 模式A: 拍照 - 主色调风格 */
 .camera-trigger {
-    border: 4rpx dashed #E5E7EB; /* Lighter dashed line */
-    border-radius: 40rpx;
-    height: 480rpx; /* Taller area */
+    border: 3rpx dashed var(--primary-color, #10B981);
+    border-radius: 32rpx;
+    height: 420rpx;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: #F9FAFB;
-    transition: all 0.3s;
+    background: var(--primary-light, #ECFDF5);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .camera-trigger:active {
-    background: #F3F4F6;
-    border-color: #D1D5DB;
+    background: #D1FAE5;
+    border-color: var(--primary-dark, #059669);
+    transform: scale(0.99);
 }
 
 /* 大相机图标容器 */
 .camera-circle {
-    width: 160rpx;
-    height: 160rpx;
-    background: #FFFFFF;
+    width: 140rpx;
+    height: 140rpx;
+    background: linear-gradient(145deg, #ffffff, #D1FAE5);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 32rpx;
-    box-shadow: 0 20rpx 40rpx rgba(0, 0, 0, 0.05); /* Soft shadow bubble */
+    margin-bottom: 28rpx;
+    box-shadow: 
+        0 16rpx 40rpx rgba(16, 185, 129, 0.15),
+        inset 0 2rpx 4rpx rgba(255, 255, 255, 0.9);
     position: relative;
 }
 
@@ -1160,34 +1178,36 @@
 }
 
 .camera-text {
-    font-size: 36rpx;
-    font-weight: 900;
-    color: #1F2937;
+    font-size: 34rpx;
+    font-weight: 800;
+    color: #0f172a;
     margin-bottom: 12rpx;
 }
 
 .camera-subtext {
-    font-size: 26rpx;
-    color: #9CA3AF;
+    font-size: 24rpx;
+    color: #64748b;
     font-weight: 600;
 }
 
-/* 模式B: 搜索 */
+/* 模式B: 搜索 - 主色调风格 */
 .search-box {
     display: flex;
     align-items: center;
-    background: #F9FAFB;
-    padding: 32rpx;
-    border-radius: 32rpx;
-    gap: 24rpx;
-    border: 2rpx solid transparent;
-    transition: all 0.3s;
+    background: var(--primary-light, #ECFDF5);
+    padding: 28rpx 32rpx;
+    border-radius: 28rpx;
+    gap: 20rpx;
+    border: 2rpx solid rgba(16, 185, 129, 0.15);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .search-box:focus-within {
-    background: #FFFFFF;
-    border-color: var(--primary-color);
-    box-shadow: 0 8rpx 24rpx rgba(16, 185, 129, 0.1);
+    background: #ffffff;
+    border-color: var(--primary-color, #10B981);
+    box-shadow: 
+        0 8rpx 32rpx rgba(16, 185, 129, 0.15),
+        inset 0 0 0 1rpx var(--primary-color, #10B981);
 }
 
 /* CSS Search Icon Small */
@@ -1223,6 +1243,59 @@
     right: 0;
     transform: rotate(45deg);
     border-radius: 4rpx;
+}
+
+/* 搜索按钮 - 独立全宽 */
+.search-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12rpx;
+    width: 100%;
+    height: 96rpx;
+    margin-top: 28rpx;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #ffffff;
+    border-radius: 48rpx;
+    font-size: 30rpx;
+    font-weight: 700;
+    box-shadow: 0 8rpx 24rpx rgba(16, 185, 129, 0.3);
+    transition: all 0.2s ease;
+}
+
+.search-action-btn:active {
+    transform: scale(0.98);
+    box-shadow: 0 4rpx 12rpx rgba(16, 185, 129, 0.25);
+}
+
+/* 搜索按钮内的小搜索图标 */
+.search-action-icon {
+    width: 28rpx;
+    height: 28rpx;
+    position: relative;
+}
+
+.search-action-icon::before {
+    content: '';
+    position: absolute;
+    width: 18rpx;
+    height: 18rpx;
+    border: 3rpx solid #ffffff;
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+}
+
+.search-action-icon::after {
+    content: '';
+    position: absolute;
+    width: 10rpx;
+    height: 3rpx;
+    background: #ffffff;
+    bottom: 2rpx;
+    right: 0;
+    transform: rotate(45deg);
+    border-radius: 2rpx;
 }
 
 /* 模式C: 手动输入 */

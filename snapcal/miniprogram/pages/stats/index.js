@@ -32,11 +32,10 @@ Page({
         monthlyStats: {
             avgCals: 0,
             loggedDays: 0,
-            avgCals: 0,
-            loggedDays: 0,
             calorieBalance: 0, // 月度热量结余 (+盈余 / -缺口)
             balanceTrend: 'flat' // 'surplus' | 'deficit' | 'flat'
         },
+        monthlyLoading: false,
 
         // 当日详情
         dailyStats: {
@@ -62,7 +61,11 @@ Page({
     },
 
     onShow() {
-        this.loadMonthlyData()
+        // 仅在非首次加载时刷新数据（首次由 initCalendar 触发）
+        if (this.hasInitialized) {
+            this.loadMonthlyData()
+            this.loadDailyDetail(this.data.selectedDate)
+        }
     },
 
     loadUserProfile() {
@@ -93,6 +96,8 @@ Page({
 
         this.generateCalendarDays()
         this.loadDailyDetail(dateStr)
+        this.loadMonthlyData()  // 确保在 currentMonth 初始化后调用
+        this.hasInitialized = true  // 标记已初始化
     },
 
     generateCalendarDays() {
@@ -178,62 +183,65 @@ Page({
 
     async loadMonthlyData() {
         const { year, month } = this.data.currentMonth
-        const daysInMonth = new Date(year, month, 0).getDate()
+
+        console.log(`[Stats] 开始加载月度数据: ${year}-${month}`)
+
+        // 显示加载状态
+        this.setData({ monthlyLoading: true })
 
         try {
-            // 获取月度所有日期的数据
+            // 使用月度统计接口，仅需 2 次请求（原来需要 62 次！）
+            const [foodRes, exerciseRes] = await Promise.all([
+                call('foodService', { action: 'getMonthlyStats', data: { year, month } }),
+                call('exerciseService', { action: 'getMonthlyStats', data: { year, month } })
+            ])
+
+            console.log('[Stats] 月度数据返回:', { foodRes, exerciseRes })
+
             let totalCalories = 0
+            let totalBurned = 0
             let loggedDays = 0
             const loggedDates = []
 
-            // 遍历当月所有日期，获取每日数据
-            let totalTarget = 0
+            if (foodRes.success && foodRes.data) {
+                totalCalories = foodRes.data.totalCalories || 0
+                loggedDays = foodRes.data.loggedDays || 0
 
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-
-                try {
-                    // 并行获取饮食和运动数据以计算精准目标
-                    const [foodRes, exerciseRes] = await Promise.all([
-                        call('foodService', { action: 'getDailyStats', data: { date: dateStr } }),
-                        call('exerciseService', { action: 'getDailyStats', data: { date: dateStr } })
-                    ])
-
-                    let dailyCals = 0
-                    let dailyBurn = 0
-
-                    if (foodRes.success) dailyCals = foodRes.data.totalCalories || 0
-                    if (exerciseRes.success) dailyBurn = exerciseRes.data.totalCalories || 0
-
-                    if (dailyCals > 0) {
-                        totalCalories += dailyCals
-                        // 当日目标 = 基础代谢 + 运动消耗
-                        const dayTarget = this.data.user.targetCalories + dailyBurn
-                        totalTarget += dayTarget
-
-                        loggedDays++
-                        loggedDates.push(dateStr)
-                    }
-                } catch (err) {
-                    // 忽略单日错误
+                // 从entries中提取已记录的日期
+                if (foodRes.data.entries) {
+                    const datesSet = new Set(foodRes.data.entries.map(e => e.date))
+                    loggedDates.push(...datesSet)
                 }
+            } else {
+                console.warn('[Stats] foodService 返回异常:', foodRes)
             }
 
+            if (exerciseRes.success && exerciseRes.data) {
+                totalBurned = exerciseRes.data.totalCalories || 0
+            }
+
+            // 计算平均每日摄入
             const avgCals = loggedDays > 0 ? Math.round(totalCalories / loggedDays) : 0
 
-            // 计算月度结余 (摄入 - 消耗)
-            const netBalance = totalCalories - totalTarget
+            // 计算月度热量结余 = 摄入 - (目标 × 记录天数 + 运动消耗)
+            const targetTotal = this.data.user.targetCalories * loggedDays + totalBurned
+            const netBalance = totalCalories - targetTotal
             const balanceTrend = netBalance > 0 ? 'surplus' : (netBalance < 0 ? 'deficit' : 'flat')
+
+            console.log('[Stats] 计算结果:', { avgCals, loggedDays, netBalance })
 
             this.setData({
                 'monthlyStats.avgCals': avgCals,
                 'monthlyStats.loggedDays': loggedDays,
                 'monthlyStats.calorieBalance': netBalance,
+                'monthlyStats.absCalorieBalance': Math.abs(netBalance),
                 'monthlyStats.balanceTrend': balanceTrend,
                 loggedDates
             })
         } catch (error) {
             console.error('[Stats] 加载月度数据失败:', error)
+        } finally {
+            this.setData({ monthlyLoading: false })
         }
     },
 

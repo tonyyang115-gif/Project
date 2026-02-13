@@ -311,14 +311,28 @@
         </view>
       </view>
 
-      <!-- 模式B: 搜索 (暂只做UI展示，逻辑复用手输) -->
+      <!-- 模式B: 搜索 -->
       <view class="tab-content search-mode" wx:if="{{logTab === 'search'}}">
         <view class="search-box">
           <view class="search-icon-sm"></view>
-          <input class="search-input" placeholder="例如：一碗牛肉面" confirm-type="search" />
-          <view class="search-btn-circle">→</view>
+          <input 
+            class="search-input" 
+            placeholder="例如：一碗牛肉面" 
+            confirm-type="search"
+            value="{{searchQuery}}"
+            bindinput="onSearchInput"
+            bindconfirm="handleSearchFood"
+          />
         </view>
-        <!-- 下方可展示历史记录或推荐，暂留白 -->
+        <!-- 搜索按钮 -->
+        <view class="search-action-btn" bindtap="handleSearchFood">
+          <view class="search-action-icon"></view>
+          <text>AI 智能搜索</text>
+        </view>
+        <!-- 下方提示 -->
+        <view style="text-align: center; color: #9CA3AF; font-size: 24rpx; margin-top: 24rpx;">
+          输入食物名称，AI 将自动分析营养成分
+        </view>
       </view>
 
       <!-- 模式C: 手动输入 (详细表单) -->

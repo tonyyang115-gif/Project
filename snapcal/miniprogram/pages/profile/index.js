@@ -5,7 +5,16 @@ Page({
     data: {
         user: null,
         bmi: '0.0',
-        subPage: 'MAIN', // MAIN, PERSONAL, NUTRITION, HELP
+        subPage: 'MAIN', // MAIN, PERSONAL, NUTRITION, HELP, DATA_MGMT, ABOUT
+        appVersion: '1.0.0',
+        usageDays: 0,
+        totalMeals: 0,
+        feedbackText: '',
+        faqList: [
+            { q: '如何修改我的体重目标？', a: '进入“个人设置” → “营养目标设置”，可以调整目标体重和每日热量目标。', open: false },
+            { q: '食物识别不准确怎么办？', a: '拍照后可手动修改食物名称和营养数值；也可使用搜索功能输入准确的食物名称获取 AI 分析。', open: false },
+            { q: '如何记录运动消耗？', a: '在首页点击底部拍照按钮 → 切换到“手动输入”标签，选择“运动”类别，记录运动类型和时长。', open: false }
+        ],
 
         // 编辑状态
         editName: '',
@@ -35,6 +44,11 @@ Page({
 
     onLoad() {
         this.loadUserProfile()
+        // 初始化版本号
+        const app = getApp()
+        this.setData({
+            appVersion: app.globalData.version || '1.0.0'
+        })
     },
 
     onShow() {
@@ -77,6 +91,50 @@ Page({
 
     goToHelp() {
         this.setData({ subPage: 'HELP' })
+    },
+
+    goToDataMgmt() {
+        this.setData({ subPage: 'DATA_MGMT' })
+    },
+
+    goToAbout() {
+        this.setData({ subPage: 'ABOUT' })
+        this.loadAboutStats()
+    },
+
+    async loadAboutStats() {
+        try {
+            // 计算使用天数
+            const profile = wx.getStorageSync('userProfile')
+            let usageDays = 1
+            if (profile && profile.createdAt) {
+                const created = new Date(profile.createdAt)
+                const now = new Date()
+                usageDays = Math.max(1, Math.ceil((now - created) / (1000 * 60 * 60 * 24)))
+            }
+
+            // 获取累计记录餐数
+            let totalMeals = 0
+            try {
+                const { call } = require('../../utils/cloudApi')
+                const today = new Date()
+                const year = today.getFullYear()
+                const month = today.getMonth() + 1
+                const res = await call('foodService', {
+                    action: 'getMonthlyStats',
+                    data: { year, month }
+                })
+                if (res.success && res.data) {
+                    totalMeals = res.data.entries ? res.data.entries.length : 0
+                }
+            } catch (e) {
+                console.warn('[About] 获取餐数失败:', e)
+            }
+
+            this.setData({ usageDays, totalMeals })
+        } catch (error) {
+            console.warn('[About] 加载统计失败:', error)
+        }
     },
 
     goBack() {
@@ -260,9 +318,96 @@ Page({
         userData.tdee = tdee
     },
 
-    // 帮助相关
-    submitFeedback() {
-        wx.showToast({ title: '感谢您的反馈', icon: 'success' })
+    // ========== 帮助与反馈 ==========
+
+    toggleFaq(e) {
+        const index = e.currentTarget.dataset.index
+        const key = `faqList[${index}].open`
+        this.setData({ [key]: !this.data.faqList[index].open })
+    },
+
+    // ========== 数据管理 ==========
+
+    async exportData() {
+        wx.showLoading({ title: '导出中...' })
+        try {
+            const { call } = require('../../utils/cloudApi')
+            const today = new Date()
+            const year = today.getFullYear()
+            const month = today.getMonth() + 1
+            const monthStr = `${year}-${String(month).padStart(2, '0')}`
+
+            const res = await call('foodService', {
+                action: 'getEntries',
+                data: { date: undefined }
+            })
+
+            if (res.success && res.data && res.data.length > 0) {
+                // 筛选本月数据
+                const monthEntries = res.data.filter(e => e.date && e.date.startsWith(monthStr))
+
+                if (monthEntries.length === 0) {
+                    wx.hideLoading()
+                    wx.showToast({ title: '本月暂无数据', icon: 'none' })
+                    return
+                }
+
+                // 生成文本摘要
+                let text = `📊 SnapCal 饮食记录 - ${year}年${month}月\n\n`
+                let totalCal = 0
+
+                // 按日期分组
+                const grouped = {}
+                monthEntries.forEach(e => {
+                    if (!grouped[e.date]) grouped[e.date] = []
+                    grouped[e.date].push(e)
+                    totalCal += e.calories || 0
+                })
+
+                Object.keys(grouped).sort().forEach(date => {
+                    text += `📅 ${date}\n`
+                    grouped[date].forEach(e => {
+                        text += `  ${e.meal} - ${e.name}: ${e.calories}kcal\n`
+                    })
+                    text += '\n'
+                })
+
+                text += `\n总计: ${totalCal}kcal | 共${monthEntries.length}条记录`
+
+                wx.setClipboardData({
+                    data: text,
+                    success: () => {
+                        wx.hideLoading()
+                        wx.showToast({ title: '已复制到剪贴板', icon: 'success' })
+                    }
+                })
+            } else {
+                wx.hideLoading()
+                wx.showToast({ title: '暂无数据', icon: 'none' })
+            }
+        } catch (error) {
+            wx.hideLoading()
+            console.error('[Profile] 导出失败:', error)
+            wx.showToast({ title: '导出失败', icon: 'none' })
+        }
+    },
+
+    clearLocalCache() {
+        wx.showModal({
+            title: '确认清除',
+            content: '将清除本地缓存数据（不影响云端数据）。清除后需要重新设置个人资料。',
+            confirmText: '确认清除',
+            confirmColor: '#EF4444',
+            success: (res) => {
+                if (res.confirm) {
+                    wx.clearStorageSync()
+                    wx.showToast({ title: '缓存已清除', icon: 'success' })
+                    setTimeout(() => {
+                        wx.redirectTo({ url: '/pages/onboarding/index' })
+                    }, 1500)
+                }
+            }
+        })
     },
 
     // ========== 底部导航栏 ==========

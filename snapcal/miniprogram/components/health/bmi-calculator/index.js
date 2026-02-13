@@ -15,7 +15,8 @@ Component({
     data: {
         tempHeight: 175,
         tempWeight: 65,
-        result: null
+        result: null,
+        needleAngle: -90 // 指针角度: -90° (左侧BMI=15) 到 90° (右侧BMI=35)
     },
 
     observers: {
@@ -46,22 +47,37 @@ Component({
         // 调整体重
         onWeightChange(e) {
             const val = e.detail.value
-            // 简单防抖或直接计算
             this.setData({ tempWeight: val })
             this.calculate()
         },
 
+        /**
+         * 计算BMI和指针角度
+         * BMI范围: 15-35 映射到角度 -90° 到 90°
+         */
         calculate() {
             const { tempHeight, tempWeight } = this.data
             const res = calculateBMI(tempHeight, tempWeight)
-            this.setData({ result: res })
+
+            // 计算指针角度
+            // BMI 15 -> -90°, BMI 35 -> 90°
+            // 每单位BMI = 180° / 20 = 9°
+            const minBMI = 15
+            const maxBMI = 35
+            const bmiValue = Math.max(minBMI, Math.min(maxBMI, res.value))
+            const angle = ((bmiValue - minBMI) / (maxBMI - minBMI)) * 180 - 90
+
+            this.setData({
+                result: res,
+                needleAngle: angle
+            })
         },
 
         // 保存数据并更新 Profile
         onSave() {
             const { tempHeight, tempWeight } = this.data
 
-            // 更新本地存储的 Profile (模拟)
+            // 更新本地存储的 Profile
             const profile = wx.getStorageSync('userProfile') || {}
             profile.height = tempHeight
             profile.weight = tempWeight

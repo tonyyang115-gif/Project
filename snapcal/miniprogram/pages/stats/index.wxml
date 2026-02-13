@@ -47,19 +47,25 @@
       <view class="overview-row">
         <view class="overview-card">
           <text class="overview-label">平均每日摄入</text>
-          <view class="overview-value">
+          <view class="overview-value" wx:if="{{!monthlyLoading}}">
             <text class="value-num">{{monthlyStats.avgCals}}</text>
             <text class="value-unit">kcal</text>
           </view>
-          <view class="trend-tag red">
-            <text>↓ 5% 比上月</text>
+          <view class="overview-value" wx:else>
+            <text class="value-num">--</text>
+          </view>
+          <view class="trend-tag neutral">
+            <text>共 {{monthlyStats.loggedDays}} 天记录</text>
           </view>
         </view>
         <view class="overview-card">
           <text class="overview-label">月度热量结余</text>
-          <view class="overview-value">
-            <text class="value-num">{{monthlyStats.calorieBalance > 0 ? '+' : ''}}{{monthlyStats.calorieBalance}}</text>
+          <view class="overview-value" wx:if="{{!monthlyLoading}}">
+            <text class="value-num">{{monthlyStats.calorieBalance > 0 ? '+' : ''}}{{monthlyStats.absCalorieBalance}}</text>
             <text class="value-unit">kcal</text>
+          </view>
+          <view class="overview-value" wx:else>
+            <text class="value-num">--</text>
           </view>
           <view class="trend-tag {{monthlyStats.calorieBalance <= 0 ? 'green' : 'red'}}">
             <text>{{monthlyStats.calorieBalance <= 0 ? '↓ 制造缺口' : '↑ 热量盈余'}}</text>

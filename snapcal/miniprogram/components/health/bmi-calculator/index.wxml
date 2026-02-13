@@ -7,62 +7,86 @@
     </view>
 
     <scroll-view scroll-y class="modal-body">
-      <!-- 结果卡片: 仪表盘风格 -->
+      <!-- 高级仪表盘 -->
       <view class="result-section">
-        <view class="speedometer-container">
-          <!-- 仪表盘主体 -->
-          <view class="speedometer-gauge">
-            <view class="gauge-bg-track"></view>
-            <view class="gauge-track"></view>
-            <view class="gauge-ticks">
-                <view class="tick t-18-5"></view>
-                <view class="tick t-24"></view>
-                <view class="tick t-28"></view>
+        <view class="gauge-wrapper">
+          <!-- 外层玻璃底座 -->
+          <view class="gauge-base">
+            <!-- 刻度标签 -->
+            <view class="gauge-labels">
+              <text class="label-min">15</text>
+              <text class="label-18">18.5</text>
+              <text class="label-24">24</text>
+              <text class="label-28">28</text>
+              <text class="label-max">35</text>
             </view>
-            <!-- 指针容器: 根据计算出的角度旋转 -->
-            <view class="needle-container" style="transform: rotate({{needleAngle}}deg)">
-                <view class="needle"></view>
+            
+            <!-- 分段弧形轨道 -->
+            <view class="gauge-segments">
+              <view class="segment seg-underweight"></view>
+              <view class="segment seg-normal"></view>
+              <view class="segment seg-overweight"></view>
+              <view class="segment seg-obese"></view>
             </view>
-            <!-- 中心盖板 -->
-            <view class="gauge-center">
-                <view class="bmi-value">{{result.value}}</view>
-                <view class="bmi-unit">BMI</view>
+            
+            <!-- 发光进度指示 -->
+            <view class="gauge-glow {{result.color}}"></view>
+            
+            <!-- 精致指针 -->
+            <view class="needle-assembly" style="transform: rotate({{needleAngle}}deg)">
+              <view class="needle-body">
+                <view class="needle-tip"></view>
+              </view>
+              <view class="needle-pivot"></view>
             </view>
-          </view>
-          <!-- 状态标签 -->
-          <view class="status-pill {{result.color}}">
-            {{result.status}}
+            
+            <!-- 中心玻璃罩 -->
+            <view class="gauge-center-glass">
+              <view class="value-container">
+                <text class="bmi-value {{result.color}}">{{result.value}}</text>
+                <text class="bmi-label">BMI</text>
+              </view>
+            </view>
           </view>
         </view>
+        
+        <!-- 状态胶囊 -->
+        <view class="status-capsule {{result.color}}">
+          <view class="capsule-glow"></view>
+          <text class="capsule-text">{{result.status}}</text>
+        </view>
 
-        <view class="tips-box">
-            <text class="tip-icon" wx:if="{{result.color === 'blue'}}">🥣</text>
-            <text class="tip-icon" wx:if="{{result.color === 'green'}}">💪</text>
-            <text class="tip-icon" wx:if="{{result.color === 'orange'}}">🏃</text>
-            <text class="tip-icon" wx:if="{{result.color === 'red'}}">🥗</text>
-            <text class="tip-text" wx:if="{{result.status === '正常'}}">您的身体质量指数处于健康范围，继续保持！</text>
-            <text class="tip-text" wx:if="{{result.status === '偏瘦'}}">体重偏轻，请注意营养摄入，适当进行增肌训练。</text>
-            <text class="tip-text" wx:if="{{result.status === '超重'}}">体重超标，建议控制热量摄入并增加有氧运动。</text>
-            <text class="tip-text" wx:if="{{result.status === '肥胖'}}">需要关注健康风险，建议制定科学的减脂饮食计划。</text>
+        <!-- 健康建议 -->
+        <view class="advice-card">
+          <view class="advice-icon {{result.color}}">
+            <text wx:if="{{result.color === 'blue'}}">🥣</text>
+            <text wx:if="{{result.color === 'green'}}">💪</text>
+            <text wx:if="{{result.color === 'orange'}}">🏃</text>
+            <text wx:if="{{result.color === 'red'}}">🥗</text>
+          </view>
+          <text class="advice-text" wx:if="{{result.status === '正常'}}">您的身体质量指数处于健康范围，继续保持！</text>
+          <text class="advice-text" wx:if="{{result.status === '偏瘦'}}">体重偏轻，请注意营养摄入，适当进行增肌训练。</text>
+          <text class="advice-text" wx:if="{{result.status === '超重'}}">体重超标，建议控制热量摄入并增加有氧运动。</text>
+          <text class="advice-text" wx:if="{{result.status === '肥胖'}}">需要关注健康风险，建议制定科学的减脂饮食计划。</text>
         </view>
       </view>
 
-      <!-- 交互输入 -->
+      <!-- 输入控制区 -->
       <view class="input-section">
         <view class="input-group">
-            <view class="label-row">
-                <text class="label">身高 (cm)</text>
-                <text class="value-display">{{tempHeight}}</text>
-            </view>
-            <slider min="100" max="230" value="{{tempHeight}}" activeColor="#10B981" bindchanging="onHeightChange" bindchange="onHeightChange" />
+          <view class="label-row">
+            <text class="label">身高 (cm)</text>
+            <text class="value-display">{{tempHeight}}</text>
+          </view>
+          <slider min="100" max="230" value="{{tempHeight}}" activeColor="#10B981" bindchanging="onHeightChange" bindchange="onHeightChange" />
         </view>
 
         <view class="input-group">
-            <view class="label-row">
-                <text class="label">体重 (kg)</text>
-                <text class="value-display">{{tempWeight}}</text>
-            </view>
-            <slider min="30" max="150" value="{{tempWeight}}" activeColor="#10B981" bindchanging="onWeightChange" bindchange="onWeightChange" />
+          <view class="label-row">
+            <text class="label">体重 (kg)</text>
+            <text class="value-display">{{tempWeight}}</text>
+          </view>
+          <slider min="30" max="150" value="{{tempWeight}}" activeColor="#10B981" bindchanging="onWeightChange" bindchange="onWeightChange" />
         </view>
       </view>
 
