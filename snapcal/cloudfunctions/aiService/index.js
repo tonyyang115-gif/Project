@@ -6,6 +6,7 @@ const INGREDIENT_RISK_LEVELS = new Set(['low', 'medium', 'high'])
 const INGREDIENT_TYPES = new Set(['common', 'additive', 'allergen', 'sugar', 'fat'])
 const RATE_LIMIT_PER_MINUTE = 6
 const DAILY_QUOTA_LIMIT = 80
+const CACHE_TTL_MS = 10 * 60 * 1000
 
 /**
  * 从环境变量读取API Key
@@ -157,8 +158,32 @@ async function analyzeIngredients(db, event, openid, cloud) {
     }
 
     const fileIdToCleanup = cleanupFileId || (imageUrl.startsWith('cloud://') ? imageUrl : null)
+    const cacheKey = imageUrl
 
     try {
+        phase = 'idempotency_check'
+        const idempotentResult = await getIdempotentResult(db, openid, 'analyzeIngredients', requestId)
+        if (idempotentResult) {
+            return {
+                success: true,
+                data: idempotentResult,
+                requestId,
+                cached: true
+            }
+        }
+
+        phase = 'cache_lookup'
+        const cachedResult = await getRecentImageCache(db, openid, 'analyzeIngredients', cacheKey)
+        if (cachedResult) {
+            await saveIdempotentResult(db, openid, 'analyzeIngredients', requestId, cachedResult, true)
+            return {
+                success: true,
+                data: cachedResult,
+                requestId,
+                cached: true
+            }
+        }
+
         phase = 'rate_limit'
         await enforceRateLimit(db, openid, 'analyzeIngredients')
 
@@ -205,6 +230,10 @@ async function analyzeIngredients(db, event, openid, cloud) {
             env: event.__env
         })
 
+        phase = 'cache_write'
+        await saveImageCache(db, openid, 'analyzeIngredients', cacheKey, normalizedResult)
+        await saveIdempotentResult(db, openid, 'analyzeIngredients', requestId, normalizedResult, false)
+
         return {
             success: true,
             data: normalizedResult,
@@ -226,6 +255,7 @@ async function analyzeIngredients(db, event, openid, cloud) {
             errorMessage: error.message,
             env: event.__env
         })
+        await saveIdempotentResult(db, openid, 'analyzeIngredients', requestId, null, false, errorCode, error.message)
 
         error.code = errorCode
         throw error
@@ -405,5 +435,102 @@ async function enforceRateLimit(db, openid, action) {
         const error = new Error('今日识别次数已达上限，请明日再试')
         error.code = 'QUOTA_EXCEEDED'
         throw error
+    }
+}
+
+async function getIdempotentResult(db, openid, action, requestId) {
+    if (!requestId) return null
+
+    try {
+        const res = await db.collection('ai_idempotency')
+            .where({ _openid: openid, action, requestId, success: true })
+            .limit(1)
+            .get()
+
+        return res.data?.[0]?.result || null
+    } catch (error) {
+        console.warn('[aiService] 幂等查询失败', { requestId, message: error.message })
+        return null
+    }
+}
+
+async function saveIdempotentResult(db, openid, action, requestId, result, fromCache, errorCode, errorMessage) {
+    if (!requestId) return
+
+    const payload = {
+        _openid: openid,
+        action,
+        requestId,
+        success: !!result,
+        result: result || null,
+        fromCache: !!fromCache,
+        errorCode: errorCode || null,
+        errorMessage: errorMessage || null,
+        updatedAt: Date.now()
+    }
+
+    try {
+        const existing = await db.collection('ai_idempotency')
+            .where({ _openid: openid, action, requestId })
+            .limit(1)
+            .get()
+
+        if (existing.data && existing.data[0]) {
+            await db.collection('ai_idempotency').doc(existing.data[0]._id).update({ data: payload })
+        } else {
+            await db.collection('ai_idempotency').add({ data: payload })
+        }
+    } catch (error) {
+        console.warn('[aiService] 幂等写入失败', { requestId, message: error.message })
+    }
+}
+
+async function getRecentImageCache(db, openid, action, cacheKey) {
+    if (!cacheKey) return null
+
+    try {
+        const command = db.command
+        const res = await db.collection('ai_result_cache')
+            .where({
+                _openid: openid,
+                action,
+                cacheKey,
+                expiresAt: command.gte(Date.now())
+            })
+            .limit(1)
+            .get()
+
+        return res.data?.[0]?.result || null
+    } catch (error) {
+        console.warn('[aiService] 缓存查询失败', { message: error.message })
+        return null
+    }
+}
+
+async function saveImageCache(db, openid, action, cacheKey, result) {
+    if (!cacheKey || !result) return
+
+    const payload = {
+        _openid: openid,
+        action,
+        cacheKey,
+        result,
+        expiresAt: Date.now() + CACHE_TTL_MS,
+        updatedAt: Date.now()
+    }
+
+    try {
+        const existing = await db.collection('ai_result_cache')
+            .where({ _openid: openid, action, cacheKey })
+            .limit(1)
+            .get()
+
+        if (existing.data && existing.data[0]) {
+            await db.collection('ai_result_cache').doc(existing.data[0]._id).update({ data: payload })
+        } else {
+            await db.collection('ai_result_cache').add({ data: payload })
+        }
+    } catch (error) {
+        console.warn('[aiService] 缓存写入失败', { message: error.message })
     }
 }
