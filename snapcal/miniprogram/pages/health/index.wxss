@@ -27,8 +27,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20rpx 0;
-  padding-top: calc(env(safe-area-inset-top) + 20rpx);
+  padding: 32rpx 0;
+  padding-top: calc(env(safe-area-inset-top) + 32rpx);
   margin-bottom: 30rpx;
 }
 
@@ -50,13 +50,16 @@
 }
 
 .header-title {
-  font-size: 36rpx;
-  font-weight: 800;
+  font-size: 40rpx;
+  font-weight: 900;
   color: #111827;
+  letter-spacing: 1rpx;
+  line-height: 1.2;
 }
 
-.placeholder {
+.header-side {
   width: 80rpx;
+  height: 80rpx;
 }
 
 /* Banner */
@@ -161,5 +164,3 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 24rpx;
 }
-
-

@@ -82,7 +82,7 @@
       <!-- 个人资料子页面 -->
       <block wx:elif="{{subPage === 'PERSONAL'}}">
         <view class="sub-header">
-          <view></view> <!-- Placeholder to maintain space-between layout for centering title -->
+          <view class="std-back-btn" bindtap="goBack"></view>
           <text class="sub-title">个人资料</text>
           <view class="save-btn" bindtap="savePersonal">保存</view>
         </view>

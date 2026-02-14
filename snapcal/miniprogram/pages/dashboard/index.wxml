@@ -1,21 +1,24 @@
 <view class="dashboard {{showLogModal || showExerciseModal ? 'is-locked' : ''}}">
   <!-- 顶部Header -->
   <view class="header">
-    <view class="user-info">
-      <view class="avatar">
-        <image wx:if="{{user.avatarUrl}}" src="{{user.avatarUrl}}" class="avatar-img" />
-        <view wx:else class="avatar-placeholder">{{user.name.charAt(0)}}</view>
+    <text class="header-page-title">今日记录</text>
+    <view class="header-main-row">
+      <view class="user-info">
+        <view class="avatar">
+          <image wx:if="{{user.avatarUrl}}" src="{{user.avatarUrl}}" class="avatar-img" />
+          <view wx:else class="avatar-placeholder">{{user.name.charAt(0)}}</view>
+        </view>
+        <view class="user-text">
+          <view class="greeting">你好, {{user.name}}</view>
+          <view class="date-text">{{today.month}}月{{today.date}}日, 今天</view>
+        </view>
       </view>
-      <view class="user-text">
-        <view class="greeting">你好, {{user.name}}</view>
-        <view class="date-text">{{today.month}}月{{today.date}}日, 今天</view>
-      </view>
+      <picker mode="date" value="{{today.dateStr}}" end="{{today.dateStr}}" bindchange="onDateChange">
+        <view class="calendar-btn">
+          <text class="calendar-icon">📅</text>
+        </view>
+      </picker>
     </view>
-    <picker mode="date" value="{{today.dateStr}}" end="{{today.dateStr}}" bindchange="onDateChange">
-      <view class="calendar-btn">
-        <text class="calendar-icon">📅</text>
-      </view>
-    </picker>
   </view>
 
   <!-- 主卡路里圆环 -->
@@ -248,7 +251,7 @@
       <view class="header-btn cancel" bindtap="clearFoodList">清空列表</view>
       <view class="header-title" wx:if="{{foodList.length > 0}}">已添加 ({{foodList.length}})</view>
       <view class="header-title" wx:else>食物列表</view>
-      <view class="header-btn save" style="background: #2563EB; color: #fff;" bindtap="confirmLog">保存</view>
+      <view class="header-btn save" bindtap="confirmLog">保存</view>
     </view>
     <view class="log-header" wx:else>
       <view class="header-btn cancel" bindtap="closeLogModal">取消</view>
@@ -465,7 +468,7 @@
     <view class="log-header">
       <view class="header-btn cancel" bindtap="closeExerciseModal">取消</view>
       <view class="header-title">记录运动</view>
-      <view class="header-btn save" style="background: #2563EB; color: #fff;" bindtap="confirmExercise">保存</view>
+      <view class="header-btn save" bindtap="confirmExercise">保存</view>
     </view>
 
     <scroll-view scroll-y class="exercise-scroll-content">

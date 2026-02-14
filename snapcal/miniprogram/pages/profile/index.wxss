@@ -22,7 +22,7 @@
 
 /* ========== 主页面Header ========== */
 .header {
-    padding-top: calc(env(safe-area-inset-top) + 48rpx);
+    padding-top: calc(env(safe-area-inset-top) + 32rpx);
     padding-bottom: 32rpx;
     padding-left: 48rpx;
     padding-right: 48rpx;
@@ -33,6 +33,8 @@
     font-size: 40rpx;
     font-weight: 900;
     color: #111827;
+    letter-spacing: 1rpx;
+    line-height: 1.2;
 }
 
 /* ========== 子页面Header ========== */
@@ -56,6 +58,8 @@
     font-size: 40rpx;
     font-weight: 900;
     color: #111827;
+    letter-spacing: 1rpx;
+    line-height: 1.2;
 }
 
 .save-btn {

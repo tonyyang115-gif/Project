@@ -21,11 +21,6 @@
       开始记录
     </view>
 
-    <!-- 登录链接 -->
-    <view class="login-link" bindtap="handleLogin">
-      已有账号? 登录
-    </view>
-
     <!-- 协议复选框 -->
     <view class="agreement-row">
       <view 

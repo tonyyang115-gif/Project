@@ -102,20 +102,6 @@
     opacity: 0.6;
 }
 
-/* 登录链接 */
-.login-link {
-    text-align: center;
-    margin: 48rpx 0;
-    font-size: 28rpx;
-    font-weight: 700;
-    color: #111827;
-    letter-spacing: 2rpx;
-}
-
-.login-link:active {
-    color: #374151;
-}
-
 /* 协议行 */
 .agreement-row {
     display: flex;

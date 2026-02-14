@@ -3,9 +3,9 @@
     <view class="health-container">
         <!-- Header -->
         <view class="header">
-            <view class="std-back-btn" bindtap="goBack"></view>
+            <view class="header-side"></view>
             <text class="header-title">健康驿站</text>
-            <view class="placeholder"></view>
+            <view class="header-side"></view>
         </view>
 
         <!-- 瘦身大作战 Banner -->
