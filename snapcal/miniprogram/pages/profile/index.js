@@ -26,6 +26,9 @@ Page({
         editDiet: '',
         editCalories: 0,
         editAvatar: '', // Current avatar being edited
+        pendingAvatarFileId: '',
+        avatarUploadStatus: 'idle', // idle / uploading / uploaded / failed
+        avatarUploadMessage: '',
         defaultAvatars: [
             'https://api.dicebear.com/9.x/adventurer/svg?seed=Felix&backgroundColor=b6e3f4', // Blue
             'https://api.dicebear.com/9.x/adventurer/svg?seed=Aneka&backgroundColor=c0aede', // Purple
@@ -75,7 +78,10 @@ Page({
                 editGoal: profile.goal,
                 editDiet: profile.dietPreference,
                 editCalories: profile.targetCalories,
-                editAvatar: profile.avatarUrl || ''
+                editAvatar: profile.avatarUrl || '',
+                pendingAvatarFileId: profile.avatarUrl || '',
+                avatarUploadStatus: 'idle',
+                avatarUploadMessage: ''
             })
         }
     },
@@ -165,13 +171,22 @@ Page({
     // 头像处理逻辑
     onSelectDefaultAvatar(e) {
         const path = e.currentTarget.dataset.path
-        this.setData({ editAvatar: path })
+        this.setData({
+            editAvatar: path,
+            pendingAvatarFileId: path,
+            avatarUploadStatus: 'uploaded',
+            avatarUploadMessage: '已选择推荐头像'
+        })
     },
 
     onChooseAvatar(e) {
         const { avatarUrl } = e.detail
 
         // 立即上传到云存储以获取永久链接
+        this.setData({
+            avatarUploadStatus: 'uploading',
+            avatarUploadMessage: '头像上传中...'
+        })
         wx.showLoading({ title: '上传中...' })
 
         const openid = this.data.user._openid || 'unknown'
@@ -186,19 +201,32 @@ Page({
                 filePath: avatarUrl, // 临时文件路径
                 success: res => {
                     console.log('[Avatar] Upload success:', res.fileID)
-                    this.setData({ editAvatar: res.fileID })
+                    this.setData({
+                        editAvatar: res.fileID,
+                        pendingAvatarFileId: res.fileID,
+                        avatarUploadStatus: 'uploaded',
+                        avatarUploadMessage: '头像上传成功'
+                    })
                     wx.hideLoading()
                 },
                 fail: err => {
                     console.error('[Avatar] Upload failed:', err)
                     wx.hideLoading()
                     wx.showToast({ title: '上传失败', icon: 'none' })
+                    this.setData({
+                        avatarUploadStatus: 'failed',
+                        avatarUploadMessage: '头像上传失败，请重试'
+                    })
                 }
             })
         }).catch(err => {
             console.error('[Avatar] Shared cloud init failed:', err)
             wx.hideLoading()
             wx.showToast({ title: '云环境异常', icon: 'none' })
+            this.setData({
+                avatarUploadStatus: 'failed',
+                avatarUploadMessage: '云环境异常，请稍后重试'
+            })
         })
     },
 
