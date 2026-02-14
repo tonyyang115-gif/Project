@@ -189,10 +189,8 @@ Page({
         })
         wx.showLoading({ title: '上传中...' })
 
-        const openid = this.data.user._openid || 'unknown'
-        const timestamp = Date.now()
-        // 获取文件扩展名 (通常 chooseAvatar 返回的是 .jpeg 或 .png 临时路径)
-        const cloudPath = `avatars/${openid}_${timestamp}.jpg`
+        const requestId = `avatar_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+        const cloudPath = `avatars/${requestId}.jpg`
 
         const { initSharedCloud } = require('../../utils/cloudApi')
         initSharedCloud().then(cloud => {
