@@ -13,7 +13,7 @@
           <view class="user-card">
             <view class="user-info">
               <view class="avatar" bindtap="goToPersonal">
-                <image wx:if="{{user.avatarUrl}}" class="avatar-img" src="{{user.avatarUrl}}" mode="aspectFill" />
+                <image wx:if="{{userAvatarDisplayUrl}}" class="avatar-img" src="{{userAvatarDisplayUrl}}" mode="aspectFill" />
                 <text wx:else class="avatar-text">{{user.name ? user.name[0] : '?'}}</text>
                 <view class="edit-icon">✎</view>
               </view>
@@ -91,7 +91,7 @@
           <!-- 头像编辑区 -->
           <view class="avatar-edit-card">
             <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-              <image class="avatar-preview" src="{{editAvatar || (user.avatarUrl || '')}}" mode="aspectFill"></image>
+              <image class="avatar-preview" src="{{editAvatarDisplayUrl || userAvatarDisplayUrl}}" mode="aspectFill"></image>
               <view class="edit-badge">✎</view>
             </button>
             <text class="avatar-tip">点击修改头像</text>

@@ -26,6 +26,8 @@ Page({
         editDiet: '',
         editCalories: 0,
         editAvatar: '', // Current avatar being edited
+        userAvatarDisplayUrl: '',
+        editAvatarDisplayUrl: '',
         pendingAvatarFileId: '',
         avatarUploadStatus: 'idle', // idle / uploading / uploaded / failed
         avatarUploadMessage: '',
@@ -79,11 +81,45 @@ Page({
                 editDiet: profile.dietPreference,
                 editCalories: profile.targetCalories,
                 editAvatar: profile.avatarUrl || '',
+                userAvatarDisplayUrl: '',
+                editAvatarDisplayUrl: '',
                 pendingAvatarFileId: profile.avatarUrl || '',
                 avatarUploadStatus: 'idle',
                 avatarUploadMessage: ''
             })
+
+            this.refreshAvatarDisplayUrls(profile.avatarUrl || '', profile.avatarUrl || '')
         }
+    },
+
+    async toDisplayAvatarUrl(value) {
+        if (!value || typeof value !== 'string') return ''
+        if (value.startsWith('https://') || value.startsWith('http://') || value.startsWith('wxfile://') || value.startsWith('data:')) {
+            return value
+        }
+        if (!value.startsWith('cloud://')) {
+            return value
+        }
+
+        try {
+            const { initSharedCloud } = require('../../utils/cloudApi')
+            const cloud = await initSharedCloud()
+            const result = await cloud.getTempFileURL({ fileList: [value] })
+            const item = result && result.fileList && result.fileList[0]
+            if (!item) return ''
+            return item.tempFileURL || ''
+        } catch (error) {
+            console.warn('[Profile] cloud avatar url resolve failed:', error)
+            return ''
+        }
+    },
+
+    async refreshAvatarDisplayUrls(userAvatarUrl, editAvatarUrl) {
+        const [userAvatarDisplayUrl, editAvatarDisplayUrl] = await Promise.all([
+            this.toDisplayAvatarUrl(userAvatarUrl),
+            this.toDisplayAvatarUrl(editAvatarUrl)
+        ])
+        this.setData({ userAvatarDisplayUrl, editAvatarDisplayUrl })
     },
 
     // 导航到子页面
@@ -144,7 +180,41 @@ Page({
     },
 
     goBack() {
+        if (this.data.subPage === 'PERSONAL') {
+            this.commitAvatarIfNeeded()
+        }
         this.setData({ subPage: 'MAIN' })
+    },
+
+    commitAvatarIfNeeded() {
+        const { user, editAvatar } = this.data
+        if (!user) return
+
+        const nextAvatar = this.resolveAvatarUrl(editAvatar, user.avatarUrl)
+        if (!nextAvatar || !this.isPersistableAvatarUrl(nextAvatar)) return
+        if (nextAvatar === (user.avatarUrl || '')) return
+
+        const updatedUser = {
+            ...user,
+            avatarUrl: nextAvatar
+        }
+
+        // 本地先落盘，确保返回主页和再次进入时都显示最新头像
+        wx.setStorageSync('userProfile', updatedUser)
+        this.setData({
+            user: updatedUser,
+            userAvatarDisplayUrl: this.data.editAvatarDisplayUrl || this.data.userAvatarDisplayUrl || ''
+        })
+        this.refreshAvatarDisplayUrls(updatedUser.avatarUrl || '', editAvatar || updatedUser.avatarUrl || '')
+
+        // 云端异步兜底同步，不阻塞返回交互
+        const { call } = require('../../utils/cloudApi')
+        call('userService', {
+            action: 'createOrUpdateProfile',
+            data: updatedUser
+        }).catch((error) => {
+            console.warn('[Profile] 头像自动同步到云端失败:', error)
+        })
     },
 
     // 个人资料编辑
@@ -173,17 +243,19 @@ Page({
         const path = e.currentTarget.dataset.path
         this.setData({
             editAvatar: path,
+            editAvatarDisplayUrl: path,
             pendingAvatarFileId: path,
             avatarUploadStatus: 'uploaded',
             avatarUploadMessage: '已选择推荐头像'
         })
     },
 
-    onChooseAvatar(e) {
+    async onChooseAvatar(e) {
         const { avatarUrl } = e.detail
 
         // 立即上传到云存储以获取永久链接
         this.setData({
+            editAvatarDisplayUrl: avatarUrl || '',
             avatarUploadStatus: 'uploading',
             avatarUploadMessage: '头像上传中...'
         })
@@ -192,20 +264,24 @@ Page({
         const requestId = `avatar_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
         const cloudPath = `avatars/${requestId}.jpg`
 
-        const { uploadWithSharedCloud } = require('../../utils/cloudApi')
-        uploadWithSharedCloud({
-            cloudPath: cloudPath,
-            filePath: avatarUrl // 临时文件路径
-        }).then(res => {
+        try {
+            const { uploadWithSharedCloud } = require('../../utils/cloudApi')
+            const res = await uploadWithSharedCloud({
+                cloudPath: cloudPath,
+                filePath: avatarUrl // 临时文件路径
+            })
+
             console.log('[Avatar] Upload success:', res.fileID)
+            const displayUrl = await this.toDisplayAvatarUrl(res.fileID)
             this.setData({
                 editAvatar: res.fileID,
+                editAvatarDisplayUrl: displayUrl,
                 pendingAvatarFileId: res.fileID,
                 avatarUploadStatus: 'uploaded',
                 avatarUploadMessage: '头像上传成功'
             })
             wx.hideLoading()
-        }).catch(err => {
+        } catch (err) {
             console.error('[Avatar] Upload failed:', err)
             wx.hideLoading()
             wx.showToast({ title: '云环境异常或上传失败', icon: 'none' })
@@ -213,7 +289,7 @@ Page({
                 avatarUploadStatus: 'failed',
                 avatarUploadMessage: '头像上传失败，请重试'
             })
-        })
+        }
     },
 
     onSavePersonalTap() {
@@ -258,7 +334,12 @@ Page({
         }
 
         wx.showToast({ title: '保存成功', icon: 'success' })
-        this.setData({ user: updatedUser, subPage: 'MAIN' })
+        this.setData({
+            user: updatedUser,
+            subPage: 'MAIN',
+            userAvatarDisplayUrl: this.data.editAvatarDisplayUrl || this.data.userAvatarDisplayUrl || ''
+        })
+        this.refreshAvatarDisplayUrls(updatedUser.avatarUrl || '', this.data.editAvatar || updatedUser.avatarUrl || '')
         this.loadUserProfile()
     },
 
