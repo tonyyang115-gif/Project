@@ -179,21 +179,28 @@ Page({
         // 获取文件扩展名 (通常 chooseAvatar 返回的是 .jpeg 或 .png 临时路径)
         const cloudPath = `avatars/${openid}_${timestamp}.jpg`
 
-        wx.cloud.uploadFile({
-            cloudPath: cloudPath,
-            filePath: avatarUrl, // 临时文件路径
-            success: res => {
-                console.log('[Avatar] Upload success:', res.fileID)
-                this.setData({ editAvatar: res.fileID })
-                wx.hideLoading()
-            },
-            fail: err => {
-                console.error('[Avatar] Upload failed:', err)
-                wx.hideLoading()
-                wx.showToast({ title: '上传失败', icon: 'none' })
-                // 降级：仅本地显示临时路径 (无法持久化到其他设备)
-                this.setData({ editAvatar: avatarUrl })
-            }
+        const { initSharedCloud } = require('../../utils/cloudApi')
+        initSharedCloud().then(cloud => {
+            cloud.uploadFile({
+                cloudPath: cloudPath,
+                filePath: avatarUrl, // 临时文件路径
+                success: res => {
+                    console.log('[Avatar] Upload success:', res.fileID)
+                    this.setData({ editAvatar: res.fileID })
+                    wx.hideLoading()
+                },
+                fail: err => {
+                    console.error('[Avatar] Upload failed:', err)
+                    wx.hideLoading()
+                    wx.showToast({ title: '上传失败', icon: 'none' })
+                    // 降级：仅本地显示临时路径 (无法持久化到其他设备)
+                    this.setData({ editAvatar: avatarUrl })
+                }
+            })
+        }).catch(err => {
+            console.error('[Avatar] Shared cloud init failed:', err)
+            wx.hideLoading()
+            wx.showToast({ title: '云环境异常', icon: 'none' })
         })
     },
 
