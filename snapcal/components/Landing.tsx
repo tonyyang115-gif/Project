@@ -152,18 +152,19 @@ export const Landing: React.FC<LandingProps> = ({ onStart }) => {
             onClose={() => setShowPrivacy(false)}
             content={
                 <>
-                     <section>
+                    <section>
                         <h3 className="text-base font-bold text-gray-900 mb-2">1. 我们收集的信息</h3>
                         <ul className="list-disc pl-5 space-y-1">
                             <li><strong>身体数据</strong>：身高、体重、年龄、性别，用于计算基础代谢率和推荐热量。</li>
                             <li><strong>上传内容</strong>：您拍摄或上传的食物照片、配料表照片，仅用于AI识别分析。</li>
+                            <li><strong>头像信息</strong>：您主动选择的头像（微信头像或推荐头像）用于个人资料展示与账号识别。</li>
                             <li><strong>使用记录</strong>：您的饮食打卡记录和运动记录。</li>
                         </ul>
                     </section>
 
                     <section>
                         <h3 className="text-base font-bold text-gray-900 mb-2">2. 数据的存储与安全</h3>
-                        <p>目前版本中，您的核心个人档案数据主要存储在您设备的<strong>本地存储 (LocalStorage)</strong> 中。这意味着如果您卸载应用或清除缓存，数据可能会丢失。</p>
+                        <p>目前版本中，您的核心个人档案数据主要存储在您设备的<strong>本地存储 (LocalStorage)</strong> 中。这意味着如果您卸载应用或清除缓存，数据可能会丢失。头像在您确认保存后会同步至云端档案；上传失败时不会保存临时路径。</p>
                     </section>
 
                     <section>

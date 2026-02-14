@@ -118,6 +118,10 @@
             </view>
             <view class="list-item">
               <text class="list-bullet">•</text>
+              <text><text class="bold">头像信息</text>：您主动选择的头像（微信头像或推荐头像）用于个人资料展示与账号识别。</text>
+            </view>
+            <view class="list-item">
+              <text class="list-bullet">•</text>
               <text><text class="bold">使用记录</text>：您的饮食打卡记录和运动记录。</text>
             </view>
           </view>
@@ -126,7 +130,7 @@
         <view class="section">
           <view class="section-title">2. 数据的存储与安全</view>
           <view class="section-text">
-            目前版本中，您的核心个人档案数据主要存储在您设备的<text class="bold">本地存储 (LocalStorage)</text> 中。这意味着如果您卸载应用或清除缓存，数据可能会丢失。
+            目前版本中，您的核心个人档案数据主要存储在您设备的<text class="bold">本地存储 (LocalStorage)</text> 中。这意味着如果您卸载应用或清除缓存，数据可能会丢失。头像在您确认保存后会同步到云端档案；上传失败时不会保存临时路径。
           </view>
         </view>
 
