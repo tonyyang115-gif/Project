@@ -69,6 +69,11 @@
     padding: 16rpx;
 }
 
+.save-btn.disabled {
+    color: #9CA3AF;
+    opacity: 0.7;
+}
+
 /* ========== 内容区 ========== */
 .content {
     padding: 0 40rpx;
@@ -693,8 +698,30 @@
 .avatar-tip {
     font-size: 28rpx;
     color: #6b7280;
-    margin-bottom: 56rpx;
+    margin-bottom: 16rpx;
     font-weight: 500;
+}
+
+.avatar-upload-status {
+    font-size: 24rpx;
+    margin-bottom: 40rpx;
+    font-weight: 600;
+}
+
+.avatar-upload-status.idle {
+    color: #6b7280;
+}
+
+.avatar-upload-status.uploading {
+    color: #2563EB;
+}
+
+.avatar-upload-status.uploaded {
+    color: #059669;
+}
+
+.avatar-upload-status.failed {
+    color: #DC2626;
 }
 
 /* 推荐头像区域 */

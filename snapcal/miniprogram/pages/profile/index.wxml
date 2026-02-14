@@ -84,7 +84,7 @@
         <view class="sub-header">
           <view class="std-back-btn" bindtap="goBack"></view>
           <text class="sub-title">个人资料</text>
-          <view class="save-btn" bindtap="savePersonal">保存</view>
+          <view class="save-btn {{avatarUploadStatus === 'uploading' ? 'disabled' : ''}}" bindtap="onSavePersonalTap">保存</view>
         </view>
 
         <view class="content">
@@ -95,6 +95,9 @@
               <view class="edit-badge">✎</view>
             </button>
             <text class="avatar-tip">点击修改头像</text>
+            <text wx:if="{{avatarUploadMessage}}" class="avatar-upload-status {{avatarUploadStatus}}">
+              {{avatarUploadMessage}}
+            </text>
             
             <!-- 推荐头像 (横向滚动) -->
             <view class="recommend-section">

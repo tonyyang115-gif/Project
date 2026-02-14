@@ -228,6 +228,14 @@ Page({
         })
     },
 
+    onSavePersonalTap() {
+        if (this.data.avatarUploadStatus === 'uploading') {
+            wx.showToast({ title: '头像上传中，请稍候', icon: 'none' })
+            return
+        }
+        this.savePersonal()
+    },
+
     async savePersonal() {
         const { user, editName, editAge, editHeight, editGender, editAvatar } = this.data
         if (editAvatar && !this.isPersistableAvatarUrl(editAvatar)) {
