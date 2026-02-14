@@ -193,8 +193,6 @@ Page({
                     console.error('[Avatar] Upload failed:', err)
                     wx.hideLoading()
                     wx.showToast({ title: '上传失败', icon: 'none' })
-                    // 降级：仅本地显示临时路径 (无法持久化到其他设备)
-                    this.setData({ editAvatar: avatarUrl })
                 }
             })
         }).catch(err => {
