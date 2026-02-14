@@ -214,6 +214,63 @@
     color: #1f2937;
 }
 
+/* 年龄控件 - 统一 Mint 风格 */
+.age-control-card {
+    background: #ffffff;
+    border: 2rpx solid #e5e7eb;
+    border-radius: 24rpx;
+    padding: 24rpx;
+    margin-bottom: 32rpx;
+    box-shadow: 0 4rpx 12rpx rgba(15, 23, 42, 0.03);
+}
+
+.age-display {
+    color: #059669;
+}
+
+.age-stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18rpx;
+    background: #f8fafc;
+    border: 2rpx solid #ecfdf5;
+    border-radius: 18rpx;
+    padding: 8rpx;
+}
+
+.age-btn {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 16rpx;
+    background: #ecfdf5;
+    color: #047857;
+    font-size: 42rpx;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.age-btn:active {
+    transform: scale(0.96);
+    background: #d1fae5;
+}
+
+.age-input {
+    flex: 1;
+    text-align: center;
+    font-size: 42rpx;
+    font-weight: 900;
+    color: #111827;
+    font-family: var(--font-number);
+}
+
+.age-slider {
+    margin: 0;
+}
+
 .save-btn {
     border-radius: 50rpx;
     font-size: 30rpx;

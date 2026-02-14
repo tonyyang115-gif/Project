@@ -105,6 +105,14 @@ Page({
     /**
      * 身高滑动
      */
+    onHeightChanging(e) {
+        const nextHeight = Number(e.detail.value)
+        if (!Number.isFinite(nextHeight)) return
+        this.setData({
+            'formData.height': nextHeight
+        })
+    },
+
     onHeightChange(e) {
         this.handleInputChange('height', e.detail.value)
     },
@@ -154,6 +162,14 @@ Page({
     /**
      * 目标体重滑动
      */
+    onTargetWeightChanging(e) {
+        const nextWeight = Number(e.detail.value)
+        if (!Number.isFinite(nextWeight)) return
+        this.setData({
+            'formData.targetWeight': nextWeight
+        })
+    },
+
     onTargetWeightChange(e) {
         this.handleInputChange('targetWeight', Number(e.detail.value))
     },

@@ -89,9 +89,8 @@
         <view class="data-card">
           <view class="data-card-header">
             <text class="data-label">身高</text>
-            <view class="unit-toggle">
+            <view class="unit-single">
               <text class="unit active">CM</text>
-              <text class="unit">FT</text>
             </view>
           </view>
           <slider 
@@ -99,14 +98,15 @@
             min="100" 
             max="230" 
             value="{{formData.height}}"
+            bindchanging="onHeightChanging"
             bindchange="onHeightChange"
-            block-size="20"
+            block-size="24"
             activeColor="#07C160"
             backgroundColor="#F3F4F6"
           />
           <view class="data-value-large">
             <text class="value-number">{{formData.height}}</text>
-            <text class="value-unit">cm</text>
+            <text class="value-unit">CM</text>
           </view>
         </view>
 
@@ -114,8 +114,7 @@
         <view class="data-card">
           <view class="data-card-header">
             <text class="data-label">体重</text>
-            <view class="unit-toggle">
-              <text class="unit">LBS</text>
+            <view class="unit-single">
               <text class="unit active">KG</text>
             </view>
           </view>
@@ -125,7 +124,7 @@
             </view>
             <view class="data-value-large">
               <text class="value-number">{{format.toFixed(formData.weight, 1)}}</text>
-              <text class="value-unit">kg</text>
+              <text class="value-unit">KG</text>
             </view>
             <view class="adjust-btn" data-amount="0.5" bindtap="adjustWeight">
               <text class="adjust-icon">+</text>
@@ -191,10 +190,9 @@
         
         <view class="target-weight-card">
           <view class="target-weight-header">
-            <text class="current-weight-label">当前: {{formData.weight}} kg</text>
-            <view class="unit-toggle">
-              <text class="unit active">KG</text>
-              <text class="unit">LBS</text>
+            <text class="current-weight-label">当前: {{formData.weight}} CM</text>
+            <view class="unit-single">
+              <text class="unit active">CM</text>
             </view>
           </view>
 
@@ -204,7 +202,7 @@
             </view>
             <view class="target-value">
               <text class="value-number-large">{{format.toFixed(formData.targetWeight, 1)}}</text>
-              <text class="value-unit-large">kg</text>
+              <text class="value-unit-large">CM</text>
             </view>
             <view class="adjust-btn-large" data-amount="0.5" bindtap="adjustTargetWeight">
               <text class="adjust-icon">+</text>
@@ -217,8 +215,9 @@
             max="150" 
             step="0.5"
             value="{{formData.targetWeight}}"
+            bindchanging="onTargetWeightChanging"
             bindchange="onTargetWeightChange"
-            block-size="20"
+            block-size="24"
             activeColor="#07C160"
             backgroundColor="#F3F4F6"
           />

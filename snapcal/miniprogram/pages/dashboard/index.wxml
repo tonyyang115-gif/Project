@@ -6,11 +6,19 @@
       <view class="user-info">
         <view class="avatar">
           <image wx:if="{{user.avatarUrl}}" src="{{user.avatarUrl}}" class="avatar-img" />
-          <view wx:else class="avatar-placeholder">{{user.name.charAt(0)}}</view>
+          <view wx:else class="avatar-placeholder">{{user.name ? user.name[0] : '用'}}</view>
         </view>
         <view class="user-text">
-          <view class="greeting">你好, {{user.name}}</view>
-          <view class="date-text">{{today.month}}月{{today.date}}日, 今天</view>
+          <view class="user-meta-card">
+            <view class="user-name-row">
+              <text class="user-name">{{user.name || '用户'}}</text>
+              <view class="user-tag">今日</view>
+            </view>
+            <view class="date-row">
+              <view class="date-dot"></view>
+              <text class="date-chip-text">{{today.dayName}} · {{today.month}}月{{today.date}}日</text>
+            </view>
+          </view>
         </view>
       </view>
       <picker mode="date" value="{{today.dateStr}}" end="{{today.dateStr}}" bindchange="onDateChange">

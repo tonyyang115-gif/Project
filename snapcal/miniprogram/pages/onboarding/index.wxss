@@ -283,6 +283,13 @@
     padding: 4rpx;
 }
 
+.unit-single {
+    display: inline-flex;
+    background: #F3F4F6;
+    border-radius: 16rpx;
+    padding: 4rpx;
+}
+
 .unit {
     padding: 8rpx 16rpx;
     font-size: 24rpx;

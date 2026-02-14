@@ -180,8 +180,8 @@ Page({
     },
 
     onShow() {
-        // 每次显示时刷新数据
-        this.loadDailyData()
+        // 每次返回首页时刷新用户档案（含头像）和当日数据
+        this.loadUserProfile()
     },
 
     /**
@@ -229,13 +229,14 @@ Page({
     /**
      * 加载用户档案
      */
-    loadUserProfile() {
+    async loadUserProfile() {
         const profile = wx.getStorageSync('userProfile')
         if (profile) {
+            const avatarDisplayUrl = await this.toDisplayAvatarUrl(profile.avatarUrl || '')
             this.setData({
                 user: {
                     name: profile.name || '用户',
-                    avatarUrl: profile.avatarUrl || '',
+                    avatarUrl: avatarDisplayUrl || '',
                     targetCalories: profile.targetCalories || 2000,
                     targetProtein: profile.targetProtein || 150,
                     targetCarbs: profile.targetCarbs || 250,
@@ -245,6 +246,26 @@ Page({
             })
         }
         this.loadDailyData()
+    },
+
+    async toDisplayAvatarUrl(value) {
+        if (!value || typeof value !== 'string') return ''
+        if (value.startsWith('https://') || value.startsWith('http://') || value.startsWith('wxfile://') || value.startsWith('data:')) {
+            return value
+        }
+        if (!value.startsWith('cloud://')) {
+            return value
+        }
+
+        try {
+            const cloud = await initSharedCloud()
+            const result = await cloud.getTempFileURL({ fileList: [value] })
+            const item = result && result.fileList && result.fileList[0]
+            return (item && item.tempFileURL) || ''
+        } catch (error) {
+            console.warn('[Dashboard] cloud avatar url resolve failed:', error)
+            return ''
+        }
     },
 
     /**

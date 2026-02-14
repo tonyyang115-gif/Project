@@ -77,6 +77,69 @@
     font-size: 32rpx;
 }
 
+.user-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+}
+
+.user-meta-card {
+    padding: 14rpx 18rpx;
+    border-radius: 20rpx;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FFFC 100%);
+    border: 1rpx solid #D1FAE5;
+    box-shadow: 0 8rpx 20rpx rgba(16, 185, 129, 0.08);
+}
+
+.user-name {
+    font-size: 34rpx;
+    font-weight: 900;
+    color: #111827;
+    line-height: 1.2;
+    letter-spacing: 0.2rpx;
+}
+
+.user-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14rpx;
+    margin-bottom: 8rpx;
+}
+
+.user-tag {
+    font-size: 20rpx;
+    font-weight: 800;
+    color: #047857;
+    background: #ECFDF5;
+    border: 1rpx solid #A7F3D0;
+    border-radius: 999rpx;
+    padding: 4rpx 12rpx;
+    flex-shrink: 0;
+}
+
+.date-row {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+}
+
+.date-dot {
+    width: 8rpx;
+    height: 8rpx;
+    border-radius: 50%;
+    background: #10B981;
+    flex-shrink: 0;
+}
+
+.date-chip-text {
+    font-size: 22rpx;
+    font-weight: 700;
+    color: #64748B;
+    letter-spacing: 0.2rpx;
+}
+
 
 /* ========== AI 扫描全屏动画 ========== */
 .scanning-overlay {
@@ -382,21 +445,6 @@
     margin-bottom: 4rpx;
 }
 
-
-.greeting {
-    font-size: 20rpx;
-    color: #9CA3AF;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 1rpx;
-    margin-bottom: 4rpx;
-}
-
-.date-text {
-    font-size: 32rpx;
-    font-weight: 800;
-    color: #111827;
-}
 
 .calendar-btn {
     width: 80rpx;

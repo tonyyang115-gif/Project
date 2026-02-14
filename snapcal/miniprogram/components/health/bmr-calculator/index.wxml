@@ -37,13 +37,17 @@
         </view>
 
         <!-- 年龄 -->
-        <view class="input-row">
-            <text class="label">年龄</text>
-            <view class="stepper">
-                <view class="step-btn" bindtap="onAgeChange" data-value="{{age - 1}}">-</view>
-                <input class="step-input" type="number" value="{{age}}" bindinput="onAgeChange"/>
-                <view class="step-btn" bindtap="onAgeChange" data-value="{{age + 1}}">+</view>
+        <view class="age-control-card">
+            <view class="label-row">
+                <text class="label">年龄</text>
+                <text class="value-display age-display">{{age}} 岁</text>
             </view>
+            <view class="age-stepper">
+                <view class="age-btn" bindtap="onAgeAdjust" data-delta="-1">−</view>
+                <input class="age-input" type="number" value="{{age}}" bindinput="onAgeInput" />
+                <view class="age-btn" bindtap="onAgeAdjust" data-delta="1">+</view>
+            </view>
+            <slider class="age-slider" min="10" max="100" value="{{age}}" activeColor="#10B981" bindchanging="onAgeSliderChange" bindchange="onAgeSliderChange" />
         </view>
 
         <!-- 身高 (Slider重用) -->

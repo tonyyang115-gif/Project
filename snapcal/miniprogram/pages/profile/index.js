@@ -7,6 +7,7 @@ Page({
         bmi: '0.0',
         subPage: 'MAIN', // MAIN, PERSONAL, NUTRITION, HELP, DATA_MGMT, ABOUT
         appVersion: '1.0.0',
+        userHint: '愿你今天元气满满~',
         usageDays: 0,
         totalMeals: 0,
         feedbackText: '',
@@ -48,6 +49,8 @@ Page({
     },
 
     onLoad() {
+        this.updateUserHint()
+        this.startUserHintTimer()
         this.loadUserProfile()
         // 初始化版本号
         const app = getApp()
@@ -57,7 +60,49 @@ Page({
     },
 
     onShow() {
+        this.updateUserHint()
+        this.startUserHintTimer()
         this.loadUserProfile()
+    },
+
+    onHide() {
+        this.stopUserHintTimer()
+    },
+
+    onUnload() {
+        this.stopUserHintTimer()
+    },
+
+    updateUserHint() {
+        const hour = new Date().getHours()
+        let userHint = '愿你今天元气满满~'
+
+        if (hour >= 5 && hour < 11) {
+            userHint = '早安，记得吃好早餐哦~'
+        } else if (hour >= 11 && hour < 14) {
+            userHint = '午餐要均衡，别忘了补水~'
+        } else if (hour >= 14 && hour < 18) {
+            userHint = '下午加油，起来活动一下吧~'
+        } else if (hour >= 18 && hour < 22) {
+            userHint = '晚餐清淡些，身体更轻松~'
+        } else {
+            userHint = '夜深了，早点休息更健康~'
+        }
+
+        this.setData({ userHint })
+    },
+
+    startUserHintTimer() {
+        if (this.userHintTimer) return
+        this.userHintTimer = setInterval(() => {
+            this.updateUserHint()
+        }, 60 * 1000)
+    },
+
+    stopUserHintTimer() {
+        if (!this.userHintTimer) return
+        clearInterval(this.userHintTimer)
+        this.userHintTimer = null
     },
 
     loadUserProfile() {

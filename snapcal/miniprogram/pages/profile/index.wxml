@@ -19,7 +19,7 @@
               </view>
               <view class="user-text">
                 <text class="user-name">{{user.name || '未设置'}}</text>
-                <text class="user-hint">记得午休哦~</text>
+                <text class="user-hint">{{userHint}}</text>
               </view>
             </view>
 

@@ -35,6 +35,17 @@ Component({
     },
 
     methods: {
+        normalizeAge(value) {
+            const num = parseInt(value, 10)
+            if (!Number.isFinite(num)) return this.data.age || 25
+            return Math.max(10, Math.min(100, num))
+        },
+
+        applyAge(age) {
+            this.setData({ age: this.normalizeAge(age) })
+            this.calculate()
+        },
+
         onClose() {
             this.triggerEvent('close')
         },
@@ -44,9 +55,17 @@ Component({
             this.calculate()
         },
 
-        onAgeChange(e) {
-            this.setData({ age: parseInt(e.detail.value) })
-            this.calculate()
+        onAgeAdjust(e) {
+            const delta = parseInt(e.currentTarget.dataset.delta, 10) || 0
+            this.applyAge(this.data.age + delta)
+        },
+
+        onAgeInput(e) {
+            this.applyAge(e.detail.value)
+        },
+
+        onAgeSliderChange(e) {
+            this.applyAge(e.detail.value)
         },
 
         onHeightChange(e) {
