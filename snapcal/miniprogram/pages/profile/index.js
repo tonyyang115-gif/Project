@@ -232,13 +232,18 @@ Page({
 
     async savePersonal() {
         const { user, editName, editAge, editHeight, editGender, editAvatar } = this.data
+        if (editAvatar && !this.isPersistableAvatarUrl(editAvatar)) {
+            wx.showToast({ title: '头像尚未上传完成', icon: 'none' })
+            return
+        }
+
         const updatedUser = {
             ...user,
             name: editName,
             age: editAge,
             height: editHeight,
             gender: editGender,
-            avatarUrl: editAvatar || user.avatarUrl
+            avatarUrl: this.resolveAvatarUrl(editAvatar, user.avatarUrl)
         }
 
         // 重新计算BMR/TDEE
@@ -349,6 +354,18 @@ Page({
 
         userData.bmr = bmr
         userData.tdee = tdee
+    },
+
+    resolveAvatarUrl(editAvatar, fallbackAvatar) {
+        if (this.isPersistableAvatarUrl(editAvatar)) {
+            return editAvatar
+        }
+        return fallbackAvatar || ''
+    },
+
+    isPersistableAvatarUrl(value) {
+        if (!value || typeof value !== 'string') return false
+        return value.startsWith('cloud://') || value.startsWith('https://') || value.startsWith('http://')
     },
 
     // ========== 帮助与反馈 ==========
