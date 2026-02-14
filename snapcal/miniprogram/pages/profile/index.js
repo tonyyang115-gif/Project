@@ -192,38 +192,26 @@ Page({
         const requestId = `avatar_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
         const cloudPath = `avatars/${requestId}.jpg`
 
-        const { initSharedCloud } = require('../../utils/cloudApi')
-        initSharedCloud().then(cloud => {
-            cloud.uploadFile({
-                cloudPath: cloudPath,
-                filePath: avatarUrl, // 临时文件路径
-                success: res => {
-                    console.log('[Avatar] Upload success:', res.fileID)
-                    this.setData({
-                        editAvatar: res.fileID,
-                        pendingAvatarFileId: res.fileID,
-                        avatarUploadStatus: 'uploaded',
-                        avatarUploadMessage: '头像上传成功'
-                    })
-                    wx.hideLoading()
-                },
-                fail: err => {
-                    console.error('[Avatar] Upload failed:', err)
-                    wx.hideLoading()
-                    wx.showToast({ title: '上传失败', icon: 'none' })
-                    this.setData({
-                        avatarUploadStatus: 'failed',
-                        avatarUploadMessage: '头像上传失败，请重试'
-                    })
-                }
+        const { uploadWithSharedCloud } = require('../../utils/cloudApi')
+        uploadWithSharedCloud({
+            cloudPath: cloudPath,
+            filePath: avatarUrl // 临时文件路径
+        }).then(res => {
+            console.log('[Avatar] Upload success:', res.fileID)
+            this.setData({
+                editAvatar: res.fileID,
+                pendingAvatarFileId: res.fileID,
+                avatarUploadStatus: 'uploaded',
+                avatarUploadMessage: '头像上传成功'
             })
-        }).catch(err => {
-            console.error('[Avatar] Shared cloud init failed:', err)
             wx.hideLoading()
-            wx.showToast({ title: '云环境异常', icon: 'none' })
+        }).catch(err => {
+            console.error('[Avatar] Upload failed:', err)
+            wx.hideLoading()
+            wx.showToast({ title: '云环境异常或上传失败', icon: 'none' })
             this.setData({
                 avatarUploadStatus: 'failed',
-                avatarUploadMessage: '云环境异常，请稍后重试'
+                avatarUploadMessage: '头像上传失败，请重试'
             })
         })
     },

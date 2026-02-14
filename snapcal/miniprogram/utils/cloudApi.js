@@ -67,3 +67,15 @@ export async function initSharedCloud() {
     const app = getApp()
     return await app.getCloud()
 }
+
+/**
+ * 使用共享云实例上传文件
+ * @param {object} params
+ * @param {string} params.cloudPath
+ * @param {string} params.filePath
+ * @returns {Promise<{fileID: string}>}
+ */
+export async function uploadWithSharedCloud(params) {
+    const cloud = await initSharedCloud()
+    return cloud.uploadFile(params)
+}
